@@ -25,7 +25,7 @@
 * table, 5 on 4 and 6 on the table.
 *
 * Parameters are given to this program on the command line. The options are:
-* 
+*
 *    -n <integer>     number of blocks in each state (default 0)
 *    -s <integer>     number of states required (default 1)
 *    -r <integer>     seed for the random number generator (default 3088)
@@ -45,6 +45,8 @@
 
 
 #include "bwstates.h"
+
+#include <unistd.h>
 
 
 main(argc,argv)
@@ -100,7 +102,7 @@ void get_options(int argc, char *argv[], int *size, int *nstates, long *seed)
     if (*nstates<0) {
 	fprintf(stderr, "Bad -s option: negative number of states\n\n");
 	exit(2);
-    } 
+    }
 }
 
 
@@ -143,7 +145,7 @@ float Ratio(float ratio[], int N, int x, int y)
 *   g(0,k) = 1
 *   g(n+1,k) = g(n,k)(n + k) + g(n,k+1)
 *
-* This determines the required ratio. 
+* This determines the required ratio.
 * Let g(n-1,k) = a. Let g(n-1,k+1)/a = R. Let g(n-1,k+2)/g(n-1,k+1) = S.
 * Then we have:
 *   g(n,k+1) / g(n,k)
@@ -189,7 +191,7 @@ void make_state(state sigma, float ratio[])
     float p;         /* The probability that the block goes on the table */
     int choice;      /* Abbreviates (n + k) */
     int b;           /* The destination block */
-    
+
     for (x=0; x<sigma->N; x++) {
 	sigma->rooted[x].top = sigma->rooted[x].bottom = -1;
 	sigma->floating[x].top = sigma->floating[x].bottom = x;
@@ -197,7 +199,7 @@ void make_state(state sigma, float ratio[])
     }                 /* Initially, each block is a floating tower */
     sigma->nrt = 0;
     sigma->nft = sigma->N;
-    
+
     while (sigma->nft--) {
 	r = drand48();
 	choice = sigma->nft + sigma->nrt;
@@ -205,20 +207,20 @@ void make_state(state sigma, float ratio[])
 	p = rat / (rat + choice);
 	if (r <= p) {                 /* Put the next block on the table */
 	    sigma->rooted[sigma->nrt].top = sigma->floating[sigma->nft].top;
-	    sigma->rooted[sigma->nrt].bottom = 
+	    sigma->rooted[sigma->nrt].bottom =
 		sigma->floating[sigma->nft].bottom;
 	    sigma->nrt++;
 	}
 	else {                        /* Put the next block on some b */
 	    b = (int) (floor((r - p) / ((1.0 - p) / choice)));
 	    if (b < sigma->nrt) {     /* Destination is a rooted tower */
-		sigma->S[sigma->floating[sigma->nft].bottom] = 
+		sigma->S[sigma->floating[sigma->nft].bottom] =
 		    sigma->rooted[b].top;
 		sigma->rooted[b].top = sigma->floating[sigma->nft].top;
 	    }
 	    else {                    /* Destination is a floating tower */
 		b -= sigma->nrt;
-		sigma->S[sigma->floating[sigma->nft].bottom] = 
+		sigma->S[sigma->floating[sigma->nft].bottom] =
 		    sigma->floating[b].top;
 		sigma->floating[b].top = sigma->floating[sigma->nft].top;
       }
