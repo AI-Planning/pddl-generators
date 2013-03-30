@@ -1,0 +1,13 @@
+Dotfiles: "z:/.ocmrc-windows"
+
+Systems:
+"wrutils"
+
+Files:
+"output"
+
+Libraries:
+
+Result: "cp_prob_gen" native "main"
+
+(* EOF *)
