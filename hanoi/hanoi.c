@@ -6,16 +6,16 @@
  * (C) Copyright 2001 Albert Ludwigs University Freiburg
  *     Institute of Computer Science
  *
- * All rights reserved. Use of this software is permitted for 
- * non-commercial research purposes, and it may be copied only 
+ * All rights reserved. Use of this software is permitted for
+ * non-commercial research purposes, and it may be copied only
  * for that use.  All copies must include this copyright message.
  * This software is made available AS IS, and neither the authors
  * nor the  Albert Ludwigs University Freiburg make any warranty
- * about the software or its performance. 
+ * about the software or its performance.
  *********************************************************************/
 
 
-/* 
+/*
  * C code for generating hanoi problems...
  */
 
@@ -120,9 +120,7 @@ int main( int argc, char *argv[] )
       printf("\n(smaller d%d d%d)", j+1, i+1);
     }
   }
-  printf("\n(clear peg2)
-          \n(clear peg3)
-          \n(clear d1)");
+  printf("\n(clear peg2)\n(clear peg3)\n(clear d1)");
 
   printf("\n(on d%d peg1)", gobjects);
   for ( i = gobjects-1; i >= 1; i-- ) {
@@ -145,8 +143,8 @@ int main( int argc, char *argv[] )
   exit( 0 );
 
 }
-  
-  
+
+
 
 
 
