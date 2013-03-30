@@ -8,7 +8,7 @@ OPS=$1
 BLOCKS=$2
 
 BS=./bwstates.1/bwstates
-TR=./${OPS}OPS/2pddl/2pddl
+TR=./${OPS}ops/2pddl/2pddl
 
 
 $BS -s 2 -n ${BLOCKS} > STATES
