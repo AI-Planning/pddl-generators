@@ -6,16 +6,16 @@
  * (C) Copyright 2001 Albert Ludwigs University Freiburg
  *     Institute of Computer Science
  *
- * All rights reserved. Use of this software is permitted for 
- * non-commercial research purposes, and it may be copied only 
+ * All rights reserved. Use of this software is permitted for
+ * non-commercial research purposes, and it may be copied only
  * for that use.  All copies must include this copyright message.
  * This software is made available AS IS, and neither the authors
  * nor the  Albert Ludwigs University Freiburg make any warranty
- * about the software or its performance. 
+ * about the software or its performance.
  *********************************************************************/
 
 
-/* 
+/*
  * C code for generating movie problems...
  */
 
@@ -128,13 +128,13 @@ int main( int argc, char *argv[] )
   printf("\n(counter-at-other-than-two-hours)");
   printf("\n)");
   printf("\n(:goal");
-  printf("\n(and (movie-rewound)
-                 (counter-at-zero)
-                 (have-chips)
-                 (have-dip)
-                 (have-pop)
-                 (have-cheese)
-                 (have-crackers))");
+  printf("\n(and (movie-rewound)"
+                 "(counter-at-zero)"
+                 "(have-chips)"
+                 "(have-dip)"
+                 "(have-pop)"
+                 "(have-cheese)"
+                 "(have-crackers))");
   printf("\n)");
   printf("\n)");
 
@@ -143,8 +143,8 @@ int main( int argc, char *argv[] )
   exit( 0 );
 
 }
-  
-  
+
+
 
 
 
