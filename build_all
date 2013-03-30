@@ -1,0 +1,18 @@
+#! /bin/bash
+
+set -e
+set -u
+
+cd "$(dirname "$0")"
+
+for DIR in * ; do
+    if [ -d $DIR ]; then
+        echo
+        echo "Building $DIR"
+        cd $DIR
+        if [ -e Makefile ]; then
+            make "$@"
+        fi
+        cd ..
+    fi
+done
