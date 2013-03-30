@@ -1,0 +1,21 @@
+
+The blocksworld generators use the random bw state generator provided
+by John Slaney and Sylvie Thiebaux. This is contained in the
+
+bwstates.1
+
+subdirectory. Go there and make. Then go to
+
+3ops/2pddl or 4ops/2pddl
+
+and make there, too - this produces an executable that translates the
+generator's output to PDDL. The random instances can then be generated
+by running the script
+
+blocksworld <ops> <num>
+
+which takes as input the number of operators (either 3 or 4) and blocks
+in the problem to be generated. This is currently maximal 200 due to
+the random state generator. To increase that, edit the Makefile in
+bwstates.1 and increase SIZE.
+
