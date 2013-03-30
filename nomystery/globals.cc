@@ -1,5 +1,9 @@
 #include "globals.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 void usage() {
 	printf("\nusage:\n");
 	printf("\nOPTIONS   DESCRIPTIONS\n\n");
