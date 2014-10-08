@@ -54,12 +54,15 @@ $(PROFILES): PROFILE-%: profile-search
 	gprof profile-search | ./cleanup-profile > $@
 
 $(OBJECTS): %.o: %.cc
+	mkdir -p obj
 	$(CC) $(CCOPT) -c $< -o obj/$@
 
 $(PROFILE_OBJECTS): %.profile.o: %.cc
+	mkdir -p obj
 	$(CC) $(CCOPT) $(PROFOPT) -c $< -o obj/$@
 
 $(RELEASE_OBJECTS): %.release.o: %.cc
+	mkdir -p obj
 	$(CC) $(RELEASEOPT) -c $< -o obj/$@
 
 clean:
