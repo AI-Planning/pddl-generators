@@ -93,11 +93,12 @@ int main( int argc, char *argv[] )
   printf("\n(:domain blocksworld)");
   printf("\n(:objects ");
   for ( i = 0; i < gn; i++ ) printf("b%d ", i+1);
-  printf(")");
+  printf(" - block)");
   printf("\n(:init");
+  printf("\n(handempty)");
   for ( i = 1; i < gn + 1; i++ ) {
     if ( initial[i] == 0 ) {
-      printf("\n(on-table b%d)", i);
+      printf("\n(ontable b%d)", i);
     } else {
       printf("\n(on b%d b%d)", i, initial[i]);
     }
