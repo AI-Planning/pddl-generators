@@ -1,6 +1,23 @@
+This repository is an inofficial collection of PDDL generators, some of
+which have been used to generate benchmarks for the International
+Planning Competitions (IPC).
+
+Instructions
+------------
+* Build all generators: ``./build_all``
+* Build in parallel: ``./build_all -j4``
+* Delete intermediate files: ``./build_all clean``
+* Build single generator: ``cd assembly; make``
+
+Feedback
+--------
+* Bug reports and pull requests are appreciated
+
+Generator descriptions
+----------------------
 The following notes were taken from the webpage
-http://fai.cs.uni-saarland.de/hoffmann/ff-domains.html where also most of the
-generators are from:
+http://fai.cs.uni-saarland.de/hoffmann/ff-domains.html, where also most
+of the generators are from:
 
 
 This page was created by Joerg Hoffmann, to form a starting point for people who want to perform large-scale empirical studies in planning. The FF domain collection provides (randomized, where possible) generators for 20 STRIPS and ADL planning benchmark domains, including the examples used in both competitions. Below, we give, for each domain, information about the origin, made adaptions (if any), the parameters of the generator, and the randomization strategy. [...] The generators should be self-explanatory in terms of how to build them (makefiles are included), and how to run them. In the less obvious cases, we have also included a README file.
