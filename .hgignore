@@ -1,4 +1,5 @@
 ^.*\.o$
+.*.pyc$
 ^assembly/assembly$
 ^blocksworld/3ops/2pddl/2pddl$
 ^blocksworld/4ops/2pddl/2pddl$

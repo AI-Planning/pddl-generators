@@ -1,0 +1,13 @@
+## TETRIS DOMAIN GENERATOR. 
+## IPC 2014
+## author: Mauro Vallati -- University of Huddersfield
+
+Usage:  generator.py <grid_size> <conf_blocks>
+	 line numbers is used for defining number of lines of the screen. The number of column is fixed at 4. E.g., 8-> 8x4 grid. Only odd numbers accepted.
+	 conf_blocks:
+		 1 -> only 1x1 square blocks
+		 2 -> only 2x1 blocks
+		 3 -> only L-shaped blocks
+		 4 -> mix of blocks
+
+** Take care, generator can return unsolvable instances!! ** 

@@ -1,0 +1,27 @@
+# parameters for generating interesting instances
+#
+# days      :  30
+# planes    :  3*days
+# mechanics :   1
+# hubs      :   3
+# visits    :   5
+# instances : 100
+#
+# if the number of visits is made smaller, it becomes less likely that
+# a schedule exists. With sufficiently few visits by the airplanes to
+# the chosen airports, almost certainly no schedules exist. Also, with 
+# far more planes than 3*days no maintenance visits can be scheduled
+# for some of the planes, turning the problem not solvable.
+# Increasing the number of planes past 3*days and simultaneously increasing
+# the number of visits keeps the problem solvable and probably also
+# challenging, but we have not investigated the impact of different
+# parameter combinations on the difficulty of the problem.
+
+./maintenance 60 180 1 3 5 100
+./maintenance 80 240 1 3 5 100
+./maintenance 100 300 1 3 5 100
+./maintenance 120 360 1 3 5 100
+./maintenance 140 420 1 3 5 100
+./maintenance 160 480 1 3 5 100
+./maintenance 180 540 1 3 5 100
+./maintenance 200 600 1 3 5 100

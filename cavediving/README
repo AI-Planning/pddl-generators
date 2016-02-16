@@ -1,0 +1,49 @@
+The cave system is represented by an undirected acyclic graph. Divers have
+a single point of entry. Certain leaf nodes of the cave branches are
+objectives that the divers must photograph. Swimming and photographing both
+consume air tanks. Divers must exit the cave and decompress at the end.
+They can therefore only make a single trip into the cave.
+
+Certain divers have no confidence in other divers and will refuse to work
+if someone they have no confidence in has already worked. Divers have
+hiring costs inversely proportional to how hard they are to work with.
+
+A typical plan involves a diver laying tanks at layer 1 for a diver to use
+to lay tanks at level 2, etc.
+
+Anyway, the domain generator and a single problem instance are attached.
+The generator comes with a decent help menu and the code is reasonably
+commented throughout.
+
+The generator requires python 2.x.
+
+Help is obtained by running: python generator.py --help
+
+Here is how to generate a typical problem:
+
+python generator.py -domain_file ../domain.pddl -problem_file
+../problem.pddl -problem_name 01 -neg_link_prob 0.5 -perturb_hiring_costs
+0.1 -cave_branches 3:2 -objectives 3:2 -order_tanks True
+
+cave_branches and objectives specify lists of the depths of the branches of
+the cave and the objectives, respectively.
+
+-cave_branches 3:2:2 means there will be 1 branch with depth 3, and two
+with depth 2. The starting points for these branches is determined
+randomly, but their depths correspond to the total depth from the cave
+entrance. Objectives must be specified at the ends of cave branches, but
+not all branches need to have an objective.
+
+For example, -cave_branches 3:2:2 -objectives 2:2   is valid, but
+ -cave_branches 3:3:2 -objectives 2:2  is not.
+
+The plan length is exponential in the depths of the caves.
+
+To make increasingly difficult problems, add duplicate caves and objectives
+at the same depth, and then increase the depth.
+
+If you are after much harder problems, I suggest setting -order_tanks False
+ and also possibly -other_action_cost 0
+
+Unsolvable instances can be created by creating negative cycles in the
+diver relationships (set this option > 0)
