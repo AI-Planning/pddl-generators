@@ -21,7 +21,7 @@ $num_cars = $max_cars unless $num_cars;  # default to all but 2 cars
 local (@curbs);
 local (@cars);
 
-die "The maximum number of cars for $num_curbs curbs is $max_cars" 
+die "The maximum number of cars for $num_curbs curbs is $max_cars"
   if $num_cars > $max_cars;
 
 for my $i (0..$num_curbs - 1) {
@@ -40,7 +40,7 @@ print define();
 
 sub define {
 	my $s = "";
-	$s .= "(define "; 
+	$s .= "(define ";
   $s .= "  (problem parking)\n";
 	$s .= "  (:domain parking)\n";
 # 	$s .= "  (:requirements :typing)\n";
@@ -68,14 +68,14 @@ sub define {
 
 sub define_untyped {
 	my $s = "";
-	$s .= "(define "; 
+	$s .= "(define ";
   $s .= "  (problem parking)\n";
 	$s .= "  (:domain parking-untyped)\n";
   $s .= objects_untyped();
   $s .= init_untyped();
   $s .= goal();
   $s .= ")\n";
-  
+
   $s .= "; =========== INIT =========== \n";
   $s .= visual_layout(%init_cfg);
   $s .= "; ========== /INIT =========== \n";
@@ -94,7 +94,7 @@ sub objects {
 	  $s .= " $car ";
 	}; $s .= "- car\n     ";
 	for my $curb (@curbs) {
-	  $s .= "$curb "; 
+	  $s .= "$curb ";
 	}
   $s .= "- curb\n  )\n";
 	return $s;
@@ -107,7 +107,7 @@ sub objects_untyped {
 	  $s .= " $car ";
 	}; $s .= "\n     ";
 	for my $curb (@curbs) {
-	  $s .= "$curb "; 
+	  $s .= "$curb ";
 	}
   $s .= "\n  )\n";
 	return $s;
@@ -150,9 +150,9 @@ sub init_untyped {
 
   for $car (@cars) {
 	  $s .= "    (car $car)\n";
-	} 
+	}
   for $curb (@curbs) {
-          $s .= "    (curb $curb)\n"; 
+          $s .= "    (curb $curb)\n";
 	}
   for $curb (@curbs) {
 		if (defined($init_cfg{$curb})) {
