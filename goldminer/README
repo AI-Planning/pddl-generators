@@ -1,0 +1,16 @@
+A robot is in a mine and has the goal of reaching a location that
+contains gold. The mine is organized as a grid with each cell either
+begin hard or soft rock. There is a special location where the robot
+can either pickup an endlesssupply of bombs or pickup a laser cannon.
+The laser cannon can shoot through both hard and soft rock, whereas the
+bomb can only penetrate soft rock. However, the laser cannon also will
+destroy the gold if used to uncover the gold location. The bomb will
+not destroy the gold. The problem difficulty is scaled by increasing
+the size of the grid.
+
+This domain has a simple optimal strategy:
+1) get the laser cannon,
+2) shoot through the rock until reaching a cell bordering the gold.
+3) go and get a bomb.
+4) blast away the rock at the gold location.
+5) pickup the gold.
