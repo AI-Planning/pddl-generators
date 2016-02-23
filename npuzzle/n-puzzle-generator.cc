@@ -1,4 +1,3 @@
-
 // PDDL problem generator for the N-puzzle
 // Neville Mehta
 
@@ -26,36 +25,53 @@ int inversion_counter (const vector<int>& permutation)
 	return num_inversions;
 }
 
-void usage()
-{
+void usage() {
+  printf("\nusage:\n\n");
 
-  printf("\nusage:\n");
+  printf("OPTIONS      DESCRIPTIONS\n\n");
+  printf("-n <num>     rows / columns (minimal 1)\n");
+  printf("-s <integer> random seed\n");
+  printf("-u           use to generate unsolvable instances\n\n");
 
-  printf("\nOPTIONS   DESCRIPTIONS\n\n");
-  printf("-n <num>    rows / columns (minimal 1)\n");
-
+  printf("options must be included in this order!!\n");
 }
 
-int main (int argc, char* argv[])
-{	int board_size = 0;
-	srand((unsigned)time(0));
-	string typed_name, untyped_name;
-    	ofstream typed_file, untyped_file;
+int random_generator(int i) { return rand()%i; }
 
-  
-	// Input
-	if (argc >= 3)
-	{	istringstream str(argv[2]);
-	    	str >> board_size;
-		//typed_name = argv[2];
-		//typed_file.open(typed_name);
-		//typed_file << "Hello world.\n";
-		//typed_file.close();
-	}
-	if (board_size < 2 || strcmp(argv[1], "-n") != 0)
-	{	cerr << " Command-line: " << argv[0] << " -n " << "<number >= 2>\n";
-		exit(1);
-	}
+int main (int argc, char* argv[]) {
+    int board_size = 0;
+    int seed = -1;
+    bool unsat = false;
+
+    string typed_name, untyped_name;
+    ofstream typed_file, untyped_file;
+
+    // Input
+    if (argc >= 3) {
+        istringstream str(argv[2]);
+        str >> board_size;
+    }
+
+    if (argc >= 5) {
+        istringstream sstr(argv[4]);
+        sstr >> seed;
+    }
+
+    if (argc > 5 && strcmp(argv[5], "-u") == 0) {
+        unsat = true;
+    }
+
+    if (board_size < 2 || strcmp(argv[1], "-n") != 0) {
+        //.cerr << " Command-line: " << argv[0] << " -n " << "<number >= 2> (-s <positive integer>)\n";
+        usage();
+        exit(1);
+    }
+
+    if (seed == -1) {
+        srand((unsigned)time(0));
+    } else {
+        srand(seed);
+    }
 
 	int num_tiles = board_size * board_size - 1;
 
@@ -73,15 +89,22 @@ int main (int argc, char* argv[])
 	int num_inversions_goal = inversion_counter(goal_board);
 
 
-	//------- Initial configuration within the same parity/orbit as the goal -------//
-	vector<int> init_board(goal_board);
-	do
-		random_shuffle(init_board.begin(), init_board.end());
-	while (inversion_counter(init_board) % 2 != num_inversions_goal % 2);
+    vector<int> init_board(goal_board);
 
+    if (unsat) {
+        // shuffle until we're a different group orbit from the goal board
+        do {
+            random_shuffle(init_board.begin(), init_board.end(), random_generator);
+        } while (inversion_counter(init_board) % 2 == num_inversions_goal % 2);
+    } else {
+        // shuffle until we're the same group orbit as the goal board
+        do {
+            random_shuffle(init_board.begin(), init_board.end(), random_generator);
+        } while (inversion_counter(init_board) % 2 != num_inversions_goal % 2);
+    }
 
 	//------- PDDL output -------//
-	cout << "(define (problem n-puzzle1)\n  (:domain n-puzzle-typed)\n  (:objects";
+	cout << "(define (problem n-puzzle-" << board_size << ")\n  (:domain n-puzzle-typed)\n  (:objects";
 	for (int i = 1; i <= board_size; i++)
 		for (int j = 1; j <= board_size; j++)
 			cout << " p_" << i << "_" << j;
