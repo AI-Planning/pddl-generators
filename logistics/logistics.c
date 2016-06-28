@@ -64,6 +64,8 @@ Bool setup_city_sizes( int vec );
  */
 int gcities, gcity_size, gpackages, gairplanes;
 
+int grandom_seed;
+
 /* random values
  */
 int *ga_corigin;
@@ -80,13 +82,6 @@ int main( int argc, char *argv[] )
 
   int i, j;
 
-  /* seed the random() function
-   */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
-
   /* command line treatment, first preset values
    */
   gcities = -1;
@@ -102,6 +97,8 @@ int main( int argc, char *argv[] )
     usage();
     exit( 1 );
   }
+
+  srandom(grandom_seed);
 
   create_random_locations();
 
@@ -307,55 +304,54 @@ void usage( void )
   printf("-a <num>    number of airplanes\n");
   printf("-c <num>    number of cities (minimal 1)\n");
   printf("-s <num>    city size(minimal 1)\n");
-  printf("-p <num>    number of packages (minimal 1)\n\n");
+  printf("-p <num>    number of packages (minimal 1)\n");
+  printf("-r <num>    random seed (minimal 1)\n\n");
 
 }
 
 
 
-Bool process_command_line( int argc, char *argv[] )
+Bool process_command_line( int argc, char *argv[] ) {
+    char option;
 
-{
+    while ( --argc && ++argv ) {
+        if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
+            return FALSE;
+        }
 
-  char option;
-
-  while ( --argc && ++argv ) {
-    if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
-      return FALSE;
+        option = *++argv[0];
+        switch ( option ) {
+            default:
+                if ( --argc && ++argv ) {
+                    switch ( option ) {
+                        case 'a':
+                            sscanf( *argv, "%d", &gairplanes );
+                            break;
+                        case 'c':
+                            sscanf( *argv, "%d", &gcities );
+                            break;
+                        case 'p':
+                            sscanf( *argv, "%d", &gpackages );
+                            break;
+                        case 's':
+                            sscanf( *argv, "%d", &gcity_size );
+                            break;
+                        case 'r':
+                            sscanf( *argv, "%d", &grandom_seed );
+                            break;
+                        default:
+                            printf( "\n\nunknown option: %c entered\n\n", option );
+                            return FALSE;
+                    }
+                } else {
+                    return FALSE;
+                }
+        }
     }
-    option = *++argv[0];
-    switch ( option ) {
-    default:
-      if ( --argc && ++argv ) {
-	switch ( option ) {
-	case 'a':
-	  sscanf( *argv, "%d", &gairplanes );
-	  break;
-	case 'c':
-	  sscanf( *argv, "%d", &gcities );
-	  break;
-	case 'p':
-	  sscanf( *argv, "%d", &gpackages );
-	  break;
-	case 's':
-	  sscanf( *argv, "%d", &gcity_size );
-	  break;
-	default:
-	  printf( "\n\nunknown option: %c entered\n\n", option );
-	  return FALSE;
-	}
-      } else {
-	return FALSE;
-      }
+
+    if ( gcities < 1 || gpackages < 1 || gcity_size < 1 ) {
+        return FALSE;
     }
-  }
 
-  if ( gcities < 1 ||
-       gpackages < 1 ||
-       gcity_size < 1 ) {
-    return FALSE;
-  }
-
-  return TRUE;
-
+    return TRUE;
 }
