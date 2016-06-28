@@ -77,13 +77,6 @@ int main( int argc, char *argv[] )
 
   int i, j;
 
-  /* seed the random() function
-   */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
-
   /* command line treatment, first preset values
    */
   gcars = 0;
@@ -102,7 +95,6 @@ int main( int argc, char *argv[] )
 
   /* now output problem in PDDL syntax
    */
-  printf("\n\n\n");
 
   /* header
    */
@@ -135,9 +127,8 @@ int main( int argc, char *argv[] )
   printf("\n)");
   printf("\n)");
 
-  printf("\n)");
+  printf("\n)\n");
 
-  printf("\n\n\n");
 
   exit( 0 );
 
@@ -231,66 +222,62 @@ void print_random_destins( void )
 /* command line functions
  */
 
+void usage( void ) {
+    printf("\nusage:\n");
 
-
-
-
-
-
-
-
-
-void usage( void )
-
-{
-
-  printf("\nusage:\n");
-
-  printf("\nOPTIONS   DESCRIPTIONS\n\n");
-  printf("-l <num>    number of locations (minimal 1)\n");
-  printf("-c <num>    number of cars\n\n");
-
+    printf("\nOPTIONS   DESCRIPTIONS\n\n");
+    printf("-l <num>    number of locations (minimal 1)\n");
+    printf("-c <num>    number of cars\n\n");
+    printf("-s <integer> random seed\n\n");
 }
 
+Bool process_command_line( int argc, char *argv[] ) {
+    int seed = -1;
+    char option;
 
+    while ( --argc && ++argv ) {
+        if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
+            return FALSE;
+        }
 
-Bool process_command_line( int argc, char *argv[] )
-
-{
-
-  char option;
-
-  while ( --argc && ++argv ) {
-    if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
-      return FALSE;
+        option = *++argv[0];
+        switch ( option ) {
+            default:
+                if ( --argc && ++argv ) {
+                    switch ( option ) {
+                        case 'l':
+                            sscanf( *argv, "%d", &glocs );
+                            break;
+                        case 'c':
+                            sscanf( *argv, "%d", &gcars );
+                            break;
+                        case 's':
+                            sscanf(*argv, "%d", &seed);
+                            break;
+                        default:
+                            printf( "\n\nunknown option: %c entered\n\n", option );
+                            return FALSE;
+                    }
+                } else {
+                    return FALSE;
+                }
+        }
     }
-    option = *++argv[0];
-    switch ( option ) {
-    default:
-      if ( --argc && ++argv ) {
-	switch ( option ) {
-	case 'l':
-	  sscanf( *argv, "%d", &glocs );
-	  break;
-	case 'c':
-	  sscanf( *argv, "%d", &gcars );
-	  break;
-	default:
-	  printf( "\n\nunknown option: %c entered\n\n", option );
-	  return FALSE;
-	}
-      } else {
-	return FALSE;
-      }
+
+    if ( glocs < 1 || gcars < 0 ) {
+        return FALSE;
     }
-  }
 
-  if ( glocs < 1 ||
-       gcars < 0 ) {
-    return FALSE;
-  }
+    /* seed the random() function
+    */
+    if (seed == -1) {
+        struct timeb tp;
+        ftime( &tp );
+        srandom( tp.millitm );
+    } else {
+        srandom(seed);
+    }
 
-  return TRUE;
-
+    return TRUE;
 }
 
