@@ -9,11 +9,12 @@ import sys
 import random
 
 def help():
-	print 'usage: generator.py <rows> <columns> <n_cars> <n_garage> <sparse>'
+	print 'usage: generator.py <rows> <columns> <n_cars> <n_garage> <sparse> <seed>'
 	print '\t row and columns indicate the grid size. They should be > 1 '
 	print '\t n_cars indicates how many cars have to go through the network'
 	print '\t n_garage indicates the number of starting garages'
 	print '\t sparse is used for designing networks with \'holes\', i.e. junctions that cannot be used'
+        print '\t seed is the random seed for the instance'
 	sys.exit(2)
 
 
@@ -22,15 +23,18 @@ def help():
 to_print_car_pos=""
 
 
-if len(sys.argv) != 6:
+if len(sys.argv) != 7:
 	help()
 row=int(sys.argv[1])
 column=int(sys.argv[2])
 car=int(sys.argv[3])
 garage=int(sys.argv[4])
 sparse=int(sys.argv[5])
+seed=int(sys.argv[6])
+
 road=int(sys.argv[1]) + 2
 
+random.seed(seed)
 
 matrix = [ [ "free" for i in range(column)] for j in range(row)  ]
 
