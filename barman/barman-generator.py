@@ -107,16 +107,18 @@ try:
    num_cocktails = int(sys.argv[1])
    num_ingredients =  int(sys.argv[2])
    num_shots = int(sys.argv[3])
+   seed = int(sys.argv[4])
    name="prob"
 except:
-   print "Usage: " +sys.argv[0] + " <num_cocktails> <num_ingredients> <num_shots>"
+   print "Usage: " +sys.argv[0] + " <num_cocktails> <num_ingredients> <num_shots> <random_seed>"
    print "  num_cocktails (min 1)"
    print "  num_ingredients (min 2)"
    print "  num_shots (min max[1,num_cocktails+1])"
+   print "  random_seed (min 1)"
 
    sys.exit(1)
 
-random.seed()
+random.seed(seed)
 
 print ("(define (problem "+name+")")
 print (" (:domain barman)")
