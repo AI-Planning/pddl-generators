@@ -46,11 +46,13 @@ Bool process_command_line( int argc, char *argv[] );
 int x; 				/* size of the grid: x*x */
 float r=1.0; 			/* ratio of cells in the goal state */
 int u=0; 			/* number of unavailable locations */
+int seed;
 
 /* main body */
 int main( int argc, char *argv[] )
 {
   int i, j;
+  int initial_row, initial_col;
 
   /* command line treatment, first preset values */
   x = -1;
@@ -78,7 +80,7 @@ int main( int argc, char *argv[] )
 
   /* initialize the random generator */
   static char randstate[2048];
-  if (!initstate(time(NULL), randstate, 256)) {
+  if (!initstate(seed, randstate, 256)) {
     printf(" \n Fatal Error while initializing the random generator\n\n");
     exit (1);
   }
@@ -115,14 +117,19 @@ int main( int argc, char *argv[] )
   /* initial state */
   printf("\n(:init");
 
-  /* well, I tried hard! but make sure that the init location is free */
-  if (!mask[(x+1)*x/2]) {
-    printf ("\n Ouch! the initial location ain't available!\n\n");
-    exit (1);
-  }
+  do {
+      initial_row = random()%x;
+      initial_col = random()%x;
+  } while (!mask[initial_row*x + initial_col]);
 
-  printf("\n\t(at-robot loc-x%d-y%d)", x / 2, x / 2);
-  printf("\n\t(visited loc-x%d-y%d)", x / 2, x / 2);
+  /* well, I tried hard! but make sure that the init location is free */
+ // if (!mask[(x+1)*x/2]) {
+  //  printf ("\n Ouch! the initial location ain't available!\n\n");
+   // exit (1);
+ // }
+
+  printf("\n\t(at-robot loc-x%d-y%d)", initial_row, initial_col);
+  printf("\n\t(visited loc-x%d-y%d)", initial_row, initial_col);
 
   printf("\n");
   
@@ -155,14 +162,14 @@ int main( int argc, char *argv[] )
       /* throw a dice to decide wether (i,j) shall be included in the
 	 goal state or not. With ratio r=1, all are included as in the
 	 original version */
-      if (mask[i*x+j] && random () % (x*x) < (r*x*x) || ((i==x/2) && (j==x/2)))
+      if (mask[i*x+j] && random () % (x*x) < (r*x*x) || ((i==initial_row) && (j==initial_col)))
 	printf("\t(visited loc-x%d-y%d)\n", i, j);
     }
   }
 
   printf(")");
   printf("\n)");  
-  printf("\n)");
+  printf("\n)\n");
 
   exit( 0 );
 }
@@ -178,6 +185,7 @@ void usage( void )
   printf (" -n <num>    size of square grid\n");
   printf (" -r <num>    ratio of cells in the goal state\n");
   printf (" -u <num>    number of unavailable locations ---which are randomly arranged\n\n");
+  printf (" -s <num>    random seed\n");
 }
 
 Bool process_command_line( int argc, char *argv[] )
@@ -203,6 +211,9 @@ Bool process_command_line( int argc, char *argv[] )
 	case 'u':
 	  sscanf( *argv, "%d", &u );
 	  break;
+    case 's':
+      sscanf( *argv, "%d", &seed);
+      break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );
 	  return FALSE;
