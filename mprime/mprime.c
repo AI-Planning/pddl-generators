@@ -81,13 +81,6 @@ int main( int argc, char *argv[] )
 
   int i, j;
 
-  /* seed the random() function
-   */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
-
   /* command line treatment, first preset values
    */
   glocations = -1;
@@ -111,7 +104,6 @@ int main( int argc, char *argv[] )
 
   /* now output problem in PDDL syntax
    */
-  printf("\n\n\n");
 
   /* header
    */
@@ -165,9 +157,7 @@ int main( int argc, char *argv[] )
   printf("\n)");
   printf("\n)");
 
-  printf("\n)");
-
-  printf("\n\n\n");
+  printf("\n)\n");
 
   exit( 0 );
 
@@ -334,72 +324,79 @@ void print_random_destins( void )
 
 
 
-void usage( void )
+void usage( void ) {
+    printf("\nusage:\n");
 
-{
-
-  printf("\nusage:\n");
-
-  printf("\nOPTIONS   DESCRIPTIONS\n\n");
-  printf("-l <num>    number of locations (minimal 2)\n\n");
-  printf("-f <num>    max amount of fuel (minimal 1)\n");
-  printf("-s <num>    max amount of space (minimal 1)\n\n");
-  printf("-v <num>    number of vehicles (minimal 1)\n");
-  printf("-c <num>    number of cargos (minimal 1)\n\n");
-
+    printf("\nOPTIONS   DESCRIPTIONS\n\n");
+    printf("-l <num>    number of locations (minimal 2)\n\n");
+    printf("-f <num>    max amount of fuel (minimal 1)\n");
+    printf("-s <num>    max amount of space (minimal 1)\n\n");
+    printf("-v <num>    number of vehicles (minimal 1)\n");
+    printf("-c <num>    number of cargos (minimal 1)\n\n");
+    printf("-r <integer> random seed\n\n");
 }
 
+Bool process_command_line( int argc, char *argv[] ) {
+    int seed = -1;
+    char option;
 
+    while ( --argc && ++argv ) {
+        if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
+            return FALSE;
+        }
 
-Bool process_command_line( int argc, char *argv[] )
+        option = *++argv[0];
 
-{
-
-  char option;
-
-  while ( --argc && ++argv ) {
-    if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
-      return FALSE;
+        switch ( option ) {
+            default:
+                if ( --argc && ++argv ) {
+                    switch ( option ) {
+                        case 'l':
+                            sscanf( *argv, "%d", &glocations );
+                            break;
+                        case 'f':
+                            sscanf( *argv, "%d", &gmax_fuel );
+                            break;
+                        case 's':
+                            sscanf( *argv, "%d", &gmax_space );
+                            break;
+                        case 'v':
+                            sscanf( *argv, "%d", &gvehicles );
+                            break;
+                        case 'c':
+                            sscanf( *argv, "%d", &gcargos );
+                            break;
+                        case 'r':
+                            sscanf(*argv, "%d", &seed);
+                            break;
+                        default:
+                            printf( "\n\nunknown option: %c entered\n\n", option );
+                            return FALSE;
+                    }
+                } else {
+                    return FALSE;
+                }
+        }
     }
-    option = *++argv[0];
-    switch ( option ) {
-    default:
-      if ( --argc && ++argv ) {
-	switch ( option ) {
-	case 'l':
-	  sscanf( *argv, "%d", &glocations );
-	  break;
-	case 'f':
-	  sscanf( *argv, "%d", &gmax_fuel );
-	  break;
-	case 's':
-	  sscanf( *argv, "%d", &gmax_space );
-	  break;
-	case 'v':
-	  sscanf( *argv, "%d", &gvehicles );
-	  break;
-	case 'c':
-	  sscanf( *argv, "%d", &gcargos );
-	  break;
-	default:
-	  printf( "\n\nunknown option: %c entered\n\n", option );
-	  return FALSE;
-	}
-      } else {
-	return FALSE;
-      }
+
+    if ( glocations < 2 ||
+            gmax_space < 1 ||
+            gmax_fuel < 1 ||
+            gvehicles < 1 ||
+            gcargos < 1 ) {
+        return FALSE;
     }
-  }
 
-  if ( glocations < 2 ||
-       gmax_space < 1 ||
-       gmax_fuel < 1 ||
-       gvehicles < 1 ||
-       gcargos < 1 ) {
-    return FALSE;
-  }
+    /* seed the random() function
+    */
+    if (seed == -1) {
+        struct timeb tp;
+        ftime( &tp );
+        srandom( tp.millitm );
+    } else {
+        srandom(seed);
+    }
 
-  return TRUE;
-
+    return TRUE;
 }
 

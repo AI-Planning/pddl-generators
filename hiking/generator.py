@@ -6,44 +6,46 @@ import random
 
 
 def help():
-	print 'usage: generator.py <n_couples> <n_cars> <n_places>'
-	print '\t for solvability, cars should be at least n_couples + 1.'
+	print 'usage: generator.py <n_couples> <n_cars> <n_places> <seed>'
+	print '\t for solvability, cars should be at list n_couples + 1.'
 	sys.exit(2)
 
 
 
-if len(sys.argv) != 4:
+if len(sys.argv) != 5:
 	help()
 couples=int(sys.argv[1])
 cars=int(sys.argv[2])
 places=int(sys.argv[3])
+seed=int(sys.argv[4])
 
 # hey, everything is ok. Let's start to do something.
 
+random.seed(seed)
 
-print '(define (problem Hiking-'+str(couples)+'-'+str(cars)+')'
+print '(define (problem Hiking-'+str(couples)+'-'+str(cars)+'-'+str(places)+')'
 print '(:domain hiking)'
 print '(:objects '
 
 for i in range(cars):
 	sys.stdout.write (' car'+str(i))
-print ' - car'
+print ' - car' 
 
 for i in range(couples):
 	sys.stdout.write (' tent'+str(i))
-print ' - tent'
+print ' - tent' 
 
 for i in range(couples):
 	sys.stdout.write (' couple'+str(i))
-print ' - couple'
+print ' - couple' 
 
 for i in range(places):
 	sys.stdout.write (' place'+str(i))
-print ' - place'
+print ' - place' 
 
 for i in range(couples):
 	sys.stdout.write (' guy'+str(i)+' girl'+str(i))
-print ' - person'
+print ' - person' 
 
 print ')\n(:init'
 
@@ -53,7 +55,7 @@ for i in range(couples):
 	print '(at_person girl'+str(i)+' place0)'
 	print '(walked couple'+str(i)+' place0)'
 	print '(at_tent tent'+str(i)+' place0)'
-	#random...
+	#random... 
 	if random.randint(1,2) == 2:
 		print '(up tent'+str(i)+')'
 	else:

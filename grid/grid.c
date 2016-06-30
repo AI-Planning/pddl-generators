@@ -83,13 +83,6 @@ int main( int argc, char *argv[] )
 
   int x, y, i, j;
 
-  /* seed the random() function
-   */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
-
   /* command line treatment, first preset values
    */
   gx = -1;
@@ -112,7 +105,6 @@ int main( int argc, char *argv[] )
 
   /* now output problem in PDDL syntax
    */
-  printf("\n\n\n");
 
   /* header
    */
@@ -187,9 +179,7 @@ int main( int argc, char *argv[] )
   printf("\n)");
   printf("\n)");
 
-  printf("\n)");
-
-  printf("\n\n\n");
+  printf("\n)\n");
 
   exit( 0 );
 
@@ -393,10 +383,7 @@ void print_key_goal_positions( void )
 
 
 
-void usage( void )
-
-{
-
+void usage( void ) {
   printf("\nusage:\n");
 
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
@@ -405,84 +392,91 @@ void usage( void )
   printf("-t <num>    num different key+lock types (minimal 1)\n\n");
   printf("-k <num>    number keys vector (dezimal)\n");
   printf("-l <num>    number locks vector (dezimal)\n\n");
-  printf("-p <num>    probability of any key being mentioned in the goal (preset: %d)\n\n",
-	 gp_goal);
-
+  printf("-p <num>    probability of any key being mentioned in the goal (preset: %d)\n\n", gp_goal);
+  printf("-s <integer> random seed\n\n");
 }
 
+Bool process_command_line( int argc, char *argv[] ) {
+    int seed = -1;
+    char option;
 
+    while ( --argc && ++argv ) {
+        if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
+            return FALSE;
+        }
 
-Bool process_command_line( int argc, char *argv[] )
+        option = *++argv[0];
 
-{
-
-  char option;
-
-  while ( --argc && ++argv ) {
-    if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
-      return FALSE;
+        switch ( option ) {
+            default:
+                if ( --argc && ++argv ) {
+                    switch ( option ) {
+                        case 'x':
+                            sscanf( *argv, "%d", &gx );
+                            break;
+                        case 'y':
+                            sscanf( *argv, "%d", &gy );
+                            break;
+                        case 't':
+                            sscanf( *argv, "%d", &gnum_keytypes );
+                            break;
+                        case 'p':
+                            sscanf( *argv, "%d", &gp_goal );
+                            break;
+                        case 'k':
+                            sscanf( *argv, "%d", &gkey_vec );
+                            if (gnum_keytypes == -1) {
+                                break;
+                            } else {
+                                if (setup_key_numbers(gkey_vec)) {
+                                    break;
+                                } else {
+                                    printf("\n\ncannot interpret key number vector.\n\n");
+                                    exit( 1 );
+                                }
+                            }
+                            break;
+                        case 'l':
+                            sscanf( *argv, "%d", &glock_vec );
+                            if (gnum_keytypes == -1) {
+                                break;
+                            } else {
+                                if (setup_lock_numbers(glock_vec)) {
+                                    break;
+                                } else {
+                                    printf("\n\ncannot interpret lock number vector.\n\n");
+                                    exit( 1 );
+                                }
+                            }
+                            break;
+                        case 's':
+                            sscanf(*argv, "%d", &seed);
+                            break;
+                        default:
+                            printf( "\n\nunknown option: %c entered\n\n", option );
+                            return FALSE;
+                    }
+                } else {
+                    return FALSE;
+                }
+        }
     }
-    option = *++argv[0];
-    switch ( option ) {
-    default:
-      if ( --argc && ++argv ) {
-	switch ( option ) {
-	case 'x':
-	  sscanf( *argv, "%d", &gx );
-	  break;
-	case 'y':
-	  sscanf( *argv, "%d", &gy );
-	  break;
-	case 't':
-	  sscanf( *argv, "%d", &gnum_keytypes );
-	  break;
-	case 'p':
-	  sscanf( *argv, "%d", &gp_goal );
-	  break;
-	case 'k':
-	  sscanf( *argv, "%d", &gkey_vec );
-	  if ( gnum_keytypes == -1 ) {
-	    break;
-	  } else {
-	    if ( setup_key_numbers( gkey_vec ) ) {
-	      break;
-	    } else {
-	      printf("\n\ncannot interpret key number vector.\n\n");
-	      exit( 1 );
-	    }
-	  }
-	  break;
-	case 'l':
-	  sscanf( *argv, "%d", &glock_vec );
-	  if ( gnum_keytypes == -1 ) {
-	    break;
-	  } else {
-	    if ( setup_lock_numbers( glock_vec ) ) {
-	      break;
-	    } else {
-	      printf("\n\ncannot interpret lock number vector.\n\n");
-	      exit( 1 );
-	    }
-	  }
-	  break;
-	default:
-	  printf( "\n\nunknown option: %c entered\n\n", option );
-	  return FALSE;
-	}
-      } else {
-	return FALSE;
-      }
+
+    if (gx < 1 || gy < 1 || gnum_keytypes < 1 ) {
+        return FALSE;
     }
-  }
 
-  if ( gx < 1 ||
-       gy < 1 ||
-       gnum_keytypes < 1 ) {
-    return FALSE;
-  }
+    /* seed the random() function
+    */
+    if (seed == -1) {
+        struct timeb tp;
+        ftime( &tp );
+        srandom( tp.millitm );
+    } else {
+        srandom(seed);
+    }
 
-  return TRUE;
-
+    return TRUE;
 }
 
 

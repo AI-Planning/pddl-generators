@@ -86,13 +86,6 @@ int main( int argc, char *argv[] )
 
   int i;
 
-  /* seed the random() function
-   */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
-
   /* command line treatment, first preset values
    */
   gcells = -1;
@@ -116,7 +109,6 @@ int main( int argc, char *argv[] )
 
   /* now output problem in PDDL syntax
    */
-  printf("\n\n\n");
 
   /* header
    */
@@ -144,9 +136,7 @@ int main( int argc, char *argv[] )
   printf("\n)");
   printf("\n)");
 
-  printf("\n)");
-
-  printf("\n\n\n");
+  printf("\n)\n");
 
   exit( 0 );
 
@@ -544,19 +534,7 @@ void print_dynamics( void )
 /* command line functions
  */
 
-
-
-
-
-
-
-
-
-
-void usage( void )
-
-{
-
+void usage( void ) {
   printf("\nusage:\n");
 
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
@@ -565,71 +543,81 @@ void usage( void )
   printf("-s <num>    number of suits (minimal 1)\n");
   printf("-0 .. -3 <num>    suit sizes\n");
   printf("-i <num>    number of initial stacks (minimal 1)\n\n");
-
+  printf("-r <integer> random seed\n\n");
 }
 
+Bool process_command_line( int argc, char *argv[] ) {
+    int seed = -1;
+    char option;
+    gsuit_size = ( int * ) calloc( 4, sizeof( int ) );
 
+    while ( --argc && ++argv ) {
+        if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
+            return FALSE;
+        }
 
-Bool process_command_line( int argc, char *argv[] )
+        option = *++argv[0];
 
-{
-
-  char option;
-  gsuit_size = ( int * ) calloc( 4, sizeof( int ) );
-
-  while ( --argc && ++argv ) {
-    if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
-      return FALSE;
+        switch ( option ) {
+            default:
+                if ( --argc && ++argv ) {
+                    switch ( option ) {
+                        case 'f':
+                            sscanf( *argv, "%d", &gcells );
+                            break;
+                        case 'c':
+                            sscanf( *argv, "%d", &gcols );
+                            break;
+                        case 's':
+                            sscanf( *argv, "%d", &gsuits );
+                            break;
+                        case '0':
+                            sscanf( *argv, "%d", &(gsuit_size[0]) );
+                            break;
+                        case '1':
+                            sscanf( *argv, "%d", &(gsuit_size[1]) );
+                            break;
+                        case '2':
+                            sscanf( *argv, "%d", &(gsuit_size[2]) );
+                            break;
+                        case '3':
+                            sscanf( *argv, "%d", &(gsuit_size[3]) );
+                            break;
+                        case 'i':
+                            sscanf( *argv, "%d", &gstacks );
+                            break;
+                        case 'r':
+                            sscanf(*argv, "%d", &seed);
+                            break;
+                        default:
+                            printf( "\n\nunknown option: %c entered\n\n", option );
+                            return FALSE;
+                    }
+                } else {
+                    return FALSE;
+                }
+        }
     }
-    option = *++argv[0];
-    switch ( option ) {
-    default:
-      if ( --argc && ++argv ) {
-	switch ( option ) {
-	case 'f':
-	  sscanf( *argv, "%d", &gcells );
-	  break;
-	case 'c':
-	  sscanf( *argv, "%d", &gcols );
-	  break;
-	case 's':
-	  sscanf( *argv, "%d", &gsuits );
-	  break;
-	case '0':
-	  sscanf( *argv, "%d", &(gsuit_size[0]) );
-	  break;
-	case '1':
-	  sscanf( *argv, "%d", &(gsuit_size[1]) );
-	  break;
-	case '2':
-	  sscanf( *argv, "%d", &(gsuit_size[2]) );
-	  break;
-	case '3':
-	  sscanf( *argv, "%d", &(gsuit_size[3]) );
-	  break;
-	case 'i':
-	  sscanf( *argv, "%d", &gstacks );
-	  break;
-	default:
-	  printf( "\n\nunknown option: %c entered\n\n", option );
-	  return FALSE;
-	}
-      } else {
-	return FALSE;
-      }
+
+    if ( gcells < 0 ||
+            gcols < 1 ||
+            gsuits < 1 ||
+            gsuits > 4 ||
+            gstacks < 1 ) {
+        return FALSE;
     }
-  }
 
-  if ( gcells < 0 ||
-       gcols < 1 ||
-       gsuits < 1 ||
-       gsuits > 4 ||
-       gstacks < 1 ) {
-    return FALSE;
-  }
+    /* seed the random() function
+    */
+    if (seed == -1) {
+        struct timeb tp;
+        ftime(&tp);
+        srandom(tp.millitm);
+    } else {
+        srandom(seed);
+    }
 
-  return TRUE;
-
+    return TRUE;
 }
 
 

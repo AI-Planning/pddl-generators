@@ -3,9 +3,9 @@
 ## IPC 2014
 ## author: Mauro Vallati -- University of Huddersfield
 
-usage: generator.py <rows> <columns> <n_cars> <n_garage> <sparse>
-	 row and columns indicate the grid size. They should be > 1 
-	 n_cars indicates how many cars have to go through the network
-	 n_garage indicates the number of starting garages
-	 sparse is used for designing networks with 'holes', i.e. junctions that cannot be used
-
+usage: generator.py <rows> <columns> <n_cars> <n_garage> <sparse> <random_seed>
+     row and columns indicate the grid size. They should be > 1 
+     n_cars indicates how many cars have to go through the network
+     n_garage indicates the number of starting garages
+     sparse is used for designing networks with 'holes', i.e. junctions that cannot be used
+     random_seed allows for control of the generator randomization. Should be >= 1.

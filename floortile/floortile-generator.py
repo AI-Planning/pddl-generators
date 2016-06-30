@@ -34,7 +34,7 @@ def get_init():
    if(mode_flag!="time"):      
       str_init += "   (= (total-cost) 0)\n"
 
-   used_cols = range(1,num_columns)
+   used_cols = range(1,num_columns+1)
    
    for robot in range(num_robots):
       posx = random.randint(0,num_rows)
@@ -88,15 +88,16 @@ def get_goals():
 
 # Reading the command line arguments
 try:
-   random.seed()
-   
    name = sys.argv[1]
-   num_rows = int(sys.argv[2])
-   num_columns = int(sys.argv[3])
-   num_robots = int(sys.argv[4])
-   mode_flag = sys.argv[5]
+   seed = int(sys.argv[2])
+   num_rows = int(sys.argv[3])
+   num_columns = int(sys.argv[4])
+   num_robots = int(sys.argv[5])
+   mode_flag = sys.argv[6]
+
+   random.seed(seed)
 except:
-   print "Usage: " +sys.argv[0] + " <name> <num_rows> <num_columns> <num_robots> <mode_flag(seq|time)>"; sys.exit(1)
+   print "Usage: " +sys.argv[0] + " <name> <seed> <num_rows> <num_columns> <num_robots> <mode_flag(seq|time)>"; sys.exit(1)
 
 print ("(define (problem "+name+")")
 print (" (:domain floor-tile)")
