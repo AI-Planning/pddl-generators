@@ -228,7 +228,7 @@ void usage( void ) {
     printf("\nOPTIONS   DESCRIPTIONS\n\n");
     printf("-l <num>    number of locations (minimal 1)\n");
     printf("-c <num>    number of cars\n\n");
-    printf("-s <integer> random seed\n\n");
+    printf("-s <num>    random seed\n\n");
 }
 
 Bool process_command_line( int argc, char *argv[] ) {
