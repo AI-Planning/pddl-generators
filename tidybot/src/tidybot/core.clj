@@ -1,5 +1,7 @@
-(ns tidybot
-  (:use clojure.contrib.combinatorics)
+(ns tidybot.core
+  (:require [random-seed.core :refer :all])
+  (:refer-clojure :exclude [rand rand-int rand-nth])
+  (:use clojure.math.combinatorics)
   (:gen-class))
 
 
@@ -226,7 +228,7 @@
 
 (defn make-multi-goal-instance [i k]
   "Make an ixi instance with k bottles"
-  (tidybot/make-tidybot-instance
+  (tidybot.core/make-tidybot-instance
    'test "/home/bhaskara/ipc/tidybot/test.pddl"
    [i i] [['pr2 [0 0]]]
    [[[1 1] [(- i 2) (- i 2)]]]
@@ -245,7 +247,7 @@
 
 (defn make-maze-instance [i]
   "Make a maze-like instance in an ixi map"
-  (tidybot/make-tidybot-instance
+  (tidybot.core/make-tidybot-instance
    'test filename
    [i i] [['pr2 [0 0]]]
    (concat (left-tables i) (right-tables i))
@@ -308,9 +310,10 @@
       (println))))
 
 
-(defn generate-world [filename world-size num-tables num-cupboards size-range cupboard-size]
-  (let [cupboards (generate-surfaces world-size num-tables size-range [cupboard-size cupboard-size] 1.0)
-        surfaces (generate-surfaces world-size num-cupboards size-range [cupboard-size cupboard-size] 0.0 cupboards)
+(defn generate-world [filename world-size num-tables num-cupboards size-range cupboard-size random-seed]
+  (set-random-seed! random-seed)
+  (let [cupboards (generate-surfaces world-size num-cupboards size-range [cupboard-size cupboard-size] 1.0)
+        surfaces (generate-surfaces world-size num-tables size-range [cupboard-size cupboard-size] 0.0 cupboards)
         objects (number-objects (place-objects surfaces))
         tables (filter is-table surfaces)]
 ;    (println surfaces)
@@ -325,7 +328,7 @@
 
 (defn -main [& args]
   ;; (println (count args))
-  (if (not (= (count args) 6))
-    (println "Usage is java -jar tidybot.jar world-size n-tables n-cupboards min-surface-size max-surface-size cupboard-size")
-    (let [[world-size n-tables n-cupboards min-surface-size max-surface-size cupboard-size] (map read-string args)]
-      (generate-world :none world-size n-tables n-cupboards [min-surface-size max-surface-size] cupboard-size))))
+  (if (not (= (count args) 7))
+    (println "Usage is java -jar tidybot.jar world-size n-tables n-cupboards min-surface-size max-surface-size cupboard-size random-seed")
+    (let [[world-size n-tables n-cupboards min-surface-size max-surface-size cupboard-size random-seed] (map read-string args)]
+      (generate-world :none world-size n-tables n-cupboards [min-surface-size max-surface-size] cupboard-size random-seed))))
