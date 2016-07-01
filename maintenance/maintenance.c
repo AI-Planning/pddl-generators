@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <malloc.h>
 
 /*  Whether all actions can be taken simultanously. If not defined,
 the problem will be completely sequential. */
