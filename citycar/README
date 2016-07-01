@@ -8,4 +8,4 @@ usage: generator.py <rows> <columns> <n_cars> <n_garage> <sparse> <random_seed>
      n_cars indicates how many cars have to go through the network
      n_garage indicates the number of starting garages
      sparse is used for designing networks with 'holes', i.e. junctions that cannot be used
-     random_seed allows for control of the generator randomization. Should be >= 1.
+     random_seed allows for control of the generator randomization. Optional, and should be >= 1.

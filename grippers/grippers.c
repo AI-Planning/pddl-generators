@@ -26,7 +26,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <time.h>
 
 
 
@@ -168,7 +169,7 @@ void usage( void ) {
     printf("-n <num>    number of robots (minimal 1)\n\n");
     printf("-r <num>    number of rooms (minimal 1)\n\n");
     printf("-o <num>    number of balls (minimal 1)\n\n");
-    printf("-s <integer> random seed\n\n");
+    printf("-s <num>    random seed (optional)\n\n");
 }
 
 Bool process_command_line( int argc, char *argv[] ) {
@@ -223,12 +224,10 @@ Bool process_command_line( int argc, char *argv[] ) {
     /* seed the random() function
     */
     if (seed == -1) {
-        struct timeb tp;
-        ftime( &tp );
-        srandom(tp.millitm);
-    } else {
-        srandom(seed);
+        seed = (int)time(NULL);
     }
+
+    srandom(seed);
 
     return TRUE;
 }

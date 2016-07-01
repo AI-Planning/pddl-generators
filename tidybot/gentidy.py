@@ -12,13 +12,15 @@ ncupboards = sys.argv[3]
 minsurfacesize = sys.argv[4]
 maxsurfacesize = sys.argv[5]
 cupboardsize = sys.argv[6]
-seed = sys.argv[7]
 
 script_dir = os.path.abspath(os.path.dirname(__file__))
 
 cmd = [
     "java", "-jar", "{script_dir}/{JAR_NAME}".format(**locals()),
     worldsize, ntables, ncupboards, minsurfacesize, maxsurfacesize,
-    cupboardsize, seed]
-print("Running: {}".format(cmd))
+    cupboardsize]
+
+if len(sys.argv) == 8:
+    cmd.append(sys.argv[7])
+
 subprocess.check_call(cmd)

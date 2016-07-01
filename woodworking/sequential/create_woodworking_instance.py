@@ -113,8 +113,7 @@ class Machine(object):
             print("%s(has-colour %s %s)" % (indent, self.name, colour), file=out)
 
 class Task(object):
-    def __init__(self, seed, nr_parts, nr_machines, wood_factor=1.0, problemtype=None, **additional_machines):
-        self.seed = seed
+    def __init__(self, nr_parts, nr_machines, wood_factor=1.0, problemtype=None, **additional_machines):
         self.problemtype = problemtype
         self.wood_factor = wood_factor
 
@@ -296,14 +295,20 @@ class Task(object):
         print(indent + "(:metric minimize (total-cost))", file=out)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
-        print('Usage: python create_woodworking_instance.py wood_factor size num_machines random_seed')
+    if len(sys.argv) not in [4, 5]:
+        print('Usage: python create_woodworking_instance.py wood_factor size num_machines (random_seed)')
         sys.exit(1)
 
     wood_factor = float(sys.argv[1])
     size = int(sys.argv[2])
     num_machines = int(sys.argv[3])
-    seed = int(sys.argv[4])
 
-    instance = Task(seed, size, num_machines, wood_factor)
+    if len(sys.argv) == 5:
+        seed = int(sys.argv[4])
+        random.seed(seed)
+    else:
+        seed = None
+        random.seed()
+
+    instance = Task(size, num_machines, wood_factor)
     instance.dump(out=sys.stdout)

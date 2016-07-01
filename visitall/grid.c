@@ -29,7 +29,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
 #include <string.h>
 #include <time.h>
 
@@ -67,11 +66,7 @@ int main( int argc, char *argv[] )
 
   // if seed still unspecified, initialize from the time
   if (seed == -1) {
-    time_t t = time(NULL);
-    struct tm *tmp_time = gmtime(&t);
-
-    seed = tmp_time->tm_sec;
-    free(tmp_time);
+    seed = (int)time(NULL);
   }
 
   /* make sure that the number of unavailable locations does not
@@ -187,7 +182,7 @@ void usage( void )
   printf (" -n <num>    size of square grid\n");
   printf (" -r <num>    ratio of cells in the goal state\n");
   printf (" -u <num>    number of unavailable locations ---which are randomly arranged\n\n");
-  printf (" -s <num>    random seed\n");
+  printf (" -s <num>    random seed (optional)\n");
 }
 
 Bool process_command_line( int argc, char *argv[] )

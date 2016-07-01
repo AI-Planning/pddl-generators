@@ -328,7 +328,13 @@
 
 (defn -main [& args]
   ;; (println (count args))
-  (if (not (= (count args) 7))
+  (if (not (<= 6 (count args) 7))
     (println "Usage is java -jar tidybot.jar world-size n-tables n-cupboards min-surface-size max-surface-size cupboard-size random-seed")
-    (let [[world-size n-tables n-cupboards min-surface-size max-surface-size cupboard-size random-seed] (map read-string args)]
-      (generate-world :none world-size n-tables n-cupboards [min-surface-size max-surface-size] cupboard-size random-seed))))
+    (if (= (count args) 6)
+      (let [[world-size n-tables n-cupboards min-surface-size max-surface-size cupboard-size] (map read-string args)]
+        (generate-world :none world-size n-tables n-cupboards [min-surface-size max-surface-size] cupboard-size (rand-int Integer/MAX_VALUE)))
+      (let [[world-size n-tables n-cupboards min-surface-size max-surface-size cupboard-size random-seed] (map read-string args)]
+        (generate-world :none world-size n-tables n-cupboards [min-surface-size max-surface-size] cupboard-size random-seed))
+    )
+  )
+)

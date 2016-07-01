@@ -25,7 +25,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <time.h>
 
 
 
@@ -88,6 +89,7 @@ int main( int argc, char *argv[] )
   gcity_size = -1;
   gpackages = -1;
   gairplanes = 0;
+  grandom_seed = -1;
 
   if ( argc == 1 || ( argc == 2 && *++argv[0] == '?' ) ) {
     usage();
@@ -96,6 +98,10 @@ int main( int argc, char *argv[] )
   if ( !process_command_line( argc, argv ) ) {
     usage();
     exit( 1 );
+  }
+
+  if (grandom_seed == -1) {
+    grandom_seed = (int)time(NULL);
   }
 
   srandom(grandom_seed);
@@ -305,8 +311,7 @@ void usage( void )
   printf("-c <num>    number of cities (minimal 1)\n");
   printf("-s <num>    city size(minimal 1)\n");
   printf("-p <num>    number of packages (minimal 1)\n");
-  printf("-r <num>    random seed (minimal 1)\n\n");
-
+  printf("-r <num>    random seed (minimal 1, optional)\n\n");
 }
 
 

@@ -26,9 +26,9 @@
 #include <utility>
 #include <iostream>
 #include <cstdlib>
+#include <ctime>
 #include <stdio.h>
 #include <string.h>
-#include <sys/timeb.h>
 #include <vector>
 
 using namespace std;
@@ -355,7 +355,7 @@ void usage() {
     printf("\nOPTIONS   DESCRIPTIONS\n\n");
     printf("-r <num>    rows (minimal 1)\n");
     printf("-c <num>    columns (minimal 1)\n\n");
-    printf("-s <num>    random seed (positive integer)\n\n");
+    printf("-s <num>    random seed (positive integer, optional)\n\n");
 }
 
 bool process_command_line( int argc, char *argv[] ) {
@@ -398,12 +398,10 @@ bool process_command_line( int argc, char *argv[] ) {
     /* seed the random() function
      */
     if (seed == -1) {
-        struct timeb tp;
-        ftime(&tp);
-        srandom(tp.millitm);
-    } else {
-        srandom(seed);
+        seed = (int)time(NULL);
     }
+
+    srandom(seed);
 
     return true;
 }
