@@ -52,11 +52,11 @@ struct Crate : public locatable {
 	int dpallet;
 	int dsurface;
 
-	Crate(int ps,int maxw) : locatable(), pallet(rnd(ps)), 
+	Crate(int ps,int maxw) : locatable(), pallet(rnd(ps)),
 							weight(rnd(maxw)), dpallet(0), dsurface(0)
 	 {
 		maxWeight = weight>maxWeight?weight:maxWeight;
-	 };		
+	 };
 };
 
 int Crate::maxWeight = 0;
@@ -112,7 +112,7 @@ private:
 
 	void location(ostream & o,int i) const
 	{
-		if(i < numDepots) 
+		if(i < numDepots)
 		{
 			o << "depot" << i;
 		}
@@ -131,7 +131,7 @@ private:
 
 
 public:
-	Depot(unsigned int s,const DepotDescriptor & d) : 
+	Depot(unsigned int s,const DepotDescriptor & d) :
 		seed(s)
 	{
 		srandom(seed);
@@ -142,7 +142,7 @@ public:
 		m = new Map(locs);
 		int numPallets = max(d.numPallets,locs);
 		int numHoists = max(d.numHoists,locs);
-		
+
 		for(int i = 0;i < numTrucks;++i)
 		{
 			Truck t(locs,0);
@@ -222,7 +222,7 @@ public:
 		o << ")\n(:init\n";
 		for(int i = 0;i < pallets.size();++i)
 		{
-		  o << "\t(at pallet" << i << " ";	
+		  o << "\t(at pallet" << i << " ";
 		  location(o,pallets[i]);
 		  o << ")\n\t(clear ";
 		  if(pallets[i].topcrate)
@@ -236,19 +236,19 @@ public:
 		};
 		for(int i = 0;i < trucks.size();++i)
 		{
-		  o << "\t(at truck" << i << " ";	
+		  o << "\t(at truck" << i << " ";
 		  location(o,trucks[i]);
 		  o << ")\n";
 		};
 		for(int i = 0;i < hoists.size();++i)
 		{
-		  o << "\t(at hoist" << i << " ";	
+		  o << "\t(at hoist" << i << " ";
 		  location(o,hoists[i]);
 		  o << ")\n\t(available hoist" << i << ")\n";
 		};
 		for(int i = 0;i < crates.size();++i)
 		{
-			o << "\t(at crate" << i << " ";	
+			o << "\t(at crate" << i << " ";
 			location(o,crates[i]);
 			o << ")\n\t(on crate" << i << " ";
 			if(crates[i].surface)
@@ -268,7 +268,7 @@ public:
 			{
 				if(crates[i].dsurface)
 				{
-					o << "\t\t(on crate" << i << " crate" << 
+					o << "\t\t(on crate" << i << " crate" <<
 							crates[i].dsurface-1 << ")\n";
 				}
 				else
@@ -280,7 +280,7 @@ public:
 		};
 		o << "\t)\n)";
 		o << ")\n";
-		
+
 	};
 
 };
@@ -326,23 +326,23 @@ DepotDescriptor commandLine(int & seed,int argc, char * argv[])
 	    case 'e':
 	      numDepots=atoi(argv[0]);
 	      break;
-	      
+
 	    case 'i':
 	      numDistributors=atoi(argv[0]);
 	      break;
-	      
+
 	    case 't':
 	      numTrucks=atoi(argv[0]);
 	      break;
-	      
+
 	    case 'p':
 	      numPallets=atoi(argv[0]);
 	      break;
-	      
+
 	    case 'h':
 	      numHoists=atoi(argv[0]);
 	      break;
-	      
+
 	    case 'c':
 	      numCrates=atoi(argv[0]);
 	      break;
@@ -350,25 +350,25 @@ DepotDescriptor commandLine(int & seed,int argc, char * argv[])
         case 's':
           seed=atoi(argv[0]);
           break;
-	      
+
 	    default:
 	      cout <<  "\n\nunknown option: " << option << " entered\n\n";
 	      usage();
 	    }
-	  }		
-	  
+	  }
+
 	  if(argc <= 0) usage();
 	  --argc;
 	  ++argv;
 	}
-	
+
 	if(numDepots<1||numDistributors<1||numTrucks<1||numPallets<1||numHoists<1||numCrates<1){
 	  usage();
 	}
-	
+
 	return DepotDescriptor(numDepots,numDistributors,numTrucks,numPallets,numHoists,numCrates);
 };
-							
+
 
 
 int main(int argc,char * argv[])
