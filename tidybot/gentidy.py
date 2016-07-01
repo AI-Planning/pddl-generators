@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-import sys,os
+
+import os.path
+import subprocess
+import sys
+
+JAR_NAME = "tidybot-1.0.1-snapshot-standalone.jar"
 
 worldsize = sys.argv[1]
 ntables = sys.argv[2]
@@ -9,14 +14,11 @@ maxsurfacesize = sys.argv[5]
 cupboardsize = sys.argv[6]
 seed = sys.argv[7]
 
-script_dir = os.path.realpath(sys.path[0])
+script_dir = os.path.abspath(os.path.dirname(__file__))
 
-cmd = "java -jar {script_dir}/tidybot-1.0.1-snapshot-standalone.jar {worldsize} {ntables} {ncupboards} {minsurfacesize} {maxsurfacesize} {cupboardsize} {seed}".format(**locals())
-print(cmd)
-
-failure = os.system(cmd)
-if failure:
-    print "Error when running " + cmd
-    exit(-1)
-
-exit(0)
+cmd = [
+    "java", "-jar", "{script_dir}/{JAR_NAME}".format(**locals()),
+    worldsize, ntables, ncupboards, minsurfacesize, maxsurfacesize,
+    cupboardsize, seed]
+print("Running: {}".format(cmd))
+subprocess.check_call(cmd)
