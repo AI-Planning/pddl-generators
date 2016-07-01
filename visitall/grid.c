@@ -46,7 +46,7 @@ Bool process_command_line( int argc, char *argv[] );
 int x; 				/* size of the grid: x*x */
 float r=1.0; 			/* ratio of cells in the goal state */
 int u=0; 			/* number of unavailable locations */
-int seed;
+int seed = -1;
 
 /* main body */
 int main( int argc, char *argv[] )
@@ -64,6 +64,15 @@ int main( int argc, char *argv[] )
   if ( !process_command_line( argc, argv ) ) {
     usage();
     exit( 1 );}
+
+  // if seed still unspecified, initialize from the time
+  if (seed == -1) {
+    time_t t = time(NULL);
+    struct tm *tmp_time = gmtime(&t);
+
+    seed = tmp_time->tm_sec;
+    free(tmp_time);
+  }
 
   /* make sure that the number of unavailable locations does not
      exceed the area of the grid */
@@ -122,12 +131,6 @@ int main( int argc, char *argv[] )
       initial_col = random()%x;
   } while (!mask[initial_row*x + initial_col]);
 
-  /* well, I tried hard! but make sure that the init location is free */
- // if (!mask[(x+1)*x/2]) {
-  //  printf ("\n Ouch! the initial location ain't available!\n\n");
-   // exit (1);
- // }
-
   printf("\n\t(at-robot loc-x%d-y%d)", initial_row, initial_col);
   printf("\n\t(visited loc-x%d-y%d)", initial_row, initial_col);
 
@@ -158,12 +161,11 @@ int main( int argc, char *argv[] )
 
   for ( i = 0; i < x; i++ ) {
     for ( j = 0; j < x; j++ ) {
-
       /* throw a dice to decide wether (i,j) shall be included in the
-	 goal state or not. With ratio r=1, all are included as in the
-	 original version */
-      if (mask[i*x+j] && random () % (x*x) < (r*x*x) || ((i==initial_row) && (j==initial_col)))
-	printf("\t(visited loc-x%d-y%d)\n", i, j);
+         goal state or not. With ratio r=1, all are included as in the
+         original version */
+      if ((mask[i*x+j] && random() % (x*x) < (r*x*x)) || ((i==initial_row) && (j==initial_col)))
+        printf("\t(visited loc-x%d-y%d)\n", i, j);
     }
   }
 
