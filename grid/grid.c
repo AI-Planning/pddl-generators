@@ -393,7 +393,7 @@ void usage( void ) {
   printf("-k <num>    number keys vector (dezimal)\n");
   printf("-l <num>    number locks vector (dezimal)\n\n");
   printf("-p <num>    probability of any key being mentioned in the goal (preset: %d)\n\n", gp_goal);
-  printf("-s <integer> random seed\n\n");
+  printf("-s <num>    random seed\n\n");
 }
 
 Bool process_command_line( int argc, char *argv[] ) {
