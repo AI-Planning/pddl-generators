@@ -294,7 +294,9 @@ ostream & operator<<(ostream& o,const Depot & d)
 
 void usage()
 {
-    cout << "Usage: depots -e <#depots> -i <#distributors> -t <#trucks> -p <#pallets> -h <#hoists> -c <#crates> (-s <random_seed>)\n\n\tAll numbers are positive integers (minimal 1).\n\n";
+    cout << "Usage: depots -e <#depots> -i <#distributors> -t <#trucks> "
+         << "-p <#pallets> -h <#hoists> -c <#crates> [-s <random_seed>]\n\n"
+         << "\tAll numbers are positive integers (minimal 1).\n\n";
 
     exit(0);
 };
