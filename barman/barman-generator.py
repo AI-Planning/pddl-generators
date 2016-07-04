@@ -5,9 +5,29 @@ import sys
 
 MAX_LEVELS = 2
 
-#*****************#
-# Functions declarations
-#*****************#
+
+def print_usage():
+    print "Usage: " + sys.argv[0] + " <num_cocktails> <num_ingredients> <num_shots> <random_seed>"
+    print "  num_cocktails (min 1)"
+    print "  num_ingredients (min 2)"
+    print "  num_shots (min max[1,num_cocktails+1])"
+    print "  random_seed (min 1, optional)"
+
+
+if len(sys.argv) not in [4, 5]:
+    print_usage()
+    sys.exit(2)
+
+num_cocktails = int(sys.argv[1])
+num_ingredients = int(sys.argv[2])
+num_shots = int(sys.argv[3])
+
+if len(sys.argv) == 5:
+    seed = int(sys.argv[4])
+else:
+    seed = None
+
+
 def get_objects():
     str_objects="\n"
 
@@ -42,11 +62,9 @@ def get_objects():
         str_objects=str_objects+" l"+str(i)
     str_objects=str_objects+" - level\n"
 
-    return(str_objects)
+    return str_objects
 
 
-
-#*****************#
 def get_init():
     str_init="\n"
     str_init=str_init+"  (ontable shaker1)\n"
@@ -78,9 +96,9 @@ def get_init():
         parts = random.sample(range(1,num_ingredients+1),2)
         str_init = str_init + "  (cocktail-part1 cocktail" + str(i) + " ingredient" + str(parts[0]) + ")\n"
         str_init = str_init + "  (cocktail-part2 cocktail" + str(i) + " ingredient" + str(parts[1]) + ")\n"
-    return(str_init)
+    return str_init
 
-#*****************#
+
 def get_goals():
     str_goal=""
     str_goal=str_goal+"\n  (and\n"
@@ -98,41 +116,19 @@ def get_goals():
             str_goal=str_goal+ "      (contains shot"+str(j)+" ingredient"+str(random.randint(1,num_ingredients))+")\n"
 
     str_goal=str_goal+")"
-    return(str_goal)
-#*****************#
+    return str_goal
 
-#*****************#
-# MAIN
-#*****************#
-# Reading the command line arguments
-try:
-    num_cocktails = int(sys.argv[1])
-    num_ingredients =  int(sys.argv[2])
-    num_shots = int(sys.argv[3])
 
-    if len(sys.argv) > 4:
-        seed = int(sys.argv[4])
-    else:
-        seed = None
-
+def main():
     name = "prob"
-except:
-    print "Usage: " +sys.argv[0] + " <num_cocktails> <num_ingredients> <num_shots> <random_seed>"
-    print "  num_cocktails (min 1)"
-    print "  num_ingredients (min 2)"
-    print "  num_shots (min max[1,num_cocktails+1])"
-    print "  random_seed (min 1, optional)"
 
-    sys.exit(1)
+    random.seed(seed)
 
-if seed != None:
-     random.seed(seed)
-else:
-     random.seed()
+    print ("(define (problem " + name + ")")
+    print (" (:domain barman)")
+    print (" (:objects " + get_objects() + ")")
+    print (" (:init " + get_init() + ")")
+    print (" (:goal" + get_goals() + "))")
 
-print ("(define (problem "+name+")")
-print (" (:domain barman)")
-print (" (:objects "+ get_objects()+")")
-print (" (:init " + get_init()+")")
-print (" (:goal"+ get_goals()+"))")
-sys.exit(0)
+
+main()
