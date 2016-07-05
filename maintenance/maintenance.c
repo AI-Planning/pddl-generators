@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
+#include <time.h>
 
 /*  Whether all actions can be taken simultanously. If not defined,
 the problem will be completely sequential. */
@@ -73,8 +73,10 @@ int main(int argc,char **argv) {
 
   intlist visits[3][1000];
 
-  if(argc != 7) {
-    fprintf(stderr,"maintenance [days] [planes] [mechanics] [cities] [visits] [instances]\n");
+  int seed;
+
+  if (argc < 7 || argc > 8) {
+    fprintf(stderr,"maintenance <days> <planes> <mechanics> <cities> <visits> <instances> [<seed>]\n");
     exit(1);
   }
   
@@ -108,9 +110,18 @@ int main(int argc,char **argv) {
     exit(1);
   }
 
+  if (argc == 8 && !sscanf(argv[7], "%d", &seed)) {
+      printf("seed was not an integer.\n", argv[7]);
+      exit(1);
+  } else if (argc == 7) {
+      seed = (int)time(NULL);
+  }
+
   if(numberOfMechanics >= numberOfCities) {
     fprintf(stderr,"More mechanics than cities: not very interesting!\n");
   }
+
+  srand(seed);
 
   sprintf(sd,"maintenance-domain.pddl",
 	    numberOfMechanics,numberOfCities,numberOfDays,numberOfVehicles,numberOfVisits);

@@ -26,7 +26,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <time.h>
 
 
 
@@ -69,13 +70,6 @@ int main( int argc, char *argv[] )
 
   int i;
 
-  /* seed the random() function
-   */
-  struct timeb tp;
-  ftime( &tp );
-  srandom(tp.millitm);
-
-
   /* command line treatment, first preset values
    */
   gobjects = -1;
@@ -94,7 +88,6 @@ int main( int argc, char *argv[] )
 
   /* now output problem in PDDL syntax
    */
-  printf("\n\n\n");
 
   /* header
    */
@@ -120,23 +113,21 @@ int main( int argc, char *argv[] )
   printf("\n(:init");
 
   for ( i = 0; i < grobots; i++ ) {
-    printf("\n(at-robby robot%d room%d)", i + 1, 1+(int)(rand() / (((double)RAND_MAX + 1)/ grooms)));
+    printf("\n(at-robby robot%d room%d)", i + 1, 1+(int)(random() / (((double)RAND_MAX + 1)/ grooms)));
     printf("\n(free robot%d rgripper%d)", i + 1, i + 1);
     printf("\n(free robot%d lgripper%d)", i + 1, i + 1);
   }
   
-  for ( i = 0; i < gobjects; i++ ) printf("\n(at ball%d room%d)", i + 1, 1+(int)(rand() / (((double)RAND_MAX + 1)/ grooms)));
+  for ( i = 0; i < gobjects; i++ ) printf("\n(at ball%d room%d)", i + 1, 1+(int)(random() / (((double)RAND_MAX + 1)/ grooms)));
   printf("\n)");
 
   printf("\n(:goal");
   printf("\n(and");
-  for ( i = 0; i < gobjects; i++ ) printf("\n(at ball%d room%d)", i + 1, 1+(int)(rand() / (((double)RAND_MAX + 1)/ grooms)));
+  for ( i = 0; i < gobjects; i++ ) printf("\n(at ball%d room%d)", i + 1, 1+(int)(random() / (((double)RAND_MAX + 1)/ grooms)));
   printf("\n)");
   printf("\n)");
 
-  printf("\n)");
-
-  printf("\n\n\n");
+  printf("\n)\n");
 
   exit( 0 );
 
@@ -171,67 +162,73 @@ int main( int argc, char *argv[] )
 
 
 
-void usage( void )
+void usage( void ) {
+    printf("\nusage:\n");
 
-{
-
-  printf("\nusage:\n");
-
-  printf("\nOPTIONS   DESCRIPTIONS\n\n");
-  printf("-n <num>    number of robots (minimal 1)\n\n");
-  printf("-r <num>    number of rooms (minimal 1)\n\n");
-  printf("-o <num>    number of balls (minimal 1)\n\n");
+    printf("\nOPTIONS   DESCRIPTIONS\n\n");
+    printf("-n <num>    number of robots (minimal 1)\n\n");
+    printf("-r <num>    number of rooms (minimal 1)\n\n");
+    printf("-o <num>    number of balls (minimal 1)\n\n");
+    printf("-s <num>    random seed (optional)\n\n");
 }
 
+Bool process_command_line( int argc, char *argv[] ) {
+    int seed = -1;
+    char option;
 
+    while ( --argc && ++argv ) {
+        if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
+            return FALSE;
+        }
 
-Bool process_command_line( int argc, char *argv[] )
+        option = *++argv[0];
 
-{
-
-  char option;
-
-  while ( --argc && ++argv ) {
-    if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
-      return FALSE;
+        switch ( option ) {
+            default:
+                if ( --argc && ++argv ) {
+                    switch ( option ) {
+                        case 'n':
+                            sscanf( *argv, "%d", &grobots );
+                            break;
+                        case 'r':
+                            sscanf( *argv, "%d", &grooms );
+                            break;
+                        case 'o':
+                            sscanf( *argv, "%d", &gobjects );
+                            break;
+                        case 's':
+                            sscanf(*argv, "%d", &seed);
+                            break;
+                        default:
+                            printf( "\n\nunknown option: %c entered\n\n", option );
+                            return FALSE;
+                    }
+                } else {
+                    return FALSE;
+                }
+        }
     }
-    option = *++argv[0];
-    switch ( option ) {
-    default:
-      if ( --argc && ++argv ) {
-	switch ( option ) {
-	case 'n':
-	  sscanf( *argv, "%d", &grobots );
-	  break;
-	case 'r':
-	  sscanf( *argv, "%d", &grooms );
-	  break;
-	case 'o':
-	  sscanf( *argv, "%d", &gobjects );
-	  break;
-	default:
-	  printf( "\n\nunknown option: %c entered\n\n", option );
-	  return FALSE;
-	}
-      } else {
-	return FALSE;
-      }
+
+    if ( grobots < 1 ) {
+        return FALSE;
     }
-  }
 
-  if ( grobots < 1 ) {
-    return FALSE;
-  }
+    if ( grooms < 1 ) {
+        return FALSE;
+    }
 
-  if ( grooms < 1 ) {
-    return FALSE;
-  }
+    if ( gobjects < 1 ) {
+        return FALSE;
+    }
 
-  if ( gobjects < 1 ) {
-    return FALSE;
-  }
+    /* seed the random() function
+    */
+    if (seed == -1) {
+        seed = (int)time(NULL);
+    }
 
-  return TRUE;
+    srandom(seed);
 
+    return TRUE;
 }
 

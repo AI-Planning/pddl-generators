@@ -35,6 +35,7 @@
 ^schedule/schedule$
 ^sokoban/random/sokoban-generator-typed$
 ^sokoban/random/sokoban-generator-untyped$
+^tidybot/tidybot-.*-snapshot-standalone.jar$
 ^tsp/tsp$
 ^turnandopen/turnandopen$
 ^tyreworld/tyreworld$

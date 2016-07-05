@@ -26,9 +26,9 @@
 #include <utility>
 #include <iostream>
 #include <cstdlib>
+#include <ctime>
 #include <stdio.h>
 #include <string.h>
-#include <sys/timeb.h>
 #include <vector>
 
 using namespace std;
@@ -68,14 +68,6 @@ void print_goal_path_predicates();
 
 int main(int argc, char *argv[])
 {
-
-  /* seed the random() function
-   */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
-
   /* command line treatment, first preset values
    */
   num_rows = -1;
@@ -211,7 +203,6 @@ void guarantee_solution(){
 void output_typed_strips(){
   /* now output problem in PDDL syntax
    */
-  printf("\n\n\n");
 
   /* header
    */
@@ -239,15 +230,12 @@ void output_typed_strips(){
   //what is the goal
     printf("\n(:goal");
   printf("\n(holds-gold)");
-  printf("\n)");
-  printf("\n)");
-  printf("\n\n\n");
+  printf("\n)\n");
 }
 
 void output_untyped_strips(){
   /* now output problem in PDDL syntax
    */
-  printf("\n\n\n");
 
   /* header
    */
@@ -360,52 +348,60 @@ void show_grid(){
   }
   cout<<endl;
 }
-void usage()
-{
 
-  printf("\nusage:\n");
+void usage() {
+    printf("\nusage:\n");
 
-  printf("\nOPTIONS   DESCRIPTIONS\n\n");
-  printf("-r <num>    rows (minimal 1)\n");
-  printf("-c <num>    columns (minimal 1)\n\n");
-
+    printf("\nOPTIONS   DESCRIPTIONS\n\n");
+    printf("-r <num>    rows (minimal 1)\n");
+    printf("-c <num>    columns (minimal 1)\n\n");
+    printf("-s <num>    random seed (positive integer, optional)\n\n");
 }
 
+bool process_command_line( int argc, char *argv[] ) {
+    int seed = -1;
 
-bool process_command_line( int argc, char *argv[] )
-{
+    char option;
+    while ( --argc && ++argv ) {
+        if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
+            return false;
+        }
 
-  char option;
-  while ( --argc && ++argv ) {
-    if ( *argv[0] != '-' || strlen(*argv) != 2 ) {
-      return false;
+        option = *++argv[0];
+        switch ( option ) {
+            default:
+                if ( --argc && ++argv ) {
+                    switch ( option ) {
+                        case 'r':
+                            sscanf( *argv, "%d", &num_rows);
+                            break;
+                        case 'c':
+                            sscanf( *argv, "%d", &num_cols);
+                            break;
+                        case 's':
+                            sscanf( *argv, "%d", &seed);
+                            break;
+                        default:
+                            printf( "\n\nunknown option: %c entered\n\n", option );
+                            return false;
+                    }
+                } else {
+                    return false;
+                }
+        }
     }
-    option = *++argv[0];
-    switch ( option ) {
-    default:
-      if ( --argc && ++argv ) {
-	switch ( option ) {
-	case 'r':
-	  sscanf( *argv, "%d", &num_rows);
-	  break;
-	case 'c':
-	  sscanf( *argv, "%d", &num_cols);
-	  break;
-	default:
-	  printf( "\n\nunknown option: %c entered\n\n", option );
-	  return false;
-	}
-      } else {
-	return false;
-      }
+
+    if ( num_rows < 1 || num_cols < 1 ) {
+        return false;
     }
-  }
 
-  if ( num_rows < 1 || num_cols < 1 )
-  {
-    return false;
-  }
+    /* seed the random() function
+     */
+    if (seed == -1) {
+        seed = (int)time(NULL);
+    }
 
-  return true;
+    srandom(seed);
 
+    return true;
 }
