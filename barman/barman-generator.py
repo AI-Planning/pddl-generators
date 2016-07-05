@@ -7,7 +7,7 @@ MAX_LEVELS = 2
 
 
 def print_usage():
-    print "Usage: " + sys.argv[0] + " <num_cocktails> <num_ingredients> <num_shots> <random_seed>"
+    print "Usage: " + sys.argv[0] + " <num_cocktails> <num_ingredients> <num_shots> [<random_seed>]"
     print "  num_cocktails (min 1)"
     print "  num_ingredients (min 2)"
     print "  num_shots (min max[1,num_cocktails+1])"

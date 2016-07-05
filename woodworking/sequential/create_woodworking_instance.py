@@ -296,7 +296,7 @@ class Task(object):
 
 if __name__ == "__main__":
     if len(sys.argv) not in [4, 5]:
-        print('Usage: python create_woodworking_instance.py wood_factor size num_machines (random_seed)')
+        print('Usage: python create_woodworking_instance.py wood_factor size num_machines [random_seed]')
         sys.exit(1)
 
     wood_factor = float(sys.argv[1])
@@ -305,10 +305,10 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 5:
         seed = int(sys.argv[4])
-        random.seed(seed)
     else:
         seed = None
-        random.seed()
+
+    random.seed(seed)
 
     instance = Task(size, num_machines, wood_factor)
     instance.dump(out=sys.stdout)

@@ -88,29 +88,33 @@ def get_goals():
 
 # Reading the command line arguments
 try:
-   name = sys.argv[1]
-   num_rows = int(sys.argv[2])
-   num_columns = int(sys.argv[3])
-   num_robots = int(sys.argv[4])
-   mode_flag = sys.argv[5]
+    name = sys.argv[1]
+    num_rows = int(sys.argv[2])
+    num_columns = int(sys.argv[3])
+    num_robots = int(sys.argv[4])
+    mode_flag = sys.argv[5]
 
-   if len(sys.argv) == 7:
-      seed = int(sys.argv[6])
-      random.seed(seed)
-   else:
-      random.seed()
+    if len(sys.argv) == 7:
+        seed = int(sys.argv[6])
+    else:
+        seed = None
+
+    random.seed(seed)
 
 except:
-   print "Usage: " +sys.argv[0] + " <name> <num_rows> <num_columns> <num_robots> <mode_flag(seq|time)> (<seed>)"; sys.exit(1)
+    print "Usage: " +sys.argv[0] + " <name> <num_rows> <num_columns> <num_robots> <mode_flag(seq|time)> [<seed>]"; sys.exit(1)
 
 print ("(define (problem "+name+")")
 print (" (:domain floor-tile)")
 print (" (:objects "+ get_objects()+")")
 print (" (:init " + get_init()+")")
 print (" (:goal "+ get_goals()+")")
-if(mode_flag=="time"):
-   print (" (:metric minimize (total-time))")
+
+if mode_flag=="time":
+    print (" (:metric minimize (total-time))")
 else:
-   print (" (:metric minimize (total-cost))")
+    print (" (:metric minimize (total-cost))")
+
 print (")")
+
 sys.exit(0)

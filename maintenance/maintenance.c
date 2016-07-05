@@ -76,7 +76,7 @@ int main(int argc,char **argv) {
   int seed;
 
   if (argc < 7 || argc > 8) {
-    fprintf(stderr,"maintenance [days] [planes] [mechanics] [cities] [visits] [instances] ([seed])\n");
+    fprintf(stderr,"maintenance <days> <planes> <mechanics> <cities> <visits> <instances> [<seed>]\n");
     exit(1);
   }
   

@@ -314,7 +314,9 @@ DepotDescriptor commandLine(int & seed,int argc, char * argv[])
 
     char option;
 
-    if(argc <= 0) usage();
+    if (argc % 2 != 0 || argc < 12 || argc > 14) {
+        usage();
+    }
 
     while(argc>0)
     {

@@ -5,7 +5,7 @@ import sys
 import random
 
 def help():
-    print 'usage: generator.py <n_couples> <n_cars> <n_places> (<seed>)'
+    print 'usage: generator.py <n_couples> <n_cars> <n_places> [<seed>]'
     print '\t for solvability, cars should be at list n_couples + 1.'
     sys.exit(2)
 
@@ -18,9 +18,10 @@ places = int(sys.argv[3])
 
 if len(sys.argv) == 5:
     seed = int(sys.argv[4])
-    random.seed(seed)
 else:
-    random.seed()
+    seed = None
+
+random.seed(seed)
 
 # hey, everything is ok. Let's start to do something.
 
