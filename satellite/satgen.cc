@@ -87,13 +87,13 @@ protected:
 	virtual direction * clone() const = 0;
 
 public:
-	direction() : myId(id++) 
+	direction() : myId(id++)
 	{
 		for(int i = 0;i < myId;++i)
 		{
 			double a = rnd()*100.0;
 			double b = rnd()*100.0;
-			
+
 			slewTimes.push_back(abs(a-b));
 		};
 	};
@@ -117,11 +117,11 @@ public:
 			o.precision(4);
 			for(int i = 0;i < myId;++i)
 			{
-				o << "\t(= (slew_time " << name() << " " << 
-					allDirections[i]->name() << ") " << slewTimes[i] 
+				o << "\t(= (slew_time " << name() << " " <<
+					allDirections[i]->name() << ") " << slewTimes[i]
 					<< ")\n";
-				o << "\t(= (slew_time " << allDirections[i]->name() << " " << 
-					name() << ") " << slewTimes[i] 
+				o << "\t(= (slew_time " << allDirections[i]->name() << " " <<
+					name() << ") " << slewTimes[i]
 					<< ")\n";
 			};
 		};
@@ -146,7 +146,7 @@ private:
 		return new target(*this);
 	};
 public:
-	target() : direction(), type(rnd(2)) 
+	target() : direction(), type(rnd(2))
 	{
 		++count;
 		nm = types[type];
@@ -156,7 +156,7 @@ public:
 		allDirections.push_back(this->clone());
 	};
 	static int howMany() {return count;};
-	bool operator==(const target & t) const	
+	bool operator==(const target & t) const
 	{
 		return myId == t.myId;
 	};
@@ -177,7 +177,7 @@ private:
 	int type;
 
 public:
-	mode() : myID(id++), type(rnd(4)) 
+	mode() : myID(id++), type(rnd(4))
 	{
 		supportedModes.push_back(false);
 	};
@@ -218,7 +218,7 @@ int mode::id = 0;
 class observation : public direction {
 private:
 	static string types[3];
-	
+
 	int type;
 	bool interesting;
 	vector<mode> images;
@@ -260,10 +260,10 @@ void mode::init(ostream & o) const
 		o << "\t(mode " << types[type] << myID << ")\n";
 	if(probType==NUMERIC || probType==COMPLEX)
 	{
-		for(vector<observation*>::const_iterator i = 
+		for(vector<observation*>::const_iterator i =
 					observation::allObservations.begin();
 			i != observation::allObservations.end();++i)
-		 		o << "\t(= (data " << (*i)->name() << " " << types[type] << myID 
+		 		o << "\t(= (data " << (*i)->name() << " " << types[type] << myID
 					<< ") " << (*i)->getDataSize(myID) << ")\n";
 	};
 };
@@ -280,13 +280,13 @@ private:
 
 public:
 	selection() : sz(0) {};
-	selection(int n) : sz(n) 
+	selection(int n) : sz(n)
 	{
 		for(int i = 0;i < n;++i)
 			choices.push_back(T());
 	};
 
-	T & selectOne() 
+	T & selectOne()
 	{
 		return choices[rnd(sz)];
 	};
@@ -308,7 +308,7 @@ public:
 			--sz;
 			fn(t);
 			ts.push_back(t);
-			
+
 		};
 		for(--i; i >= 0;--i)
 		{
@@ -353,7 +353,7 @@ public:
 	selection<mode> modes;
 	selection<target> targets;
 	selection<observation> observations;
-	
+
 	problem(int ts,int os,int ms) : modes(ms), targets(ts)
 	{
 		p = this;
@@ -382,7 +382,7 @@ observation::observation() : direction(), type(rnd(3)), interesting(rnd(10) < 9)
 {
 	int ims = 1+rnd(mode::howMany()/3);
 	problem::instance()->modes.selectSeveral(images,ims);
-	
+
 	nm = types[type];
 	ostringstream s;
 	s << myId;
@@ -402,7 +402,7 @@ private:
 	vector<double> calibrationTimes;
 	vector<target> targets;
 public:
-	instrument() : myID(id++) 
+	instrument() : myID(id++)
 	{
 		int modes = 1+rnd(3);
 		problem::instance()->modes.selectSeveral(supportedModes,modes,
@@ -412,7 +412,7 @@ public:
 		problem::instance()->targets.selectSeveral(targets,targs);
 		for(int i = 0;i < targs;++i)
 			calibrationTimes.push_back(100*rnd());
-		
+
 	};
 	string name() const
 	{
@@ -429,7 +429,7 @@ public:
 	};
 	void init(ostream & o) const
 	{
-		
+
 		if(typing==OFF)
 			o << "\t(instrument instrument" << myID << ")\n";
 		for(int i = 0;i < supportedModes.size();++i)
@@ -442,7 +442,7 @@ public:
 				" " << targets[i].name() << ")\n";
 			if(probType==COMPLEX || probType==TIMED)
 				o << "\t(= (calibration_time instrument" << myID <<
-					" " << targets[i].name() << ") " << 
+					" " << targets[i].name() << ") " <<
 					calibrationTimes[i] << ")\n";
 		};
 
@@ -470,7 +470,7 @@ public:
 				problem::instance()->observations)),
 		end(selectOne<direction,target,observation>
 				(problem::instance()->targets,
-				problem::instance()->observations)), 
+				problem::instance()->observations)),
 				interesting(rnd(5) < 2),
 				fuel(100*(1+rnd()))
 	{
@@ -499,7 +499,7 @@ public:
 			o << "\t(on_board " << instruments[i].name() <<
 					" satellite" << myID << ")\n";
 		o << "\t(power_avail satellite" << myID << ")\n"
-		  << "\t(pointing satellite" << myID << " " << d->name() 
+		  << "\t(pointing satellite" << myID << " " << d->name()
 			<< ")\n";
 		if(probType==NUMERIC || probType==COMPLEX)
 			o << "\t(= (data_capacity satellite" << myID << ") 1000)\n";
@@ -531,7 +531,7 @@ void doMetric()
 				cout << "(:metric minimize (fuel-used))\n";
 				return;
 			};
-		case COMPLEX:		
+		case COMPLEX:
 			if(metricType==EASY)
 			{
 				cout << "(:metric minimize (total-time))\n";
@@ -545,7 +545,7 @@ void doMetric()
 			break;
 	};
 };
-		
+
 
 int main(int argc,char * argv[])
 {
