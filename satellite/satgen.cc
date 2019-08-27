@@ -30,11 +30,6 @@ double rnd() {
 	return ((double) random())/(RAND_MAX+1.0);
 };
 
-double abs(double x)
-{
-	return x < 0?-x:x;
-};
-
 class ProblemObject {
 private:
 	enum OutStatus {OBJECT,INIT,GOAL};
