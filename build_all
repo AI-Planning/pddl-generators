@@ -1,17 +1,21 @@
 #! /bin/bash
 
-set -e
-set -u
+set -euo pipefail
 
 cd "$(dirname "$0")"
 
 for DIR in * ; do
     if [ -d $DIR ]; then
         echo
-        echo "Building $DIR"
+        echo "Domain: $DIR"
         cd $DIR
         if [ -e Makefile ]; then
-            make "$@"
+            # Handle "./build_all test": don't try to run "make test" if command doesn't exist.
+            if [ "$#" -eq 1 ] && [ "$@" == "test" ]; then
+                make --dry-run test > /dev/null && make test > /dev/null && echo "Tests passed."
+            else
+                make "$@"
+            fi
         fi
         cd ..
     fi
