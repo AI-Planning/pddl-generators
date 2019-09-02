@@ -12,7 +12,7 @@ def help():
     print '\t row and columns indicate the grid size. They should be > 1 '
     print '\t n_cars indicates how many cars have to go through the network'
     print '\t n_garage indicates the number of starting garages'
-    print '\t sparse is used for designing networks with \'holes\', i.e. junctions that cannot be used'
+    print '\t if sparse != 0, the network has \'holes\', i.e. junctions that cannot be used'
     print '\t seed is the (optional) random seed for the instance'
     sys.exit(2)
 
