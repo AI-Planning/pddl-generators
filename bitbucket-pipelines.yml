@@ -1,0 +1,8 @@
+image: ubuntu:18.04
+pipelines:
+  default:
+    - step:
+        script:
+          - apt update && apt -y upgrade
+          - apt -y install g++ make python2.7 python3.6 python3.7 python-tox
+          - tox
