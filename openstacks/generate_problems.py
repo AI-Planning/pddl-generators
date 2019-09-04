@@ -84,4 +84,5 @@ def generate_problem(filename, num_products, num_orders, density):
 
 if __name__ == "__main__":
     import sys
+
     main(sys.argv)

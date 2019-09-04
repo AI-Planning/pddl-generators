@@ -16,9 +16,16 @@ cupboardsize = sys.argv[6]
 script_dir = os.path.abspath(os.path.dirname(__file__))
 
 cmd = [
-    "java", "-jar", "{script_dir}/{JAR_NAME}".format(**locals()),
-    worldsize, ntables, ncupboards, minsurfacesize, maxsurfacesize,
-    cupboardsize]
+    "java",
+    "-jar",
+    "{script_dir}/{JAR_NAME}".format(**locals()),
+    worldsize,
+    ntables,
+    ncupboards,
+    minsurfacesize,
+    maxsurfacesize,
+    cupboardsize,
+]
 
 if len(sys.argv) == 8:
     cmd.append(sys.argv[7])

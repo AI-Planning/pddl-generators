@@ -73,8 +73,11 @@ class Graph(object):
         print(r"\begin{document}", file=out)
         print(r"\begin{tikzpicture}", file=out)
         for v in self.vertices:
-            print(r"  \node[fill] (%s) at (%.2f, %.2f) {};" % (
-                v.name, v.x * 0.01, v.y * 0.01), file=out);
+            print(
+                r"  \node[fill] (%s) at (%.2f, %.2f) {};"
+                % (v.name, v.x * 0.01, v.y * 0.01),
+                file=out,
+            )
         for u, v in self.edges:
             if u < v:
                 print(r"  \draw (%s) -- (%s);" % (u.name, v.name), file=out)
@@ -112,16 +115,17 @@ def generate(num_vert, width, height, connect_distance, epsilon):
 def generate_connected(num_vert, width, height, connect_distance, epsilon):
     for attempts in itertools.count():
         if attempts == MAX_CONNECTION_ATTEMPTS:
-            raise ValueError(
-                "failed to connect graph: increase CONNECT_DISTANCE")
+            raise ValueError("failed to connect graph: increase CONNECT_DISTANCE")
         graph = generate(num_vert, width, height, connect_distance, epsilon)
         if graph.is_connected():
             return graph
 
 
 def usage():
-    raise SystemExit("usage: %s SEED NUM_VERTICES WIDTH HEIGHT "
-                     "CONNECT_DISTANCE EPSILON" % sys.argv[0])
+    raise SystemExit(
+        "usage: %s SEED NUM_VERTICES WIDTH HEIGHT "
+        "CONNECT_DISTANCE EPSILON" % sys.argv[0]
+    )
 
 
 def parse_args():

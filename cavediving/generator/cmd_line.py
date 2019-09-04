@@ -22,19 +22,22 @@
 
 import sys
 
-#Preliminary definitions
-#-------------------------------------------------------------------------------
+# Preliminary definitions
+# -------------------------------------------------------------------------------
+
 
 class InputException(Exception):
     """A custom Exception thrown by ArgProcessor.parse_args(), et al."""
+
 
 class ArgDefinition:
     """This class stores the definition of a command line argument that can be
         passed to the program.
     """
 
-    def __init__(self, var_name, needed, validator, validator_args,\
-        default_value, description):
+    def __init__(
+        self, var_name, needed, validator, validator_args, default_value, description
+    ):
         """ Create a new ArgDefinition.
 
             (ArgDefinition, str, bool, function, [object], object, str) -> None
@@ -82,9 +85,11 @@ class FlagDefinition:
         self.function = function
         self.description = description
 
-#Validators
-#A set of functions that validate the various types of command line arguments.
-#-------------------------------------------------------------------------------
+
+# Validators
+# A set of functions that validate the various types of command line arguments.
+# -------------------------------------------------------------------------------
+
 
 def range_validator(value_str, args):
     """ Validate command line args that take a range of values.
@@ -104,14 +109,14 @@ def range_validator(value_str, args):
     assert len(args) == 5, "Error: range_validator requires 5 arguments."
     a_type, lb, ub, allow_none, error_msg = args
     try:
-        if allow_none and value_str == 'None':
+        if allow_none and value_str == "None":
             value = None
         else:
             value = a_type(value_str)
     except ValueError:
-        raise InputException(error_msg + ' ' + value_str)
+        raise InputException(error_msg + " " + value_str)
     if (lb is not None and value < lb) or (ub is not None and value > ub):
-        raise InputException(error_msg + ' ' + value_str)
+        raise InputException(error_msg + " " + value_str)
     return value
 
 
@@ -125,14 +130,15 @@ def range_validator_advice(validator_args):
     a_type, lb, ub, allow_none, error_msg = validator_args
     if lb == None and ub == None:
         return ""
-    adv_str = 'x'
+    adv_str = "x"
     if lb is not None:
-        adv_str = str(lb) + ' <= ' + adv_str
+        adv_str = str(lb) + " <= " + adv_str
     if ub is not None:
-        adv_str += ' <= ' + str(ub)
+        adv_str += " <= " + str(ub)
     if allow_none:
-        adv_str += ', None'
-    return ' {' + adv_str + '}'
+        adv_str += ", None"
+    return " {" + adv_str + "}"
+
 
 def enum_validator(value_str, args):
     """ Validate cmd line args that take one of a set of str values.
@@ -149,8 +155,9 @@ def enum_validator(value_str, args):
     assert len(args) == 2, "Error: enum_validator requires 2 arguments."
     v_list, error_message = args
     if v_list is not None and value_str not in v_list:
-        raise InputException(error_message + ' ' + value_str)
+        raise InputException(error_message + " " + value_str)
     return value_str
+
 
 def enum_validator_advice(validator_args):
     """ A function for the enum_validator that returns a short help string based
@@ -159,7 +166,7 @@ def enum_validator_advice(validator_args):
         ([[str], str]) -> str
     """
 
-    return ' {' + ', '.join(validator_args[0]) + '}'
+    return " {" + ", ".join(validator_args[0]) + "}"
 
 
 def bool_validator(value_str, args):
@@ -179,8 +186,9 @@ def bool_validator(value_str, args):
     elif value_str == "False":
         value = False
     else:
-        raise InputException(error_message + ' ' + value_str)
+        raise InputException(error_message + " " + value_str)
     return value
+
 
 def bool_validator_advice(validator_args):
     """ A function for the bool_validator that returns a short help string
@@ -213,18 +221,19 @@ def seq_range_validator(value_str, args):
     sep, min_vals, max_vals, a_type, lb, ub, error_msg = args
     try:
         values = value_str.split(sep)
-        if (min_vals is not None and len(values) < min_vals) or\
-            (max_vals is not None and len(values) > max_vals):
-            raise InputException(error_msg + ' ' + value_str)
+        if (min_vals is not None and len(values) < min_vals) or (
+            max_vals is not None and len(values) > max_vals
+        ):
+            raise InputException(error_msg + " " + value_str)
         values_out = []
         for value in values:
             value = a_type(value)
             if (lb is not None and value < lb) or (ub is not None and value > ub):
-                raise InputException(error_msg + ' ' + value_str)
+                raise InputException(error_msg + " " + value_str)
             values_out.append(value)
         return values_out
     except ValueError:
-        raise InputException(error_msg + ' ' + value_str)
+        raise InputException(error_msg + " " + value_str)
 
 
 def seq_range_validator_advice(validator_args):
@@ -235,28 +244,28 @@ def seq_range_validator_advice(validator_args):
     """
 
     sep, min_vals, max_vals, a_type, lb, ub, error_msg = validator_args
-    k_str = ''
+    k_str = ""
     if min_vals is not None or max_vals is not None:
-        k_str = 'k'
+        k_str = "k"
     if min_vals is not None:
-        k_str = str(min_vals) + ' <= ' + k_str
+        k_str = str(min_vals) + " <= " + k_str
     if max_vals is not None:
-        k_str = k_str + ' <= ' + str(max_vals)
-    x_str = ''
+        k_str = k_str + " <= " + str(max_vals)
+    x_str = ""
     if lb is not None or ub is not None:
-        x_str = 'xi'
+        x_str = "xi"
     if lb is not None:
-        x_str = str(lb) + ' <= ' + x_str
+        x_str = str(lb) + " <= " + x_str
     if ub is not None:
-        x_str = x_str + ' <= ' + str(ub)
-    adv_str = ''
+        x_str = x_str + " <= " + str(ub)
+    adv_str = ""
     if k_str:
         adv_str += k_str
     if x_str:
         if k_str:
             adv_str += ", "
         adv_str += x_str
-    return ' {' + adv_str + '}'
+    return " {" + adv_str + "}"
 
 
 def print_usage(arg_processor):
@@ -265,32 +274,53 @@ def print_usage(arg_processor):
 
         (ArgProcessor) -> None
     """
-    min_width = max([len(x) for x in arg_processor.program_arg_order + arg_processor.program_flag_order])
+    min_width = max(
+        [
+            len(x)
+            for x in arg_processor.program_arg_order + arg_processor.program_flag_order
+        ]
+    )
     print("Usage: python {} ".format(sys.argv[0]))
     print("The following flags and arguments can be supplied:")
     print("Flags:")
     for flag in arg_processor.program_flag_order:
-        print("  {:<{}} : {}".format(flag, min_width,
-            arg_processor.program_flags[flag].description))
+        print(
+            "  {:<{}} : {}".format(
+                flag, min_width, arg_processor.program_flags[flag].description
+            )
+        )
     print("Arguments:")
     for arg in arg_processor.program_arg_order:
         if arg_processor.program_args[arg].validator is not None:
-            advice_str = arg_processor.advice_functions[\
-                arg_processor.program_args[arg].validator](\
-                arg_processor.program_args[arg].validator_args)
+            advice_str = arg_processor.advice_functions[
+                arg_processor.program_args[arg].validator
+            ](arg_processor.program_args[arg].validator_args)
         else:
             advice_str = ""
         if arg_processor.program_args[arg].needed:
-            print("  {:<{}} : {}{}".format(arg, min_width,
-                arg_processor.program_args[arg].description, advice_str))
+            print(
+                "  {:<{}} : {}{}".format(
+                    arg,
+                    min_width,
+                    arg_processor.program_args[arg].description,
+                    advice_str,
+                )
+            )
         else:
-            print("  {:<{}} : {}{} [optional, default: {}]".format(arg,
-                min_width, arg_processor.program_args[arg].description,
-                advice_str, arg_processor.program_args[arg].default_value))
+            print(
+                "  {:<{}} : {}{} [optional, default: {}]".format(
+                    arg,
+                    min_width,
+                    arg_processor.program_args[arg].description,
+                    advice_str,
+                    arg_processor.program_args[arg].default_value,
+                )
+            )
     sys.exit(0)
 
-#The main class
-#-------------------------------------------------------------------------------
+
+# The main class
+# -------------------------------------------------------------------------------
 
 
 class ArgProcessor:
@@ -305,23 +335,25 @@ class ArgProcessor:
 
             (ArgProcessor) -> None
         """
-        self.program_args =  {}
+        self.program_args = {}
         self.program_arg_order = []
         self.program_flags = {}
         self.program_flag_order = []
         self.validators = []
         self.advice_functions = {}
-        #Register the pre-made validators
+        # Register the pre-made validators
         self.register_validator(range_validator, range_validator_advice)
         self.register_validator(seq_range_validator, seq_range_validator_advice)
         self.register_validator(enum_validator, enum_validator_advice)
         self.register_validator(bool_validator, bool_validator_advice)
-        #Add the quiet flag:
-        self.add_program_flag('--quiet',
-            FlagDefinition('quiet', None, 'Suppress non-essential output'))
-        #Add the help flag
-        self.add_program_flag('--help',
-            FlagDefinition('help', print_usage, "Display this notice"))
+        # Add the quiet flag:
+        self.add_program_flag(
+            "--quiet", FlagDefinition("quiet", None, "Suppress non-essential output")
+        )
+        # Add the help flag
+        self.add_program_flag(
+            "--help", FlagDefinition("help", print_usage, "Display this notice")
+        )
 
     def add_program_arg(self, param, arg_definition):
         """ This method adds a program argument.
@@ -331,15 +363,16 @@ class ArgProcessor:
             arg_definition: The ArgDefinition object describing the argument.
         """
         assert param not in self.program_args, "Error: parameter name in use."
-        assert arg_definition.validator == None or\
-            arg_definition.validator in self.validators,\
-            "Error: unregistered validator"
+        assert (
+            arg_definition.validator == None
+            or arg_definition.validator in self.validators
+        ), "Error: unregistered validator"
         self.program_args[param] = arg_definition
         self.program_arg_order.append(param)
 
-    #This method adds a program flag.
-    #param:          The '--' prefixed flag string.
-    #arg_definition: The FlagDefinition object describing the flag.
+    # This method adds a program flag.
+    # param:          The '--' prefixed flag string.
+    # arg_definition: The FlagDefinition object describing the flag.
     def add_program_flag(self, flag, flag_definition):
         assert flag not in self.program_flags, "Error: flag name in use."
         self.program_flags[flag] = flag_definition
@@ -360,23 +393,23 @@ class ArgProcessor:
 
             (ArgProcessor) -> None
         """
-        #-----------------------------------------------------------------------
-        #This code is based on code from the KR Toolkit by Christian Muise
-        #URL: http://code.google.com/p/krtoolkit/
+        # -----------------------------------------------------------------------
+        # This code is based on code from the KR Toolkit by Christian Muise
+        # URL: http://code.google.com/p/krtoolkit/
         try:
             argv, opts, flags = sys.argv[1:], {}, []
             while argv:
-                if argv[0][0:2] == '--':
+                if argv[0][0:2] == "--":
                     flags.append(argv[0])
                     argv = argv[1:]
-                elif argv[0][0] == '-':
+                elif argv[0][0] == "-":
                     opts[argv[0]] = argv[1]
                     argv = argv[2:]
                 else:
-                    raise InputException("Badly constructed arg: " +argv[0])
+                    raise InputException("Badly constructed arg: " + argv[0])
         except IndexError:
             raise InputException("Badly constructed arg: " + argv[0])
-        #-----------------------------------------------------------------------
+        # -----------------------------------------------------------------------
         for flag in flags:
             if flag in self.program_flags:
                 vars(self)[self.program_flags[flag].var_name] = True
@@ -386,13 +419,23 @@ class ArgProcessor:
                 raise InputException("Invalid flag: " + flag)
 
         if not self.quiet:
-            min_width = max(len('Flags:'),
-                max([len(x.description) for x in iter(self.program_args.values())])) + 1
+            min_width = (
+                max(
+                    len("Flags:"),
+                    max([len(x.description) for x in iter(self.program_args.values())]),
+                )
+                + 1
+            )
             if len(flags) == 0:
-                print("{:<{}} {}".format('Flags:', min_width,'<None>'))
+                print("{:<{}} {}".format("Flags:", min_width, "<None>"))
             else:
-                print("{:<{}} {}".format('Flags:', min_width,
-                    ', '.join([f for f in self.program_flags if f in flags])))
+                print(
+                    "{:<{}} {}".format(
+                        "Flags:",
+                        min_width,
+                        ", ".join([f for f in self.program_flags if f in flags]),
+                    )
+                )
 
         for arg in opts:
             if arg not in self.program_args:
@@ -408,9 +451,14 @@ class ArgProcessor:
                 if arg_def.validator == None:
                     vars(self)[arg_def.var_name] = opts[arg]
                 else:
-                    vars(self)[arg_def.var_name] = arg_def.validator(opts[arg],
-                        arg_def.validator_args)
+                    vars(self)[arg_def.var_name] = arg_def.validator(
+                        opts[arg], arg_def.validator_args
+                    )
             if not self.quiet:
-                print("{:<{}} {}".format(arg_def.description + ':', min_width,
-                    vars(self)[arg_def.var_name]))
-
+                print(
+                    "{:<{}} {}".format(
+                        arg_def.description + ":",
+                        min_width,
+                        vars(self)[arg_def.var_name],
+                    )
+                )

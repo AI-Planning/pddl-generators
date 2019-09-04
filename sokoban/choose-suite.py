@@ -4,31 +4,46 @@
 from rolling_stone_data import rs_data
 
 rs_nodes = dict(
-    (instance, nodes)
-    for instance, moves, pushes, nodes in rs_data
-    if moves is not None)
+    (instance, nodes) for instance, moves, pushes, nodes in rs_data if moves is not None
+)
+
 
 def r(begin, end=None):
     if end is None:
         end = begin
     return set(range(begin, end + 1))
 
+
 solved_by_base = (
-    r(1, 34) | r(36, 77) | r(79, 92) | r(94, 97) | r(100, 104) |
-    r(110) | r(115, 116) | r(119, 120) | r(124, 125) | r(127, 132) |
-    r(134, 136) | r(142) | r(147, 149) | r(151, 152) | r(154, 155))
+    r(1, 34)
+    | r(36, 77)
+    | r(79, 92)
+    | r(94, 97)
+    | r(100, 104)
+    | r(110)
+    | r(115, 116)
+    | r(119, 120)
+    | r(124, 125)
+    | r(127, 132)
+    | r(134, 136)
+    | r(142)
+    | r(147, 149)
+    | r(151, 152)
+    | r(154, 155)
+)
+
 
 def key(instance):
     hard = instance not in solved_by_base
     too_hard = instance not in rs_nodes
     return (hard, too_hard, rs_nodes.get(instance))
 
+
 instances = list(range(1, 156))
 instances.sort(key=key)
 
 for no, instance in enumerate(instances):
-    print("%3d  instance #%03d: %s" % (
-        (no + 1), instance, key(instance)))
+    print("%3d  instance #%03d: %s" % ((no + 1), instance, key(instance)))
 
 assert len(instances) == 155, len(instances)
 assert len(solved_by_base) == 123, len(solved_by_base)
