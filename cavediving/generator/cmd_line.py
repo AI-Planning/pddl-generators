@@ -265,15 +265,14 @@ def print_usage(arg_processor):
 
         (ArgProcessor) -> None
     """
-    min_width = max(map(lambda x : len(x),\
-        arg_processor.program_arg_order + arg_processor.program_flag_order))
-    print "Usage: python {} ".format(sys.argv[0])
-    print "The following flags and arguments can be supplied:"
-    print "Flags:"
+    min_width = max([len(x) for x in arg_processor.program_arg_order + arg_processor.program_flag_order])
+    print("Usage: python {} ".format(sys.argv[0]))
+    print("The following flags and arguments can be supplied:")
+    print("Flags:")
     for flag in arg_processor.program_flag_order:
-        print "  {:<{}} : {}".format(flag, min_width,
-            arg_processor.program_flags[flag].description)
-    print "Arguments:"
+        print("  {:<{}} : {}".format(flag, min_width,
+            arg_processor.program_flags[flag].description))
+    print("Arguments:")
     for arg in arg_processor.program_arg_order:
         if arg_processor.program_args[arg].validator is not None:
             advice_str = arg_processor.advice_functions[\
@@ -282,12 +281,12 @@ def print_usage(arg_processor):
         else:
             advice_str = ""
         if arg_processor.program_args[arg].needed:
-            print "  {:<{}} : {}{}".format(arg, min_width,
-                arg_processor.program_args[arg].description, advice_str)
+            print("  {:<{}} : {}{}".format(arg, min_width,
+                arg_processor.program_args[arg].description, advice_str))
         else:
-            print "  {:<{}} : {}{} [optional, default: {}]".format(arg,
+            print("  {:<{}} : {}{} [optional, default: {}]".format(arg,
                 min_width, arg_processor.program_args[arg].description,
-                advice_str, arg_processor.program_args[arg].default_value)
+                advice_str, arg_processor.program_args[arg].default_value))
     sys.exit(0)
 
 #The main class
@@ -388,14 +387,12 @@ class ArgProcessor:
 
         if not self.quiet:
             min_width = max(len('Flags:'),
-                max(map(lambda x : len(x.description),
-                self.program_args.itervalues()))) + 1
+                max([len(x.description) for x in iter(self.program_args.values())])) + 1
             if len(flags) == 0:
-                print "{:<{}} {}".format('Flags:', min_width,'<None>')
+                print("{:<{}} {}".format('Flags:', min_width,'<None>'))
             else:
-                print "{:<{}} {}".format('Flags:', min_width,
-                    ', '.join(filter(lambda f : f in flags,
-                     self.program_flags)))
+                print("{:<{}} {}".format('Flags:', min_width,
+                    ', '.join([f for f in self.program_flags if f in flags])))
 
         for arg in opts:
             if arg not in self.program_args:
@@ -414,6 +411,6 @@ class ArgProcessor:
                     vars(self)[arg_def.var_name] = arg_def.validator(opts[arg],
                         arg_def.validator_args)
             if not self.quiet:
-                print "{:<{}} {}".format(arg_def.description + ':', min_width,
-                    vars(self)[arg_def.var_name])
+                print("{:<{}} {}".format(arg_def.description + ':', min_width,
+                    vars(self)[arg_def.var_name]))
 

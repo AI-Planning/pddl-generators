@@ -34,7 +34,7 @@ def get_init():
    if(mode_flag!="time"):      
       str_init += "   (= (total-cost) 0)\n"
 
-   used_cols = range(1,num_columns+1)
+   used_cols = list(range(1,num_columns+1))
    
    for robot in range(num_robots):
       posx = random.randint(0,num_rows)
@@ -102,13 +102,13 @@ try:
     random.seed(seed)
 
 except:
-    print "Usage: " +sys.argv[0] + " <name> <num_rows> <num_columns> <num_robots> <mode_flag(seq|time)> [<seed>]"; sys.exit(1)
+    print("Usage: " +sys.argv[0] + " <name> <num_rows> <num_columns> <num_robots> <mode_flag(seq|time)> [<seed>]"); sys.exit(1)
 
-print ("(define (problem "+name+")")
+print(("(define (problem "+name+")"))
 print (" (:domain floor-tile)")
-print (" (:objects "+ get_objects()+")")
-print (" (:init " + get_init()+")")
-print (" (:goal "+ get_goals()+")")
+print((" (:objects "+ get_objects()+")"))
+print((" (:init " + get_init()+")"))
+print((" (:goal "+ get_goals()+")"))
 
 if mode_flag=="time":
     print (" (:metric minimize (total-time))")

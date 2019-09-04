@@ -36,11 +36,11 @@ def report(instances):
                           for instance in instances]
     instances_and_pegs.sort(key=lambda x: (x[1], x[0]))
     for pair in instances_and_pegs:
-        print "instance #%03d: %2d pegs" % pair
+        print("instance #%03d: %2d pegs" % pair)
 
 solvable = set(range(1, len(pegs) + 1))- set(unsolvable)
-print "Solvable instances (%d):" % len(solvable)
+print("Solvable instances (%d):" % len(solvable))
 report(solvable)
-print
-print "Unsolvable instances (%d):" % len(unsolvable)
+print()
+print("Unsolvable instances (%d):" % len(unsolvable))
 report(unsolvable)

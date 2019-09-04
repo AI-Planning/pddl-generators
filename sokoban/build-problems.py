@@ -97,11 +97,11 @@ def create_pddl(filename, prob_name, desc, track, hex):
             if not is_player and not is_stone and not is_wall:
                 init.append("(clear %s)" % pos)
             if is_player:
-                player = "player-%02d" % player_counter.next()
+                player = "player-%02d" % next(player_counter)
                 objects.append("%s - player" % player)
                 init.append("(at %s %s)" % (player, pos))
             if is_stone:
-                stone = "stone-%02d" % stone_counter.next()
+                stone = "stone-%02d" % next(stone_counter)
                 objects.append("%s - stone" % stone)
                 init.append("(at %s %s)" % (stone, pos))
                 if is_goal:
@@ -119,33 +119,33 @@ def create_pddl(filename, prob_name, desc, track, hex):
 
     out = open(filename, "w")
     for line in comments:
-        print >> out, ";; %s" % line.rstrip()
+        print(";; %s" % line.rstrip(), file=out)
     if comments:
-        print >> out, ";;"
+        print(";;", file=out)
     for line in maze:
-        print >> out, ";; %s" % line.rstrip()
-    print >> out
-    print >> out, "(define (problem %s)" % prob_name
-    print >> out, "  (:domain sokoban-%s)" % track
-    print >> out, "  (:objects"
+        print(";; %s" % line.rstrip(), file=out)
+    print(file=out)
+    print("(define (problem %s)" % prob_name, file=out)
+    print("  (:domain sokoban-%s)" % track, file=out)
+    print("  (:objects", file=out)
     for objdesc in sorted(objects):
-        print >> out, "    %s" % objdesc
-    print >> out, "  )"
-    print >> out, "  (:init"
+        print("    %s" % objdesc, file=out)
+    print("  )", file=out)
+    print("  (:init", file=out)
     for initdesc in sorted(init):
-        print >> out, "    %s" % initdesc
+        print("    %s" % initdesc, file=out)
     if track == "sequential":
-        print >> out, "    (= (total-cost) 0)"
-    print >> out, "  )"
-    print >> out, "  (:goal (and"
+        print("    (= (total-cost) 0)", file=out)
+    print("  )", file=out)
+    print("  (:goal (and", file=out)
     for goaldesc in sorted(goal):
-        print >> out, "    %s" % goaldesc
-    print >> out, "  ))"
+        print("    %s" % goaldesc, file=out)
+    print("  ))", file=out)
     if track == "sequential":
-        print >> out, "  (:metric minimize (total-cost))"
+        print("  (:metric minimize (total-cost))", file=out)
     else:
-        print >> out, "  (:metric minimize (total-time))"
-    print >> out, ")"
+        print("  (:metric minimize (total-time))", file=out)
+    print(")", file=out)
     out.close()
 
 

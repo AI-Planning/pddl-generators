@@ -75,17 +75,17 @@ try:
    NUM_P2= int(sys.argv[3])
    NUM_P3= int(sys.argv[4])
 except:
-   print "Usage: " +sys.argv[0] + " <name> <num_p1> <num_p2> <num_p3>"
+   print("Usage: " +sys.argv[0] + " <name> <num_p1> <num_p2> <num_p3>")
    sys.exit(1)
 
 random.seed()
 
 
-print ("(define (problem "+name+")")
+print(("(define (problem "+name+")"))
 print (" (:domain domain-tms-2-3-light)")
-print (" (:objects "+ get_objects()+")")
-print (" (:init " + get_init()+")")
-print (" (:goal"+ get_goals()+")")
+print((" (:objects "+ get_objects()+")"))
+print((" (:init " + get_init()+")"))
+print((" (:goal"+ get_goals()+")"))
 print (" (:metric minimize (total-time))")
 print (")")
 

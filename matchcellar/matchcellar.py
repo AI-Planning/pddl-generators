@@ -48,7 +48,7 @@ try:
    name= sys.argv[1]
    NUM_MATCHES= int(sys.argv[2])
 except:
-   print "Usage: " +sys.argv[0] + " <name> <num_matches>"
+   print("Usage: " +sys.argv[0] + " <name> <num_matches>")
    sys.exit(1)
 
 random.seed()
@@ -56,11 +56,11 @@ random.seed()
 
 NUM_FUSES=NUM_MATCHES*2
 
-print ("(define (problem "+name+")")
+print(("(define (problem "+name+")"))
 print (" (:domain matchcellar)")
-print (" (:objects "+ get_objects(NUM_FUSES)+")")
-print (" (:init " + get_init()+")")
-print (" (:goal"+ get_goals()+")")
+print((" (:objects "+ get_objects(NUM_FUSES)+")"))
+print((" (:init " + get_init()+")"))
+print((" (:goal"+ get_goals()+")"))
 print (" (:metric minimize (total-time))")
 print (")")
 

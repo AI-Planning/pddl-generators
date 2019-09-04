@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 from collections import defaultdict
 import itertools
 import random
@@ -18,6 +20,9 @@ class Point(object):
         self.x = x
         self.y = y
 
+    def __lt__(self, other):
+        return (self.x, self.y) < (other.x, other.y)
+
     def __repr__(self):
         return "Point(%s, %d, %d)" % (self.name, self.x, self.y)
 
@@ -26,7 +31,7 @@ class Point(object):
 
     def round_distance(self, other):
         return int(round(self.distance(other)))
-    
+
 
 class Graph(object):
     def __init__(self):
@@ -46,7 +51,7 @@ class Graph(object):
             neighbours[u].append(v)
         reached = set()
         queue = self.vertices[:1]
-	reached.add(queue[0])
+        reached.add(queue[0])
         while queue:
             for succ in neighbours[queue.pop()]:
                 if succ not in reached:
@@ -56,29 +61,29 @@ class Graph(object):
 
     def dump_pddl(self, out=None):
         for v in self.vertices:
-            print >> out, "(location %s)" % v.name
+            print("(location %s)" % v.name, file=out)
         for u, v in self.edges:
             dist = u.round_distance(v)
-            print >> out, "(connected %s %s)" % (u.name, v.name)
-            print >> out, "(= (distance %s %s) %d)" % (u.name, v.name, dist)
+            print("(connected %s %s)" % (u.name, v.name), file=out)
+            print("(= (distance %s %s) %d)" % (u.name, v.name, dist), file=out)
 
     def dump_tikz(self, out=None):
-        print >> out,  r"\documentclass{article}"
-        print >> out,  r"\usepackage{tikz}"
-        print >> out,  r"\begin{document}"
-        print >> out,  r"\begin{tikzpicture}"
+        print(r"\documentclass{article}", file=out)
+        print(r"\usepackage{tikz}", file=out)
+        print(r"\begin{document}", file=out)
+        print(r"\begin{tikzpicture}", file=out)
         for v in self.vertices:
-            print >> out,  r"  \node[fill] (%s) at (%.2f, %.2f) {};" % (
-                v.name, v.x * 0.01, v.y * 0.01);
+            print(r"  \node[fill] (%s) at (%.2f, %.2f) {};" % (
+                v.name, v.x * 0.01, v.y * 0.01), file=out);
         for u, v in self.edges:
             if u < v:
-                print >> out,  r"  \draw (%s) -- (%s);" % (u.name, v.name)
-        print >> out,  r"\end{tikzpicture}"
-        print >> out,  r"\clearpage"
-        print >> out,  r"\begin{verbatim}"
+                print(r"  \draw (%s) -- (%s);" % (u.name, v.name), file=out)
+        print(r"\end{tikzpicture}", file=out)
+        print(r"\clearpage", file=out)
+        print(r"\begin{verbatim}", file=out)
         self.dump_pddl(out)
-        print >> out,  r"\end{verbatim}"
-        print >> out,  r"\end{document}"
+        print(r"\end{verbatim}", file=out)
+        print(r"\end{document}", file=out)
 
 
 def find_suitable_point(graph, width, height, epsilon):
@@ -121,7 +126,7 @@ def usage():
 
 def parse_args():
     try:
-        parameters = map(int, sys.argv[1:])
+        parameters = list(map(int, sys.argv[1:]))
     except TypeError:
         usage()
     if len(parameters) != 6:
@@ -135,9 +140,9 @@ def main(seed, graph_params):
     random.seed(seed)
     try:
         g = generate_connected(*graph_params)
-    except ValueError, e:
+    except ValueError as e:
         raise SystemExit(str(e))
-    print "%% %s %s" % (seed, " ".join(map(str, graph_params)))
+    print("%% %s %s" % (seed, " ".join(map(str, graph_params))))
     g.dump_tikz()
 
 

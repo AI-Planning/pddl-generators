@@ -42,16 +42,16 @@ def make_caves(branch_depths):
 
         ([int]) -> [(int, int)], [int], [int]
     """
-    edges = [(x, x+1) for x in xrange(branch_depths[0])]
-    node_depths = range(branch_depths[0]+1)
+    edges = [(x, x+1) for x in range(branch_depths[0])]
+    node_depths = list(range(branch_depths[0]+1))
     nodes = branch_depths[0]+1
     leaves = [nodes-1]
     for branch in branch_depths[1:]:
-        junction = random.choice([x for x in xrange(nodes) if node_depths[x] < branch])
+        junction = random.choice([x for x in range(nodes) if node_depths[x] < branch])
         length = branch - node_depths[junction]
         edges.append((junction, nodes))
         node_depths.append(node_depths[junction]+1)
-        for nid, new_node in enumerate(xrange(nodes, nodes+length-1)):
+        for nid, new_node in enumerate(range(nodes, nodes+length-1)):
             edges.append((new_node, new_node+1))
             node_depths.append(node_depths[junction]+2+nid)
         nodes += length
@@ -94,10 +94,10 @@ def make_tanks_and_divers(node_depths, objectives, num_tank_adjustment,
     for obj in objectives:
         num_tanks += pow(2, node_depths[obj]+1)
         num_divers += pow(2, node_depths[obj]-1)
-    tanks = ['t' + str(x) for x in xrange(num_tanks)]
+    tanks = ['t' + str(x) for x in range(num_tanks)]
     if ordered_tanks:
         tanks.append('dummy')
-    divers = ['d' + str(x) for x in xrange(num_divers)]
+    divers = ['d' + str(x) for x in range(num_divers)]
 
     return tanks, divers
 
@@ -120,7 +120,7 @@ def make_positive_relationships(objectives, node_depths):
         cur_d += 1
         depth = node_depths[obj]-1
         while depth > 0:
-            new_divers = range(cur_d, cur_d + len(obj_divers))
+            new_divers = list(range(cur_d, cur_d + len(obj_divers)))
             for diver in obj_divers:
                 for n_diver in new_divers:
                     pos_relationships.add((n_diver, diver))
@@ -143,8 +143,8 @@ def make_negative_relationships(pos_relationships, num_divers, neg_link_prob):
 
         (set([(int, int)]), int, ...) -> { int : [int] }
     """
-    neg_relationships = dict([(x, list()) for x in xrange(num_divers)])
-    for (diver1, diver2) in itertools.combinations(xrange(num_divers), 2):
+    neg_relationships = dict([(x, list()) for x in range(num_divers)])
+    for (diver1, diver2) in itertools.combinations(range(num_divers), 2):
         if (diver1, diver2) not in pos_relationships and random.random() < neg_link_prob:
             neg_relationships[diver1].append(diver2)
 
@@ -158,7 +158,7 @@ def add_neg_cycle(neg_relationships, num_divers, neg_cycle_frac):
 
         ({ int  : [int] }, int, float) -> None
     """
-    divers = random.sample(xrange(num_divers), max(2, int(num_divers*neg_cycle_frac)))
+    divers = random.sample(range(num_divers), max(2, int(num_divers*neg_cycle_frac)))
     for did, diver1 in enumerate(divers):
         diver2 = divers[(did+1)%len(divers)]
         if diver2 not in neg_relationships[diver1]:
@@ -172,8 +172,8 @@ def make_hiring_costs(neg_relationships, min_cost, max_cost, perturb):
 
         ({ int  : [int] }, int, int, float) -> { int : int }
     """
-    divers = neg_relationships.keys()
-    num_rels = [len(x) for x in neg_relationships.values()]
+    divers = list(neg_relationships.keys())
+    num_rels = [len(x) for x in list(neg_relationships.values())]
     min_rels, max_rels = min(num_rels), max(num_rels)
     rel_range = max_rels - min_rels
     cost_range = max_cost - min_cost
@@ -188,7 +188,7 @@ def make_hiring_costs(neg_relationships, min_cost, max_cost, perturb):
     rel_dict = dict([(n, list()) for n in num_rels])
     for nid, num in enumerate(num_rels):
         rel_dict[num].append(divers[nid])
-    sorted_rels = sorted(zip(rel_dict.keys(), rel_dict.values()))
+    sorted_rels = sorted(zip(list(rel_dict.keys()), list(rel_dict.values())))
     sorted_rels.reverse()
 
     hiring_costs = {}
@@ -385,7 +385,7 @@ def write_domain_file(file_name,  divers, neg_relationships, strips, ordered_tan
         output_file.write(")\n")
         output_file.close()
     except IOError:
-        print "Error: could not write to the domain file:", file_name
+        print("Error: could not write to the domain file:", file_name)
 
 
 def write_problem_file(file_name, problem_name, num_locations, tanks, divers,
@@ -397,7 +397,7 @@ def write_problem_file(file_name, problem_name, num_locations, tanks, divers,
             { int : int }, int, bool, bool) -> None
     """
     try:
-        output_file = file(file_name, 'w')
+        output_file = open(file_name, 'w')
 
         if strips:
             output_file.write(";; Cave Diving STRIPS\n")
@@ -416,13 +416,13 @@ def write_problem_file(file_name, problem_name, num_locations, tanks, divers,
 
         output_file.write("  (:objects\n")
         output_file.write("    " + " ".join(\
-            ['l' + str(x) for x in xrange(num_locations)]) + " - location\n")
-        num_diver_lines = len(divers)/20 + 1
-        ordered_divers = ['d' + str(x) for x in xrange(len(divers))]
-        for d_line in xrange(num_diver_lines):
+            ['l' + str(x) for x in range(num_locations)]) + " - location\n")
+        num_diver_lines = len(divers) // 20 + 1
+        ordered_divers = ['d' + str(x) for x in range(len(divers))]
+        for d_line in range(num_diver_lines):
             output_file.write("    " + " ".join(ordered_divers[(d_line*20):(d_line*20+20)]) + " - diver\n")
-        num_tank_lines = len(tanks)/20 + 1
-        for t_line in xrange(num_tank_lines):
+        num_tank_lines = len(tanks) // 20 + 1
+        for t_line in range(num_tank_lines):
             output_file.write("    " + " ".join(tanks[(t_line*20):(t_line*20+20)]) + " - tank\n")
         output_file.write("    zero one two three four - quantity\n")
         output_file.write("  )\n\n")
@@ -477,7 +477,7 @@ def write_problem_file(file_name, problem_name, num_locations, tanks, divers,
 
         output_file.close()
     except IOError:
-        print "Error: could not write to the problem file:", file_name
+        print("Error: could not write to the problem file:", file_name)
 
 def main():
     args = generator_cmd_line.process_args()
@@ -504,15 +504,15 @@ def main():
     random.shuffle(divers)
 
     if not args.quiet:
-        print
-        print "Edges: ", ", ".join(map(str, edges))
-        print "Depths:", ", ".join(map(str, node_depths))
-        print "Objectives:", ", ".join(map(str, objectives))
-        print "Tanks:", ", ".join(map(str, tanks))
-        print "Divers:", ", ".join(map(str, divers))
-        print "Positive relationships:", ", ".join(map(str, pos_relationships))
-        print "Negative relationships:", neg_relationships
-        print "Hiring costs:", hiring_costs
+        print()
+        print("Edges: ", ", ".join(map(str, edges)))
+        print("Depths:", ", ".join(map(str, node_depths)))
+        print("Objectives:", ", ".join(map(str, objectives)))
+        print("Tanks:", ", ".join(map(str, tanks)))
+        print("Divers:", ", ".join(map(str, divers)))
+        print("Positive relationships:", ", ".join(map(str, pos_relationships)))
+        print("Negative relationships:", neg_relationships)
+        print("Hiring costs:", hiring_costs)
 
     if args.domain_file_name:
         write_domain_file(args.domain_file_name, divers, neg_relationships,

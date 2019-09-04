@@ -7,11 +7,11 @@ MAX_LEVELS = 2
 
 
 def print_usage():
-    print "Usage: " + sys.argv[0] + " <num_cocktails> <num_ingredients> <num_shots> [<random_seed>]"
-    print "  num_cocktails (min 1)"
-    print "  num_ingredients (min 2)"
-    print "  num_shots (min max[1,num_cocktails+1])"
-    print "  random_seed (min 1, optional)"
+    print(("Usage: " + sys.argv[0] + " <num_cocktails> <num_ingredients> <num_shots> [<random_seed>]"))
+    print("  num_cocktails (min 1)")
+    print("  num_ingredients (min 2)")
+    print("  num_shots (min max[1,num_cocktails+1])")
+    print("  random_seed (min 1, optional)")
 
 
 if len(sys.argv) not in [4, 5]:
@@ -93,7 +93,7 @@ def get_init():
         str_init=str_init+"  (next l"+str(i)+" l"+str(i+1)+")\n"
 
     for i in range(1, num_cocktails+1):
-        parts = random.sample(range(1,num_ingredients+1),2)
+        parts = random.sample(list(range(1,num_ingredients+1)),2)
         str_init = str_init + "  (cocktail-part1 cocktail" + str(i) + " ingredient" + str(parts[0]) + ")\n"
         str_init = str_init + "  (cocktail-part2 cocktail" + str(i) + " ingredient" + str(parts[1]) + ")\n"
     return str_init
@@ -103,7 +103,7 @@ def get_goals():
     str_goal=""
     str_goal=str_goal+"\n  (and\n"
 
-    serving = random.sample(range(1,num_cocktails+1),num_cocktails)
+    serving = random.sample(list(range(1,num_cocktails+1)),num_cocktails)
     for i in range(1,num_cocktails+1):
         str_goal=str_goal+ "      (contains shot"+str(i)+" cocktail"+str(serving[i-1])+")\n"
 
@@ -124,11 +124,11 @@ def main():
 
     random.seed(seed)
 
-    print ("(define (problem " + name + ")")
-    print (" (:domain barman)")
-    print (" (:objects " + get_objects() + ")")
-    print (" (:init " + get_init() + ")")
-    print (" (:goal" + get_goals() + "))")
+    print(("(define (problem " + name + ")"))
+    print(" (:domain barman)")
+    print((" (:objects " + get_objects() + ")"))
+    print((" (:init " + get_init() + ")"))
+    print((" (:goal" + get_goals() + "))"))
 
 
 main()

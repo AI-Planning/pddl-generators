@@ -74,20 +74,20 @@ try:
    num_locations = int(sys.argv[3])
    name="prob"
 except:
-   print "Usage: " +sys.argv[0] + " <num_spanners> <num_nuts> <num_locations>"
-   print "  num_spanners (min 1)"
-   print "  num_nuts (min 1 and <= num_spanners)"
-   print "  num_locations (min 1)"
+   print("Usage: " +sys.argv[0] + " <num_spanners> <num_nuts> <num_locations>")
+   print("  num_spanners (min 1)")
+   print("  num_nuts (min 1 and <= num_spanners)")
+   print("  num_locations (min 1)")
 
    sys.exit(1)
 
 random.seed()
 
-print ("(define (problem "+name+")")
+print(("(define (problem "+name+")"))
 print (" (:domain spanner)")
-print (" (:objects "+ get_objects()+")")
-print (" (:init " + get_init()+")")
-print (" (:goal"+ get_goals()+"))")
+print((" (:objects "+ get_objects()+")"))
+print((" (:init " + get_init()+")"))
+print((" (:goal"+ get_goals()+"))"))
 sys.exit(0)
 
 

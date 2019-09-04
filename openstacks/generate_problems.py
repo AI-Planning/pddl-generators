@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
+
 import math
 import random
 
@@ -18,9 +20,9 @@ where
 def main(args):
     if len(args) != 7:
         raise SystemExit(USAGE % args[0])
-    min_size, max_size, step_size, min_id, max_id, density = map(int, args[1:])
-    for size in xrange(min_size, max_size + 1, step_size):
-        for counter in xrange(min_id, max_id + 1):
+    min_size, max_size, step_size, min_id, max_id, density = list(map(int, args[1:]))
+    for size in range(min_size, max_size + 1, step_size):
+        for counter in range(min_id, max_id + 1):
             filename = "p%d_%d.txt" % (size, counter)
             generate_problem(filename, size, size, density)
 
@@ -36,7 +38,7 @@ def include_product_for_order(product, order, num_products, density):
     # with small (= few stacks) solutions since it adds some locality
     # to the problem: the matrix entries (before shuffling) will tend
     # to cluster around the diagonal.
-    
+
     d = abs(product - order)
     s = num_products / 6.0
     # The next line is the density function of the normal distribution
@@ -49,8 +51,8 @@ def include_product_for_order(product, order, num_products, density):
 
 
 def generate_problem(filename, num_products, num_orders, density):
-    products = range(num_products)
-    orders = range(num_orders)
+    products = list(range(num_products))
+    orders = list(range(num_orders))
     matrix = [[0 for product in products] for order in orders]
     for order in orders:
         for product in products:
@@ -73,11 +75,11 @@ def generate_problem(filename, num_products, num_orders, density):
     random.shuffle(orders)
 
     with open(filename, "w") as outfile:
-        print >> outfile, num_orders, num_products
+        print(num_orders, num_products, file=outfile)
         for order in orders:
             row = [matrix[order][product] for product in products]
-            print >> outfile, " ".join(map(str, row))
-        print >> outfile, " ".join(map(str, weights))
+            print(" ".join(map(str, row)), file=outfile)
+        print(" ".join(map(str, weights)), file=outfile)
 
 
 if __name__ == "__main__":

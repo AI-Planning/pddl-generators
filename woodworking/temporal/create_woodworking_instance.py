@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 from math import ceil
 import random
 
 _colours = ["black", "white", "red", "green", "blue", "mauve"]
 _woods = ["oak", "pine", "cherry", "teak", "mahogany", "beech", "walnut"]
-_default_machines = {"highspeed-saw":1, "glazer":1, "grinder":1, 
-                    "immersion-varnisher":1, "planer":1, 
+_default_machines = {"highspeed-saw":1, "glazer":1, "grinder":1,
+                    "immersion-varnisher":1, "planer":1,
                     "saw":1, "spray-varnisher":1}
-_only_saws = {"highspeed-saw":1, "glazer":0, "grinder":0, 
-                    "immersion-varnisher":0, "planer":0, 
+_only_saws = {"highspeed-saw":1, "glazer":0, "grinder":0,
+                    "immersion-varnisher":0, "planer":0,
                     "saw":1, "spray-varnisher":0}
 
 class Part(object):
@@ -40,8 +42,8 @@ class Part(object):
     else:
       if not nr_goals:
         nr_goals = random.choice([2,2,2,3,4])
-      self.goalselection = set(random.sample(self.goalprops, nr_goals))
-    
+      self.goalselection = set(random.sample(list(self.goalprops), nr_goals))
+
   def generate_random_init(self, woods, colours):
     def gen_preprocessing_status():
         self.initprops["treatment"] = \
@@ -49,10 +51,10 @@ class Part(object):
         self.initprops["surface-condition"] = \
               random.choice(["rough", "smooth", "verysmooth"])
         self.initprops["wood"] = self.goalprops["wood"]
-        poss_colours = (set(colours + ["natural"]) - 
+        poss_colours = (set(colours + ["natural"]) -
                         set([self.goalprops["colour"]]))
         self.initprops["colour"] = random.choice(list(poss_colours))
-      
+
     self.initprops = dict()
     if self.problemtype == "sawing":
         status = "unused"
@@ -72,17 +74,17 @@ class Part(object):
     self.size = random.randint(5,15)
   def dump_init(self, indent="", out=None):
     if self.initprops:
-      print >> out, "%s(available %s)" % (indent, self.name)
-      for prop, val in self.initprops.iteritems():
-        print >> out, "%s(%s %s %s)" % (indent, prop, self.name, val)
+      print("%s(available %s)" % (indent, self.name), file=out)
+      for prop, val in self.initprops.items():
+        print("%s(%s %s %s)" % (indent, prop, self.name, val), file=out)
     else:
-      print >> out, "%s(unused %s)" % (indent, self.name)
-    print >> out, "%s(= (goal-size %s) %d)" % (indent, self.name, self.size)
+      print("%s(unused %s)" % (indent, self.name), file=out)
+    print("%s(= (goal-size %s) %d)" % (indent, self.name, self.size), file=out)
   def dump_goal(self, indent="", out=None):
-    print >> out, "%s(available %s)" % (indent, self.name)
+    print("%s(available %s)" % (indent, self.name), file=out)
     for choice in self.goalselection:
-      print >> out, "%s(%s %s %s)" % (indent, choice, self.name, 
-                                      self.goalprops[choice])
+      print("%s(%s %s %s)" % (indent, choice, self.name,
+                                      self.goalprops[choice]), file=out)
 
 class Board(object):
   def __init__(self, index, wood, size):
@@ -91,11 +93,11 @@ class Board(object):
     self.size = size
     self.surface = random.choice(["rough","rough","rough","smooth"])
   def dump_init(self, indent="", out=None):
-    print >> out, "%s(= (board-size %s) %s)" % (indent, self.name, self.size)
-    print >> out, "%s(wood %s %s)" % (indent, self.name, self.wood) 
-    print >> out, "%s(surface-condition %s %s)" % (indent, self.name, 
-                                           self.surface)
-    print >> out, "%s(available %s)" % (indent, self.name)
+    print("%s(= (board-size %s) %s)" % (indent, self.name, self.size), file=out)
+    print("%s(wood %s %s)" % (indent, self.name, self.wood), file=out)
+    print("%s(surface-condition %s %s)" % (indent, self.name,
+                                           self.surface), file=out)
+    print("%s(available %s)" % (indent, self.name), file=out)
 
 class Machine(object):
   def __init__(self, name, type):
@@ -103,11 +105,11 @@ class Machine(object):
     self.type = type
     self.colours = set()
   def dump_init(self, indent, out=None):
-    print >> out, "%s(idle %s)" % (indent, self.name)
+    print("%s(idle %s)" % (indent, self.name), file=out)
     if self.type == "highspeed-saw":
-      print >> out, "%s(empty %s)" % (indent, self.name)
+      print("%s(empty %s)" % (indent, self.name), file=out)
     for colour in self.colours:
-      print >> out, "%s(has-colour %s %s)" % (indent, self.name, colour)
+      print("%s(has-colour %s %s)" % (indent, self.name, colour), file=out)
 
 class Task(object):
   def __init__(self, seed, nr_parts, problemtype=None, **additional_machines):
@@ -117,8 +119,8 @@ class Task(object):
     self.colours = _colours[:nr_colours]
     nr_woods = max(int(round(0.25*nr_parts)), 2)
     self.woods = random.sample(_woods, nr_woods)
-    self.parts = [Part(nr, self.woods, self.colours, problemtype) 
-                  for nr in xrange(nr_parts)]
+    self.parts = [Part(nr, self.woods, self.colours, problemtype)
+                  for nr in range(nr_parts)]
     self._generate_boards()
     self._generate_machines(**additional_machines)
     self._assign_colours_to_machines()
@@ -135,14 +137,14 @@ class Task(object):
 
     self.boards = []
     counter = 0
-    for wood, quantity in quantities.iteritems():
+    for wood, quantity in quantities.items():
       if not quantity:
         self.woods.remove("wood")
       else:
         random.shuffle(quantity)
-        for amounts in zip(quantity[::4], 
-                           quantity[1::4] + [0], 
-                           quantity[2::4] + [0], 
+        for amounts in zip(quantity[::4],
+                           quantity[1::4] + [0],
+                           quantity[2::4] + [0],
                            quantity[3::4] + [0]):
           size = int(ceil(sum(amounts) * extra_wood_factor))
           self.boards.append(Board(counter, wood, size))
@@ -151,10 +153,10 @@ class Task(object):
     machines = dict(_default_machines)
     machines.update(changes)
     self.machines = dict()
-    for type, number in machines.iteritems():
+    for type, number in machines.items():
       if number:
-        m = [Machine("%s%s" % (type,nr), type) 
-             for nr in xrange(number)]
+        m = [Machine("%s%s" % (type,nr), type)
+             for nr in range(number)]
         self.machines[type] = m
   def _assign_colours_to_machines(self):
     necessary = self._determine_necessary_colours()
@@ -162,9 +164,9 @@ class Task(object):
     immersion_varnishers = self.machines.get("immersion-varnisher",[])
     glazers = self.machines.get("glazer",[])
     for colour in necessary["varnished"]:
-      machines = random.sample(spray_varnishers, 
+      machines = random.sample(spray_varnishers,
                                int(ceil(0.6*len(spray_varnishers))))
-      machines += random.sample(immersion_varnishers, 
+      machines += random.sample(immersion_varnishers,
                                int(ceil(0.6*len(immersion_varnishers))))
       for m in machines:
         m.colours.add(colour)
@@ -172,9 +174,9 @@ class Task(object):
       for m in random.sample(glazers, int(ceil(0.6*len(glazers)))):
         m.colours.add(colour)
     for colour in necessary["unspecified"]:
-      machines = random.sample(spray_varnishers, 
+      machines = random.sample(spray_varnishers,
                                int(ceil(0.3*len(spray_varnishers))))
-      machines += random.sample(immersion_varnishers, 
+      machines += random.sample(immersion_varnishers,
                                int(ceil(0.3*len(immersion_varnishers))))
       machines += random.sample(glazers, int(ceil(0.3*len(glazers))))
       for m in machines:
@@ -196,49 +198,49 @@ class Task(object):
           used_colours[part.goalprops["treatment"]].add(colour)
         else:
           used_colours["unspecified"].add(colour)
-    return used_colours 
+    return used_colours
   def dump(self, out=None):
     self._dump_header(out)
     self._dump_objects("  ", out)
     self._dump_init("  ", out)
     self._dump_goal("  ", out)
     self._dump_metric("  ", out)
-    print >> out, ")"
+    print(")", file=out)
   def _dump_header(self, out=None):
     if self.problemtype:
-      print >> out, "; woodworking %s task with %s parts" % (self.problemtype,
-                                                             len(self.parts))
+      print("; woodworking %s task with %s parts" % (self.problemtype,
+                                                             len(self.parts)), file=out)
     else:
-      print >> out, "; woodworking task with %s parts" % len(self.parts)
-    print >> out, "; Machines:"
-    for type, machines in self.machines.iteritems():
-      print >> out, ";   %d %s" % (len(machines), type)
-    print >> out, "; random seed: %d" % self.seed
-    print >> out
-    print >> out, "(define (problem wood-prob)"
-    print >> out, "  (:domain woodworking)"
+      print("; woodworking task with %s parts" % len(self.parts), file=out)
+    print("; Machines:", file=out)
+    for type, machines in self.machines.items():
+      print(";   %d %s" % (len(machines), type), file=out)
+    print("; random seed: %d" % self.seed, file=out)
+    print(file=out)
+    print("(define (problem wood-prob)", file=out)
+    print("  (:domain woodworking)", file=out)
   def _dump_objects(self, indent="", out=None):
-    print >> out, indent + "(:objects"
-    for type, machines in self.machines.iteritems():
-      print >> out, "%s  %s - %s" % (indent, 
-                          " ".join([m.name for m in machines]), type)
+    print(indent + "(:objects", file=out)
+    for type, machines in self.machines.items():
+      print("%s  %s - %s" % (indent,
+                          " ".join([m.name for m in machines]), type), file=out)
     if self.colours:
-      print >> out, "%s  %s - acolour" % (indent, " ".join(self.colours))
-    print >> out, "%s  %s - awood" % (indent, " ".join(self.woods))
-    print >> out, "%s  %s - part" % (indent, 
-                          " ".join([p.name for p in self.parts]))
-    print >> out, "%s  %s - board" % (indent, 
-                           " ".join([b.name for b in self.boards]))
-    print >> out, indent + ")"
+      print("%s  %s - acolour" % (indent, " ".join(self.colours)), file=out)
+    print("%s  %s - awood" % (indent, " ".join(self.woods)), file=out)
+    print("%s  %s - part" % (indent,
+                          " ".join([p.name for p in self.parts])), file=out)
+    print("%s  %s - board" % (indent,
+                           " ".join([b.name for b in self.boards])), file=out)
+    print(indent + ")", file=out)
   def _dump_init(self, indent="", out=None):
-    print >> out, indent + "(:init"
+    print(indent + "(:init", file=out)
     if self.problemtype != "sawing":
-      print >> out, indent + "  (grind-treatment-change varnished colourfragments)"
-      print >> out, indent + "  (grind-treatment-change glazed untreated)"
-      print >> out, indent + "  (grind-treatment-change untreated untreated)"
-      print >> out, indent + "  (grind-treatment-change colourfragments untreated)"
-      print >> out, indent + "  (is-smooth smooth)"
-      print >> out, indent + "  (is-smooth verysmooth)"
+      print(indent + "  (grind-treatment-change varnished colourfragments)", file=out)
+      print(indent + "  (grind-treatment-change glazed untreated)", file=out)
+      print(indent + "  (grind-treatment-change untreated untreated)", file=out)
+      print(indent + "  (grind-treatment-change colourfragments untreated)", file=out)
+      print(indent + "  (is-smooth smooth)", file=out)
+      print(indent + "  (is-smooth verysmooth)", file=out)
     for type in self.machines:
       for m in self.machines[type]:
         m.dump_init(indent + "  ", out)
@@ -246,28 +248,28 @@ class Task(object):
       part.dump_init(indent + "  ", out)
     for board in self.boards:
       board.dump_init(indent + "  ", out)
-    print >> out, indent + ")"
+    print(indent + ")", file=out)
   def _dump_goal(self, indent="", out=None):
-    print >> out, indent + "(:goal"
-    print >> out, indent + "  (and"
+    print(indent + "(:goal", file=out)
+    print(indent + "  (and", file=out)
     for part in self.parts:
       part.dump_goal(indent + "    ", out)
-    print >> out, indent + "  )"
-    print >> out, indent + ")"
+    print(indent + "  )", file=out)
+    print(indent + ")", file=out)
   def _dump_metric(self, indent="", out=None):
-    print >> out, indent + "(:metric minimize (total-time))"
+    print(indent + "(:metric minimize (total-time))", file=out)
 
 def reseed():
   new_seed = random.randrange(10 ** 6)
   random.seed(new_seed)
   return new_seed
-  
+
 def generate_sawing_instance(nr_parts):
   seed = reseed()
   nr_highspeed = nr_parts//5 + 1
   saws = dict(_only_saws)
   saws["highspeed-saw"] = nr_highspeed
-  return Task(seed, nr_parts, "sawing", **saws) 
+  return Task(seed, nr_parts, "sawing", **saws)
 
 def generate_painting_instance(nr_parts):
   seed = reseed()
@@ -284,11 +286,11 @@ def generate_general_instance(nr_parts):
   seed = reseed()
   nr_add_machines = int(ceil(random.normalvariate(0.4*nr_parts, 1)))
   machines = dict(_default_machines)
-  types = machines.keys()
+  types = list(machines.keys())
   for _ in range(nr_add_machines):
     type = random.choice(types)
     machines[type] += 1
-  return Task(seed, nr_parts, **machines) 
+  return Task(seed, nr_parts, **machines)
 
 if __name__ == "__main__":
   import random
@@ -296,7 +298,7 @@ if __name__ == "__main__":
 
   sawing_tasks = [generate_sawing_instance(size) for size in range(15, 27, 3)]
   painting_tasks = [generate_painting_instance(size) for size in range(15, 24, 3)]
-  general_tasks = [generate_general_instance(size) for size in range(15, 24, 3)] 
+  general_tasks = [generate_general_instance(size) for size in range(15, 24, 3)]
   tasks = sawing_tasks + painting_tasks + general_tasks
   for no, task in enumerate(tasks):
     task.dump(out=open("p%02d.pddl" % (no + 11), "w"))

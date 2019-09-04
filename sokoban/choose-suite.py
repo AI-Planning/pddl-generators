@@ -23,12 +23,12 @@ def key(instance):
     too_hard = instance not in rs_nodes
     return (hard, too_hard, rs_nodes.get(instance))
 
-instances = range(1, 156)
+instances = list(range(1, 156))
 instances.sort(key=key)
 
 for no, instance in enumerate(instances):
-    print "%3d  instance #%03d: %s" % (
-        (no + 1), instance, key(instance))
+    print("%3d  instance #%03d: %s" % (
+        (no + 1), instance, key(instance)))
 
 assert len(instances) == 155, len(instances)
 assert len(solved_by_base) == 123, len(solved_by_base)
@@ -58,5 +58,5 @@ sat_hard = instances[123:143]
 
 sat = sat_easy + sat_middle + sat_hard
 
-print "sat_range = [%s]" % ", ".join(map(str, sat))
-print "opt_range = [%s]" % ", ".join(map(str, opt))
+print("sat_range = [%s]" % ", ".join(map(str, sat)))
+print("opt_range = [%s]" % ", ".join(map(str, opt)))

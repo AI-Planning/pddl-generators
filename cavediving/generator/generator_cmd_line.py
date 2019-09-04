@@ -29,8 +29,8 @@ from cmd_line import ArgProcessor, ArgDefinition, FlagDefinition,\
     InputException
 
 def print_citation_info(arg_processor):
-    print "When citing this program please cite the following publication:"
-    print "TBA"
+    print("When citing this program please cite the following publication:")
+    print("TBA")
     sys.exit(0)
 
 
@@ -171,8 +171,8 @@ def process_args():
             raise InputException("Max hiring cost is less than max.")
 
     except InputException as e:
-        print e.message
-        print "Use --help flag to display usage information."
+        print(e.message)
+        print("Use --help flag to display usage information.")
         sys.exit(1)
     return arg_processor
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+
 from math import ceil
 
 import random
@@ -35,7 +36,7 @@ class Part(object):
 
     def generate_goal_selection(self, nr_goals=None):
         nr_goals = random.choice([2,2,2,3,4])
-        self.goalselection = set(random.sample(self.goalprops, nr_goals))
+        self.goalselection = set(random.sample(list(self.goalprops), nr_goals))
 
     def generate_random_init(self, woods, colours):
         def gen_preprocessing_status():
@@ -69,7 +70,7 @@ class Part(object):
         if self.initprops:
             print("%s(available %s)" % (indent, self.name), file=out)
 
-            for prop, val in self.initprops.iteritems():
+            for prop, val in self.initprops.items():
                 print("%s(%s %s %s)" % (indent, prop, self.name, val), file=out)
         else:
             print("%s(unused %s)" % (indent, self.name), file=out)
@@ -123,7 +124,7 @@ class Task(object):
         nr_woods = max(int(round(0.25*nr_parts)), 2)
         self.woods = random.sample(_woods, min(nr_woods, len(_woods)))
 
-        self.parts = [Part(nr, self.woods, self.colours, problemtype) for nr in xrange(nr_parts)]
+        self.parts = [Part(nr, self.woods, self.colours, problemtype) for nr in range(nr_parts)]
 
         self.max_board_size = self._generate_boards()
 
@@ -140,7 +141,7 @@ class Task(object):
         self.boards = []
         counter = 0
         maxsize = 0
-        for wood, quantity in quantities.iteritems():
+        for wood, quantity in quantities.items():
             if not quantity:
                 self.woods.remove("wood")
             else:
@@ -153,7 +154,7 @@ class Task(object):
 
                 quantity.append(additional_wood)
                 random.shuffle(quantity)
-                for amounts in zip(quantity[::4], quantity[1::4] + [0], 
+                for amounts in zip(quantity[::4], quantity[1::4] + [0],
                                     quantity[2::4] + [0], quantity[3::4] + [0]):
                     size = sum(amounts)
                     maxsize = max(maxsize, size)
@@ -167,9 +168,9 @@ class Task(object):
         machines.update(changes)
 
         self.machines = dict()
-        for type, number in machines.iteritems():
+        for type, number in machines.items():
             if number:
-                m = [Machine("%s%s" % (type,nr), type) for nr in xrange(number)]
+                m = [Machine("%s%s" % (type,nr), type) for nr in range(number)]
                 self.machines[type] = m
 
     def _assign_colours_to_machines(self):
@@ -233,7 +234,7 @@ class Task(object):
         print("; woodworking task with %s parts and %d%% wood" % (len(self.parts), self.wood_factor * 100), file=out)
         print("; Machines:", file=out)
 
-        for type, machines in self.machines.iteritems():
+        for type, machines in self.machines.items():
             print(";   %d %s" % (len(machines), type), file=out)
 
         print("", file=out)
@@ -243,7 +244,7 @@ class Task(object):
     def _dump_objects(self, indent="", out=None):
         print(indent + "(:objects", file=out)
 
-        for type, machines in self.machines.iteritems():
+        for type, machines in self.machines.items():
             print("%s  %s - %s" % (indent, " ".join([m.name for m in machines]), type), file=out)
 
         print("%s  %s - acolour" % (indent, " ".join(self.colours)), file=out)
