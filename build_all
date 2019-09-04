@@ -12,7 +12,7 @@ for DIR in * ; do
         if [ -e Makefile ]; then
             # Handle "./build_all test": don't try to run "make test" if command doesn't exist.
             if [ "$#" -eq 1 ] && [ "$@" == "test" ]; then
-                make --dry-run test > /dev/null && make test > /dev/null && echo "Tests passed."
+                make --dry-run test > /dev/null && (make test > /dev/null && echo "Tests passed." || exit 1)
             else
                 make "$@"
             fi
