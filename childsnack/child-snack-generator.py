@@ -157,7 +157,8 @@ def usage():
     print(
         "\n Usage: "
         + sys.argv[0]
-        + " [pool | control | numeric] <seed> <num_children> <num_trays> <gluten_factor> <const_ratio>"
+        + " [pool | control | numeric]"
+        + " <seed> <num_children> <num_trays> <gluten_factor> <const_ratio>"
     )
     print("\n    <const_ratio>: min 1.0")
     sys.exit(1)

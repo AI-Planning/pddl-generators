@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-import copy
 import math
 import euclidean_graph
 import sys

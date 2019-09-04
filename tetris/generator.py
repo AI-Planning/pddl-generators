@@ -6,7 +6,6 @@
 
 from __future__ import print_function
 
-import string
 import sys
 import random
 
@@ -20,7 +19,9 @@ rows = 4
 def help():
     print("usage: generator.py <grid_size> <conf_blocks>")
     print(
-        "\t line numbers is used for defining number of lines of the screen. The number of column is fixed at 4. E.g., 8-> 8x4 grid. Only odd numbers accepted."
+        "\t line numbers is used for defining number of lines of the screen. "
+        "The number of column is fixed at 4. E.g., 8-> 8x4 grid. "
+        "Only odd numbers accepted."
     )
     print("\t conf_blocks:")
     print("\t\t 1 -> only 1x1 square blocks")

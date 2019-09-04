@@ -378,7 +378,8 @@ class Task(object):
 if __name__ == "__main__":
     if len(sys.argv) not in [4, 5]:
         print(
-            "Usage: python create_woodworking_instance.py wood_factor size num_machines [random_seed]"
+            "Usage: python create_woodworking_instance.py "
+            "wood_factor size num_machines [random_seed]"
         )
         sys.exit(1)
 

@@ -351,8 +351,6 @@ def generate_general_instance(nr_parts):
 
 
 if __name__ == "__main__":
-    import random
-
     random.seed(2008 * 2008)
 
     sawing_tasks = [generate_sawing_instance(size) for size in range(15, 27, 3)]

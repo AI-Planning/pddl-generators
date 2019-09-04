@@ -13,7 +13,6 @@ def get_tile(row, col):
 def get_objects():
     #   TILES
     str_tiles = ""
-    str_row = ""
     for row in range(num_rows + 1):
         for column in range(num_columns):
             str_tiles = str_tiles + get_tile(row, column + 1) + " "

@@ -29,10 +29,10 @@
             3. document and send in
 """
 
-import generator_cmd_line
-from cmd_line import InputException
+import itertools
+import random
 
-import sys, random, itertools
+import generator_cmd_line
 
 eps = 0.01
 
@@ -216,7 +216,7 @@ def write_domain_file(file_name, divers, neg_relationships, strips, ordered_tank
         (str, [int], { int : [int] }, bool, bool) -> None
     """
     try:
-        output_file = file(file_name, "w")
+        output_file = open(file_name, "w")
 
         if strips:
             output_file.write(";; Cave Diving STRIPS\n")
@@ -467,14 +467,14 @@ def write_problem_file(
         for d_line in range(num_diver_lines):
             output_file.write(
                 "    "
-                + " ".join(ordered_divers[(d_line * 20) : (d_line * 20 + 20)])
+                + " ".join(ordered_divers[(d_line * 20): (d_line * 20 + 20)])
                 + " - diver\n"
             )
         num_tank_lines = len(tanks) // 20 + 1
         for t_line in range(num_tank_lines):
             output_file.write(
                 "    "
-                + " ".join(tanks[(t_line * 20) : (t_line * 20 + 20)])
+                + " ".join(tanks[(t_line * 20): (t_line * 20 + 20)])
                 + " - tank\n"
             )
         output_file.write("    zero one two three four - quantity\n")

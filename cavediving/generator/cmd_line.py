@@ -128,7 +128,7 @@ def range_validator_advice(validator_args):
     """
 
     a_type, lb, ub, allow_none, error_msg = validator_args
-    if lb == None and ub == None:
+    if lb is None and ub is None:
         return ""
     adv_str = "x"
     if lb is not None:
@@ -364,7 +364,7 @@ class ArgProcessor:
         """
         assert param not in self.program_args, "Error: parameter name in use."
         assert (
-            arg_definition.validator == None
+            arg_definition.validator is None
             or arg_definition.validator in self.validators
         ), "Error: unregistered validator"
         self.program_args[param] = arg_definition
@@ -448,7 +448,7 @@ class ArgProcessor:
                     raise InputException("Error needed arg is missing: " + arg)
                 vars(self)[arg_def.var_name] = arg_def.default_value
             else:
-                if arg_def.validator == None:
+                if arg_def.validator is None:
                     vars(self)[arg_def.var_name] = opts[arg]
                 else:
                     vars(self)[arg_def.var_name] = arg_def.validator(

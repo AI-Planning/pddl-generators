@@ -24,13 +24,13 @@
 """
 
 import sys
+
 from cmd_line import (
     ArgProcessor,
     ArgDefinition,
     FlagDefinition,
     range_validator,
     seq_range_validator,
-    enum_validator,
     bool_validator,
     InputException,
 )
