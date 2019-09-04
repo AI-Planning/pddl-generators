@@ -10,9 +10,12 @@ for DIR in * ; do
         echo "Domain: $DIR"
         cd $DIR
         if [ -e Makefile ]; then
-            # Handle "./build_all test": don't try to run "make test" if command doesn't exist.
+            # Handle "./build_all test" and "./build_all clean" separately:
+            # don't try to run the command if it doesn't exist.
             if [ "$#" -eq 1 ] && [ "$@" == "test" ]; then
                 make --dry-run test > /dev/null && (make test > /dev/null && echo "Tests passed." || exit 1)
+            elif [ "$#" -eq 1 ] && [ "$@" == "clean" ]; then
+                make --dry-run clean > /dev/null && (make clean > /dev/null && echo "Cleaned up." || exit 1)
             else
                 make "$@"
             fi
