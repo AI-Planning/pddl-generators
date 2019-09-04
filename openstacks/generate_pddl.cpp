@@ -20,7 +20,7 @@ int net_benefit=1;
 
 int max(int a, int b)
 {
-	if (a>b) 
+	if (a>b)
 		return a;
 	else
 		return b;
@@ -31,11 +31,11 @@ FILE *infile, *outfile;
 int read_input(char* filename)
 {
 	int i,j;
-	infile =fopen(filename,"r"); 
+	infile =fopen(filename,"r");
     fscanf(infile, "%d %d", &Orders, &Products);
 	if (temporal==1)
 		Numbers=(int) (0.9* max(Orders,Products));
-	else 
+	else
 		Numbers=max(Orders,Products);
 	for(i=0;i<Orders;i++)
 		for(j=0;j<Products;j++)
@@ -101,13 +101,13 @@ void generate_problem(char *filename, int items, int instance)
 	fprintf(outfile,"\n(:init\n");
 	if (semiground==0 && ADL==0 && numeric==0)
 		fprintf(outfile,"(zero n0)\n");
-	
+
 	if (numeric==0)
 	{
-		for(i=0;i<Numbers;i++) fprintf(outfile,"(next-count n%d n%d) ", i, i+1); 
+		for(i=0;i<Numbers;i++) fprintf(outfile,"(next-count n%d n%d) ", i, i+1);
 		fprintf(outfile,"\n");
 	}
-	
+
 	if (temporal==0 && net_benefit==0)
 		if (numeric==0)
 			fprintf(outfile,"(stacks-avail n0)\n");
@@ -150,7 +150,7 @@ void generate_problem(char *filename, int items, int instance)
 			}
 		if (semiground==0 && ADL==0)
 			fprintf(outfile,"(pending-products-per-order o%d n%d)\n",i,count_products);
-		fprintf(outfile,"\n");	
+		fprintf(outfile,"\n");
 	}
 
 	if (semiground==0 && ADL==0)
@@ -188,7 +188,7 @@ if (negated==0)
 	fprintf(outfile,"(:goal\n(and\n");
 	for(i=1;i<=Orders;i++)
 		fprintf(outfile,"(shipped o%d)\n",i);
-	
+
 	if (net_benefit==1)
 		for(i=1;i<=Orders;i++)
 			for (j=1;j<=Products;j++)
@@ -210,7 +210,7 @@ if (negated==0)
 		fprintf(outfile,"(:metric minimize (total-cost))\n\n)\n\n");
 	else
 		fprintf(outfile,"(:metric minimize (total-time))\n\n)\n\n");
-	
+
 	fclose(outfile);
 }
 
@@ -248,7 +248,7 @@ void generate_domain(char *filename)
 		fprintf(outfile,"(:types order product count)\n");
 	else
 		fprintf(outfile,"(:types order product)\n");
-	
+
 	fprintf(outfile,"(:constants \n");
 	for(j=1;j<=Products;j++)
 		fprintf(outfile," p%d",j);
@@ -323,15 +323,15 @@ void generate_domain(char *filename)
 		fprintf(outfile,"(:action start-order\n");
 	else
 		fprintf(outfile,"(:durative-action start-order\n");
-	
+
 	if (numeric==0)
 		fprintf(outfile,":parameters (?o - order ?avail ?new-avail - count)\n");
 	else
 		fprintf(outfile,":parameters (?o - order)\n");
-	
+
 	if (temporal==1)
 		fprintf(outfile,":duration (= ?duration 1)\n");
-	
+
 	if (temporal==0)
 		fprintf(outfile,":precondition ");
 	else
@@ -357,7 +357,7 @@ void generate_domain(char *filename)
 		fprintf(outfile,":effect (and (not (waiting ?o))(started ?o)");
 	else
 		fprintf(outfile,":effect (and (at start (not (waiting ?o)))(at end (started ?o))");
-	
+
 	if (temporal==0)
 		if (numeric==0)
 			fprintf(outfile,"(not (stacks-avail ?avail))(stacks-avail ?new-avail))\n");
@@ -368,9 +368,9 @@ void generate_domain(char *filename)
 			fprintf(outfile,"(at start (not (stacks-avail ?avail)))(at end (stacks-avail ?new-avail)))\n");
 		else
 			fprintf(outfile,"(at start (increase (stacks-in-use) 1)))\n");
-	
+
 	fprintf(outfile,")\n\n");
-	
+
 	// MAKE-PRODUCT
 	for(j=1;j<=Products;j++)
 	{
@@ -445,14 +445,14 @@ void generate_domain(char *filename)
 					fprintf(outfile,"(made p%d)",j);
 				else
 					fprintf(outfile,"(at start (made p%d))",j);
-		
+
 		if (numeric==0)
 			if (temporal==0)
 				fprintf(outfile,"(stacks-avail ?avail)(next-count ?avail ?new-avail)");
 			else
 				fprintf(outfile,"(at start (stacks-avail ?avail))(at start (next-count ?avail ?new-avail))");
 		fprintf(outfile,")\n");
-		
+
 		if (temporal==0)
 			fprintf(outfile,":effect (and (not (started o%d))(shipped o%d)",i,i);
 		else
@@ -467,12 +467,12 @@ void generate_domain(char *filename)
 				fprintf(outfile,"(at start (not (stacks-avail ?avail)))(at end (stacks-avail ?new-avail)))");
 			else
 				fprintf(outfile,"(at end (decrease (stacks-in-use) 1)))");
-		
+
 		fprintf(outfile,")\n\n");
 	}
 
-	fprintf(outfile,")\n\n");	
-	
+	fprintf(outfile,")\n\n");
+
 	fclose(outfile);
 }
 
@@ -499,7 +499,7 @@ int main(int argc, char** argv) {
 			strcat(infilename,temps);
 			strcat(problemfilename,temps);
 			strcat(domainfilename,temps);
-			
+
 			strcat(infilename,"_");
 			strcat(problemfilename,"_");
 			strcat(domainfilename,"_");
@@ -512,10 +512,10 @@ int main(int argc, char** argv) {
 			strcat(infilename,".txt");
 			strcat(problemfilename,".pddl");
 			strcat(domainfilename,".pddl");
-		
+
 			read_input(infilename);
 	//		print_problem();
-			
+
 			generate_problem(problemfilename, i,j);
 			if (semiground==1 && net_benefit==0)
 				generate_domain(domainfilename);
@@ -540,7 +540,7 @@ void generate_instances(int start, int finish, int step, int min_instance, int m
 			strcat(infilename,temps);
 			strcat(problemfilename,temps);
 			strcat(domainfilename,temps);
-			
+
 			strcat(infilename,"_");
 			strcat(problemfilename,"_");
 			strcat(domainfilename,"_");
@@ -553,10 +553,10 @@ void generate_instances(int start, int finish, int step, int min_instance, int m
 			strcat(infilename,".txt");
 			strcat(problemfilename,".pddl");
 			strcat(domainfilename,".pddl");
-		
+
 			read_input(infilename);
 	//		print_problem();
-			
+
 			generate_problem(problemfilename, i,j);
 			if (semiground==1)
 				generate_domain(domainfilename);
@@ -584,5 +584,5 @@ int main(int argc, char** argv) {
 		generate_instances(5, 34, 1, 1, 3);
 		generate_instances(35, 100, 5, 1, 3);
 	}
-	return 1;
+	return 0;
 }

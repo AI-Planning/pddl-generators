@@ -30,6 +30,8 @@
 ^nomystery/nomystery$
 ^nomystery/release-search$
 ^npuzzle/n-puzzle-generator$
+^openstacks/generate_pddl$
+^openstacks/generate_problems$
 ^rover/rovgen$
 ^satellite/satgen$
 ^schedule/schedule$

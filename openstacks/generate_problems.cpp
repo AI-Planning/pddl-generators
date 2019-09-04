@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 			generate_problem(Products,Orders,filename,Density);
 		}
 
-	return 1;
+	return 0;
 }
 
 int compute_distance(int order, int product)
@@ -83,7 +83,7 @@ void swap_orders(int o1, int o2, int Orders, int Products)
 }
 
 int generate_problem(int Products,int Orders,char *filename,int Density){
-	
+
 	FILE *outfile;
 	int i,j;
 	int rand100;
@@ -97,7 +97,7 @@ int generate_problem(int Products,int Orders,char *filename,int Density){
 		{
 			int p;
 			int D=compute_distance(i,j);
-			rand100 = (int)(((double) rand() / 
+			rand100 = (int)(((double) rand() /
                          (double) RAND_MAX) * RANGE_MAX + RANGE_MIN);
 //			if (rand100<=Density)
 			p=gaussian(D,Products,Density);
@@ -115,7 +115,7 @@ int generate_problem(int Products,int Orders,char *filename,int Density){
 			count+=A[i][j];
 		if (count==0)
 		{
-			rand100 = (int)(((double) rand() / 
+			rand100 = (int)(((double) rand() /
                          (double) RAND_MAX) * (Products-1) );
 			A[i][rand100]=1;
 		}
@@ -129,7 +129,7 @@ int generate_problem(int Products,int Orders,char *filename,int Density){
 			count+=A[i][j];
 		if (count==0)
 		{
-			rand100 = (int)(((double) rand() / 
+			rand100 = (int)(((double) rand() /
                          (double) RAND_MAX) * (Orders-1) );
 			A[rand100][j]=1;
 		}
@@ -157,12 +157,12 @@ int generate_problem(int Products,int Orders,char *filename,int Density){
 
 	for (j=1;j<=Products;j++)
 	{
-		rand100 = 10*(int)(((double) rand() / 
+		rand100 = 10*(int)(((double) rand() /
                          (double) RAND_MAX) * 10+1);
 		fprintf(outfile,"%d ", rand100);
 	}
 	fprintf(outfile,"\n");
-	
+
 	fclose(outfile);
 	return 1;
 }
