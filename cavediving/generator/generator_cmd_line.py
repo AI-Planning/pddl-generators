@@ -239,7 +239,7 @@ def process_args():
             raise InputException("Max hiring cost is less than max.")
 
     except InputException as e:
-        print(e.message)
+        print(e)
         print("Use --help flag to display usage information.")
         sys.exit(1)
     return arg_processor

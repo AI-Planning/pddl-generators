@@ -200,7 +200,7 @@ def make_hiring_costs(neg_relationships, min_cost, max_cost, perturb):
 
     hiring_costs = {}
     cost_inc = cost_range / float(len(sorted_rels))
-    for rid, (nr, nr_d) in enumerate(sorted_rels):
+    for rid, (_, nr_d) in enumerate(sorted_rels):
         for d in nr_d:
             base_cost = min_cost + cost_inc * rid
             base_cost += random.random() * 2 * perturb * base_cost - perturb * base_cost
