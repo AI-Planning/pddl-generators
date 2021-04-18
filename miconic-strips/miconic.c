@@ -214,11 +214,11 @@ int main( int argc, char *argv[] )
 
   /* goal condition
    */
-  printf("\n\n\n(:goal");
+  printf("\n\n\n(:goal (and");
   for ( i = 0; i < gpassengers; i++ ) {
     printf("\n(served p%d)", i);
   }
-  printf("\n)");
+  printf("\n))");
   /* that's it
    */
   printf("\n)");
