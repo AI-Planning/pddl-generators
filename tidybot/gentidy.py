@@ -4,7 +4,7 @@ import os.path
 import subprocess
 import sys
 
-JAR_NAME = "tidybot-1.0.1-snapshot-standalone.jar"
+JAR_NAME = "tidybot.jar"
 
 worldsize = sys.argv[1]
 ntables = sys.argv[2]
@@ -18,7 +18,7 @@ script_dir = os.path.abspath(os.path.dirname(__file__))
 cmd = [
     "java",
     "-jar",
-    "{script_dir}/{JAR_NAME}".format(**locals()),
+    f"{script_dir}/{JAR_NAME}",
     worldsize,
     ntables,
     ncupboards,

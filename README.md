@@ -12,21 +12,25 @@ Planning Competitions (IPC).
 # Feedback
 * Bug reports and pull requests are appreciated.
 
-# Cite
-Please cite this repository by using
+# Citation
+We revised and extended the set of generators significantly when working on creating
+the Autoscale benchmarks. If you use the generators for a publication, please use the
+following citation:
 
-    @InProceedings{fawcett-et-al-icaps2011wspal,
-      author =       "Chris Fawcett and Malte Helmert and Holger Hoos and
-                      Erez Karpas and Gabriele R{\"o}ger and Jendrik Seipp",
-      title =        "{FD-Autotune}: Domain-Specific Configuration using
-                      {Fast} {Downward}",
-      crossref =     "icaps2011wspal",
-      pages =        "13--17"
+    @InProceedings{torralba-et-al-icaps2021,
+      author =       "{\'A}lvaro Torralba and Jendrik Seipp and Silvan Sievers",
+      title =        "Automatic Instance Generation for Classical Planning",
+      crossref =     "icaps2021",
+      pages =        "376--384"
     }
-    @Proceedings{icaps2011wspal,
-      title =        "{ICAPS} 2011 Workshop on Planning and Learning",
-      booktitle =    "{ICAPS} 2011 Workshop on Planning and Learning",
-      year =         "2011"
+    @Proceedings{icaps2021,
+      editor =       "Robert P. Goldman and Susanne Biundo and Michael Katz",
+      title =        "Proceedings of the Thirty-First International Conference on
+                      Automated Planning and Scheduling (ICAPS 2021)",
+      booktitle =    "Proceedings of the Thirty-First International Conference on
+                      Automated Planning and Scheduling (ICAPS 2021)",
+      year =         "2021",
+      publisher =    "AAAI Press"
     }
 
 
@@ -41,7 +45,9 @@ This page was created by Joerg Hoffmann, to form a starting point for people who
 **Note:** We do not make any claims whatsoever about the validity of the problem ranges generated, nor about the adequacy of the kind of problems that are generated within a domain. We have made an effort to imitate closely the examples known from published problem suites, and we have generally chosen the most obvious first-guess randomization strategy. Some of the generators, like the one for Assembly, are quite a hack. Nevertheless, we believe that the generators form an invaluable tool for experimentation - they have definetely done so in our own experiments. Please contact us with any comments or suggestions.
 
 ## Acknowledgments
-We thank all persons involved in the development of any of the domains below. We have mentioned all names of persons we knew were involved, and apologize if someone was left out. Please contact us with any additional information on this. Thanks also go to Malte Helmert for discussions on the validity of problem ranges, and to Ulrich Scholz for pointing out bugs.
+We thank all persons involved in the development of any of the domains below.
+We try to mention the persons involved in creating the generators, but some authors are missing.
+Please contact us with any additional information on this.
 
 
 ## Assembly
@@ -224,7 +230,8 @@ We thank all persons involved in the development of any of the domains below. We
 ## Mprime
 
 *   Origin: Drew McDermott. Used in the AIPS-1998 competition.
-*   Adaptions: Translated all predicate names to get a more intuitive notation. Operator for passing on fuel from one location to another could, in the original version, be instantiated with the same location as origin and destination city, which caused the amount of fuel in that city to increase one unit. Changed that such that origin and destination cities must be different.
+*   Adaptions: Translated all predicate names to get a more intuitive notation. Also use typing. Operator for passing on fuel from one location to another could, in the original version, be instantiated with the same location as origin and destination city, which caused the amount of fuel in that city to increase one unit. Changed that such that origin and destination cities must be different.
+    NOTE: in the aibasel benchmarks repo, the reformulated domain no-mprime does a similar translation of predicate names but doesn't use typing. It also doesn't use the described fix (which the mprime domain of that repo does, however).
 *   Description: Typed STRIPS domain; the name results from Mystery' (see below). Logistics variant where trucks move on a map of locations. Additionally, trucks have only limited transportation capacity, and there are constraints on the amount of fuel. Each location has initially a certain amount of fuel available. Moving a truck away from a location decreases the amount of fuel at that location by one. If a location has more than one fuel item, then it can pass a fuel item over to a different location.
 *   Parameters:
     *   -l number of locations
@@ -238,7 +245,8 @@ We thank all persons involved in the development of any of the domains below. We
 ## Mystery
 
 *   Origin: Drew McDermott. Used in the AIPS-1998 competition.
-*   Adaptions: Translated all predicate names to get a more intuitive notation.
+*   Adaptions: Translated all predicate names to get a more intuitive notation. Also use typing.
+    NOTE: in the aibasel benchmarks repo, the reformulated domain no-mystery does a similar translation of predicate names but doesn't use typing. This is not to be confused with the IPC'11 domain nomystery for which there is also a generator here.
 *   Description: Typed STRIPS domain; the name is because the original specified the semantics in a disguised manner by using unintuitive names for the predicates and constants. The domain is the same like the Mprime domain above, except that there is no way of passing on fuel between locations.
 *   Parameters:
     *   -l number of locations
@@ -248,8 +256,22 @@ We thank all persons involved in the development of any of the domains below. We
     *   -c number of cargos
 *   Generation: Exactly like in Mprime.
 
+## Overview of mystery/mprime/nomystery domain variants
 
-## Schedule
+pddl-generators/mprime: typed, speaking names, pass fuel between locations, no fuel increment
+pddl-generators/mystery: typed, speaking names, like pddl-generators/mprime but no fuel passing
+pddl-generators/nomystery: typed, speaking names, fuel associated with trucks, very different from aibasel/no-mystery
+
+aibasel/mprime: untyped, obfuscated names, pass fuel between locations, forbid increasing fuel
+aibasel/mystery: untyped, obfuscated names, no fuel passing
+aibasel/no-mprime: untyped, speaking names, copy of aibasel/mprime but with speaking predicate names, fuel increasing allowed
+aibasel/no-mystery: untyped, speaking names, copy of aibasel/mystery but with speaking predicate names, no fuel passing
+aibasel/nomystery-{opt,sat}11-strips: same as pddl-generators/nomystery
+
+aibasel/mprime, aibasel/mystery, and aibasel/nomystery-{opt,sat}11-strips are the original IPC domains, with the fix applied to mprime, whereas the versions ins pddl-generators are adaptations which behave the same.
+
+
+** Schedule **
 
 *   Origin: One variation appears in the Prodigy collection by Manuela Veloso. Prepared for the AIPS-2000 competition by Fahiem Bacchus.
 *   Adaptions: None.

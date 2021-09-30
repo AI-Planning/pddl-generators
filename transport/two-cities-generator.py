@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import copy
 import math
@@ -79,10 +79,10 @@ random.seed(seed)
 #         nodes * pi * Connect^2
 connect_distance = math.sqrt((degree * size * size) / (nodes * math.pi * 0.694))
 
-city_a = euclidean_graph.generate_connected(
+city_a = euclidean_graph.generate_connected_safe(
     nodes, size, size, connect_distance, epsilon
 )
-city_b = euclidean_graph.generate_connected(
+city_b = euclidean_graph.generate_connected_safe(
     nodes, size, size, connect_distance, epsilon
 )
 

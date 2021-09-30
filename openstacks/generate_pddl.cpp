@@ -58,7 +58,7 @@ void print_problem()
 	}
 }
 
-void generate_problem(char *filename, int items, int instance)
+void generate_problem(char *filename)
 {
 	int i, j;
 	outfile=fopen(filename,"w");
@@ -69,7 +69,7 @@ void generate_problem(char *filename, int items, int instance)
 		fprintf(outfile,"-time");
 	else
 		fprintf(outfile,"-sequencedstrips");
-	fprintf(outfile,"-p%d_%d)\n",items, instance);
+	fprintf(outfile,")\n");
 
 	fprintf(outfile,"(:domain openstacks");
 	if (net_benefit==1)
@@ -478,7 +478,6 @@ void generate_domain(char *filename)
 
 /*
 int main(int argc, char** argv) {
-	srand( (unsigned)time( NULL ) );
 	if (argc!=6) return -1;
 	char infilename[100],problemfilename[100], domainfilename[100], temps[35];
 	int i, j, start, finish, step, min_instance, max_instance;
@@ -557,14 +556,13 @@ void generate_instances(int start, int finish, int step, int min_instance, int m
 			read_input(infilename);
 	//		print_problem();
 
-			generate_problem(problemfilename, i,j);
+			generate_problem(problemfilename);
 			if (semiground==1)
 				generate_domain(domainfilename);
 		}
 }
 
 int main(int argc, char** argv) {
-	srand( (unsigned)time( NULL ) );
 /*	if (argc!=6) return -1;
 
 */

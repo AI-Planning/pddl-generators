@@ -373,7 +373,7 @@ ostream & operator<<(ostream & o,const problem & p)
 	return o;
 };
 
-observation::observation() : direction(), type(rnd(3)), interesting(rnd(10) < 9)
+observation::observation() : direction(), type(rnd(3)), interesting(true) // (rnd(10) < 9) We prefer to make all observations interesting so that there is always a goal
 {
 	int ims = 1+rnd(mode::howMany()/3);
 	problem::instance()->modes.selectSeveral(images,ims);
@@ -393,10 +393,11 @@ private:
 	static int id;
 	int myID;
 
-	vector<mode> supportedModes;
 	vector<double> calibrationTimes;
 	vector<target> targets;
 public:
+    vector<mode> supportedModes;
+
 	instrument() : myID(id++)
 	{
 		int modes = 1+rnd(3);
@@ -503,6 +504,9 @@ public:
 			o << "\t(= (fuel satellite" << myID << ") " << fuel << ")\n";
 
 	};
+    instrument *rnd_instrument() {
+        return &(instruments[rnd(instruments.size())]);
+    }
 	void goal(ostream & o) const
 	{
 		if(interesting)
@@ -597,6 +601,19 @@ int main(int argc,char * argv[])
 	vector<satellite> sats;
 	for(int i = 0;i < numsats;++i)
 		sats.push_back(satellite(numinsts));
+
+        vector<mode> all_modes;
+
+        //Make sure that all modes are supported
+        problem::instance()->modes.selectSeveral(all_modes,pp.modes.size());
+        for (mode m : all_modes) {
+            if (!m.isSupported()){
+                int s = rnd(numsats);
+                sats[s].rnd_instrument()->supportedModes.push_back(m);
+                m.supported();
+            }
+        }
+
 
 	cout << "(define (problem strips-sat-x-1)\n(:domain satellite)\n(:objects\n";
 	copy(sats.begin(),sats.end(),ostream_iterator<satellite>(cout,""));

@@ -4,12 +4,12 @@
 
 ####### FLAGS
 
-TYPE	= 
-ADDONS	= 
+TYPE	=
+ADDONS	=
 
 CC      = gcc
 
-CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS) 
+CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS)
 # -g -pg
 
 LIBS    = -lm
@@ -30,7 +30,7 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+generator: $(OBJECTS)
 	$(CC) -o schedule $(OBJECTS) $(CFLAGS) $(LIBS)
 
 # misc
@@ -46,5 +46,8 @@ veryclean: clean
 
 lint:
 	lclint -booltype Bool $(SOURCES) 2> output.lint
+
+test: generator
+	./schedule -p 1 -s 0 -c 2 -w 2 -o 2 -Q 80 -W 50 -E 80 -R 50 -T 80 -Y 50 -r 5
 
 # DO NOT DELETE

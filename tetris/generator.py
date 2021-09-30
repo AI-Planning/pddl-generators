@@ -4,8 +4,6 @@
 # IPC 2014
 # author: Mauro Vallati -- University of Huddersfield
 
-from __future__ import print_function
-
 import sys
 import random
 
@@ -16,18 +14,22 @@ to_stamp_L_right = ""
 rows = 4
 
 
+def print_error(msg):
+    print(msg, file=sys.stderr)
+
+
 def help():
-    print("usage: generator.py <grid_size> <conf_blocks>")
-    print(
-        "\t line numbers is used for defining number of lines of the screen. "
-        "The number of column is fixed at 4. E.g., 8-> 8x4 grid. "
-        "Only odd numbers accepted."
+    print_error(f"usage: {sys.argv[0]} <grid_size> <block_type> [random_seed]")
+    print_error(
+        "  grid_size: defines the number of rows. "
+        "Only even numbers are accepted. "
+        "The number of columns is fixed at 4."
     )
-    print("\t conf_blocks:")
-    print("\t\t 1 -> only 1x1 square blocks")
-    print("\t\t 2 -> only 2x1 blocks")
-    print("\t\t 3 -> only L-shaped blocks")
-    print("\t\t 4 -> mix of blocks")
+    print_error("  block_type:")
+    print_error("    1 -> only 1x1 square blocks")
+    print_error("    2 -> only 2x1 blocks")
+    print_error("    3 -> only L-shaped blocks")
+    print_error("    4 -> mix of blocks")
     sys.exit(2)
 
 
@@ -38,7 +40,7 @@ def put_squares(real_number_square):
     squares = [i for i in range(real_number_square)]
     posizionati = 0
     while posizionati < real_number_square:
-        x = random.randint(0, (size_grid / 2))
+        x = random.randint(0, (size_grid // 2))
         y = random.randint(0, rows - 1)
         if matrix[x][y] == "free":
             matrix[x][y] = "square" + str(squares[posizionati])
@@ -57,18 +59,20 @@ def put_squares(real_number_square):
             posizionati = posizionati + 1
 
 
-if len(sys.argv) != 3:
+if len(sys.argv) not in {3, 4}:
     help()
 size_grid = int(sys.argv[1])
 conf_blocks = int(sys.argv[2])
+if len(sys.argv) == 4:
+    random.seed(int(sys.argv[3]))
 if size_grid < 2:
-    print("grid_size too small. Try something bigger than 2.")
+    print_error("grid_size must be at least 2.")
     help()
 if size_grid % 2 != 0:
-    print("only odd values for grid_size are accepted")
+    print_error("Only even values for grid_size are accepted.")
     help()
 if conf_blocks < 1 and conf_blocks > 4:
-    print("invalid block configuration. Valid configurations 1 -- 4.")
+    print_error("Invalid block configuration. Valid configurations: 1 -- 4.")
     help()
 
 # hey, everything is ok. Let's start to do something.
@@ -84,19 +88,19 @@ matrix = [["free" for i in range(rows)] for j in range(size_grid)]
 
 if conf_blocks == 1:
     # only square 1x1
-    max_number_squares = int(size_grid / 2) * rows
+    max_number_squares = (size_grid // 2) * rows
     put_squares(random.randint(1, max_number_squares))
 
 
 if conf_blocks == 2:
     # only 2x1
-    max_number_straights = int(size_grid / 2) * int(rows / 2)
+    max_number_straights = (size_grid // 2) * (rows // 2)
     # random... ??
     real_number_straights = random.randint(1, max_number_straights)
     straights = [i for i in range(real_number_straights)]
     posizionati = 0
     while posizionati < real_number_straights:
-        x = random.randint(0, (size_grid / 2))
+        x = random.randint(0, (size_grid // 2))
         y = random.randint(0, rows - 1)
         if matrix[x][y] == "free":
             direction = random.randint(1, 4)
@@ -198,13 +202,13 @@ if conf_blocks == 2:
 
 if conf_blocks == 3:
     # only L
-    max_number_ls = int(size_grid / 4) * int(rows / 2)
+    max_number_ls = (size_grid // 4) * (rows // 2)
     # random... ??
     real_number_l_right = random.randint(1, max_number_ls)
     l_rights = [i for i in range(real_number_l_right)]
     posizionati = 0
     while posizionati < real_number_l_right:
-        x = random.randint(0, (size_grid / 2) - 1)
+        x = random.randint(0, (size_grid // 2) - 1)
         y = random.randint(0, rows - 2)
         if (
             matrix[x][y] == "free"
@@ -236,12 +240,12 @@ if conf_blocks == 3:
             )
             posizionati = posizionati + 1
 if conf_blocks == 4:
-    max_number_ls = int(size_grid / 4) * int(rows / 2)
+    max_number_ls = (size_grid // 4) * (rows // 2)
     real_number_l_right = random.randint(1, max_number_ls)
     l_rights = [i for i in range(real_number_l_right)]
     posizionati = 0
     while posizionati < real_number_l_right:
-        x = random.randint(0, (size_grid / 2) - 1)
+        x = random.randint(0, (size_grid // 2) - 1)
         y = random.randint(0, rows - 2)
         if (
             matrix[x][y] == "free"
@@ -433,7 +437,7 @@ for i in range(size_grid):
 print(to_stamp_init, end=" ")
 print(")\n(:goal\n(and")
 
-for i in range(0, int(size_grid / 2) + aggiungi):
+for i in range(0, size_grid // 2 + aggiungi):
     for j in range(rows):
         print("(clear f" + str(i) + "-" + str(j) + "f)")
 
