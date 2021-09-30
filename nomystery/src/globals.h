@@ -1,11 +1,11 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "successor_generator.h"
-
 #include <iostream>
 #include <string>
 #include <vector>
+#include "state.h"
+
 using namespace std;
 #define NOT_CONNECTED -1
 
@@ -43,12 +43,19 @@ extern int g_m; /* random edge weights will be drawn from {1..g_m} */
 extern float g_c;
 extern int g_seed;
 extern vector< vector<int> > g_graph;
+extern vector< vector<int> > g_distances;
 extern vector<LocationInfo> g_loc_info;
 extern vector<int> g_masks;
 extern vector<int> g_p_initials;
 extern vector<int> g_p_goals;
 extern vector<int> g_t_initials;
 
-extern SuccessorGenerator g_successor_generator;
+
+extern vector<vector<int>> g_goals_per_initial;
+extern vector<vector<int>> g_initials_per_goal;
+
+
+
+State get_initial_state(); 
 
 #endif

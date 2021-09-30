@@ -9,6 +9,9 @@ for DIR in * ; do
         echo
         echo "Domain: $DIR"
         cd $DIR
+        if [ -e CMakeLists.txt ]; then
+            cmake .
+        fi
         if [ -e Makefile ]; then
             # Handle "./build_all test" and "./build_all clean" separately:
             # don't try to run the command if it doesn't exist.

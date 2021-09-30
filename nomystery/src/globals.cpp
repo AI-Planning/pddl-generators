@@ -3,6 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cassert>
+#include <algorithm>
+#include <limits>
+#include <queue>
+#include "state.h"
+
 
 void usage() {
 	printf("\nusage:\n");
@@ -71,6 +77,15 @@ bool process_command_line(int argc, char *argv[]) {
 
 void output_pddl_file(int initial_fuel) {
 
+    set<int> fuel_levels_road;
+    for (int i = 0; i < g_num_locations; i++) {
+        for (int j = 0; j < g_num_locations; j++) {
+            if (g_graph[i][j] != NOT_CONNECTED) {
+                fuel_levels_road.insert(g_graph[i][j]);
+            }
+        }
+    }
+
 	int max_init_fuel = max(initial_fuel, g_m);
 	int printn = (int) (((float) 100) * g_n);
 	int printc = (int) (((float) 100) * g_c);
@@ -103,7 +118,9 @@ void output_pddl_file(int initial_fuel) {
 	printf("(:init\n");
 	for (int post = 0; post <= max_init_fuel; post++) {
 		for (int pre = post; pre <= max_init_fuel; pre++) {
+                    if (fuel_levels_road.count(pre-post)) {
 			printf("(sum level%d level%d level%d)\n", post, pre - post, pre);
+                    }
 		}
 	}
 	printf("\n");
@@ -225,6 +242,40 @@ void create_random_graph() {
 		g_graph[y][x] = c;
 		num_edges++;
 	}
+
+
+
+        g_distances.resize(g_graph.size());
+        for (int s = 0; s < g_distances.size(); ++s) {
+            g_distances[s].resize(g_graph.size(), std::numeric_limits<int>::max());
+
+            g_distances[s][s] = 0;
+            
+            std::priority_queue<pair<int, int>, std::vector<pair<int, int>>, std::greater<pair<int, int>> > queue;
+            queue.push(make_pair(0, s));
+            while (!queue.empty()) {
+                pair<int, int> top_pair = queue.top();
+                queue.pop();
+                int distance = top_pair.first;
+                int state = top_pair.second;
+                int state_distance = g_distances[s][state];
+                assert(state_distance <= distance);
+                if (state_distance < distance)
+                    continue;
+                for (size_t i = 0; i < g_graph[state].size(); ++i) {
+                    if (g_graph[state][i] == NOT_CONNECTED) continue;
+                    int successor = i;
+                    int cost = g_graph[state][i];
+                    int successor_cost = state_distance + cost;
+                    if (g_distances[s][successor] > successor_cost) {
+                        g_distances[s][successor] = successor_cost;
+                        queue.push(make_pair(successor_cost, successor));
+                    }
+                }
+            }
+
+        }
+        
 }
 
 void g_dump(int input) {
@@ -245,6 +296,9 @@ void g_dump(int input) {
 
 void select_initials_goals() {
 
+    g_initials_per_goal.resize(g_num_locations);
+    g_goals_per_initial.resize(g_num_locations);
+
 	for (int i = 0; i < g_num_trucks; i++) {
 		// int r = random();
 		// cout << "r: " << r << endl;
@@ -253,15 +307,26 @@ void select_initials_goals() {
 	}
 
 	for (int i = 0; i < g_num_packages; i++) {
-		g_p_initials.push_back(random() % g_num_locations);
-		while (true) {
-			int goal = random() % g_num_locations;
-			if (g_p_initials.back() != goal) {
-				g_p_goals.push_back(goal);
-				break;
-			}
-		}
+            int initial = random() % g_num_locations;
+            int goal = random() % g_num_locations;
+
+		while (initial == goal) {
+                    goal = random() % g_num_locations;
+
+                }
+                g_p_initials.push_back(initial);
+                g_p_goals.push_back(goal);
+                if (std::find(g_initials_per_goal[goal].begin(),
+                              g_initials_per_goal[goal].end(),
+                              initial) == g_initials_per_goal[goal].end()) {
+                    g_initials_per_goal[goal].push_back(initial);
+                }
+                if (find(g_goals_per_initial[initial].begin(), g_goals_per_initial[initial].end(), goal) == g_goals_per_initial[initial].end()) {
+                    g_goals_per_initial[initial].push_back(goal);
+                }		
 	}
+
+        
 }
 
 void dump_problem() {
@@ -323,8 +388,34 @@ vector<int> g_p_initials;
 vector<int> g_p_goals;
 vector<int> g_t_initials;
 
+vector<vector<int>> g_goals_per_initial;
+vector<vector<int>> g_initials_per_goal;
+
 vector<vector<int> > g_graph;
 vector<LocationInfo> g_loc_info;
 vector<int> g_masks;
-SuccessorGenerator g_successor_generator;
 
+vector<vector<int> > g_distances;
+
+
+State get_initial_state(){
+    State initial_state;
+    assert(g_t_initials.size() == 1);
+    initial_state.truck_at  = g_t_initials[0];
+    initial_state.locations_to_load.resize(g_graph.size(), false);
+    for (int loc : g_p_initials) {
+        initial_state.locations_to_load[loc] = true;
+    }
+    initial_state.locations_to_deliver.resize(g_graph.size(), -1);
+    for (int loc : g_p_goals) {
+        initial_state.locations_to_deliver[loc] = g_initials_per_goal[loc].size();
+    }
+
+    initial_state.locations_to_load[initial_state.truck_at] = false;
+
+    for (int loc : g_goals_per_initial[initial_state.truck_at]) {
+        initial_state.locations_to_deliver[loc] --;
+    }
+    
+    return initial_state;
+}
