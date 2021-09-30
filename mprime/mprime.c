@@ -5,17 +5,17 @@
  * (C) Copyright 2001 Albert Ludwigs University Freiburg
  *     Institute of Computer Science
  *
- * All rights reserved. Use of this software is permitted for 
- * non-commercial research purposes, and it may be copied only 
+ * All rights reserved. Use of this software is permitted for
+ * non-commercial research purposes, and it may be copied only
  * for that use.  All copies must include this copyright message.
  * This software is made available AS IS, and neither the authors
  * nor the  Albert Ludwigs University Freiburg make any warranty
- * about the software or its performance. 
+ * about the software or its performance.
  *********************************************************************/
 
 
 
-/* 
+/*
  * C code for generating randomozied mprime problems...
  */
 
@@ -108,8 +108,8 @@ int main( int argc, char *argv[] )
 
   /* header
    */
-  printf("(define (problem strips-mprime-l%d-f%d-s%d-v%d-c%d)", 
-	 glocations, gmax_fuel, gmax_space, gvehicles, gcargos);
+  printf("(define (problem strips-mprime-l%d-f%d-s%d-v%d-c%d)",
+         glocations, gmax_fuel, gmax_space, gvehicles, gcargos);
   printf("\n(:domain mprime-strips)");
 
   printf("\n(:objects ");
@@ -163,8 +163,8 @@ int main( int argc, char *argv[] )
   exit( 0 );
 
 }
-  
-  
+
+
 
 
 
@@ -250,7 +250,7 @@ void create_random_locations( void )
  */
 
 
-  
+
 
 
 void print_random_fuels( void )
@@ -262,7 +262,7 @@ void print_random_fuels( void )
   for ( i = 0; i < glocations; i++ ) {
     printf("\n(has-fuel l%d f%d)", i, gfuel[i]);
   }
- 
+
 }
 
 

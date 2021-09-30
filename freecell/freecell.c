@@ -5,17 +5,17 @@
  * (C) Copyright 2001 Albert Ludwigs University Freiburg
  *     Institute of Computer Science
  *
- * All rights reserved. Use of this software is permitted for 
- * non-commercial research purposes, and it may be copied only 
+ * All rights reserved. Use of this software is permitted for
+ * non-commercial research purposes, and it may be copied only
  * for that use.  All copies must include this copyright message.
  * This software is made available AS IS, and neither the authors
  * nor the  Albert Ludwigs University Freiburg make any warranty
- * about the software or its performance. 
+ * about the software or its performance.
  *********************************************************************/
 
 
 
-/* 
+/*
  * C code for generating randomized freecell problems...
  */
 
@@ -113,8 +113,8 @@ int main( int argc, char *argv[] )
 
   /* header
    */
-  printf("(define (problem freecell-f%d-c%d-s%d-i%d", 
-	 gcells, gcols, gsuits, gstacks);
+  printf("(define (problem freecell-f%d-c%d-s%d-i%d",
+         gcells, gcols, gsuits, gstacks);
   for ( i = 0; i < gsuits; i++ ) {
     printf("-%d%d", i, gsuit_size[i]);
   }
@@ -142,8 +142,8 @@ int main( int argc, char *argv[] )
   exit( 0 );
 
 }
-  
-  
+
+
 
 
 
@@ -276,7 +276,7 @@ void print_objects( void )
   max_suit_size = -1;
   for ( i = 0; i < gsuits; i++ ) {
     if ( max_suit_size == -1 ||
-	 gsuit_size[i] > max_suit_size ) {
+         gsuit_size[i] > max_suit_size ) {
       max_suit_size = gsuit_size[i];
     }
   }
@@ -292,7 +292,7 @@ void print_objects( void )
     print_suit( i );
   }
   printf("\n - suit");
-   
+
   printf("\n)");
 
 }
@@ -366,7 +366,7 @@ void print_statics( void )
   max_suit_size = -1;
   for ( i = 0; i < gsuits; i++ ) {
     if ( max_suit_size == -1 ||
-	 gsuit_size[i] > max_suit_size ) {
+         gsuit_size[i] > max_suit_size ) {
       max_suit_size = gsuit_size[i];
     }
   }
@@ -375,13 +375,13 @@ void print_statics( void )
   }
 
   for ( i = 0; i < gsuits; i++ ) {
-    printf("\n(SUIT ");
+    printf("\n(HASSUIT ");
     print_suit( i );
     printf("0 ");
     print_suit( i );
     printf(")");
     for ( j = 0; j < gsuit_size[i]; j++ ) {
-      printf("\n(SUIT ");
+      printf("\n(HASSUIT ");
       print_suit( i );
       print_card( j );
       printf(" ");
@@ -392,7 +392,7 @@ void print_statics( void )
 
   for ( i = 1; i < gsuit_size[0]; i++ ) {
     if ( gsuits >= 2 &&
-	 gsuit_size[1] > i + 1 ) {
+         gsuit_size[1] > i + 1 ) {
       printf("\n(CANSTACK ");
       print_suit( 0 );
       print_card( i );
@@ -402,7 +402,7 @@ void print_statics( void )
       printf(")");
     }
     if ( gsuits >= 4 &&
-	 gsuit_size[3] > i + 1 ) {
+         gsuit_size[3] > i + 1 ) {
       printf("\n(CANSTACK ");
       print_suit( 0 );
       print_card( i );
@@ -415,72 +415,72 @@ void print_statics( void )
   if ( gsuits >= 2 ) {
     for ( i = 1; i < gsuit_size[1]; i++ ) {
       if ( gsuit_size[0] > i + 1 ) {
-	printf("\n(CANSTACK ");
-	print_suit( 1 );
-	print_card( i );
-	printf(" ");
-	print_suit( 0 );
-	print_card( i + 1 );
-	printf(")");
+        printf("\n(CANSTACK ");
+        print_suit( 1 );
+        print_card( i );
+        printf(" ");
+        print_suit( 0 );
+        print_card( i + 1 );
+        printf(")");
       }
       if ( gsuits >= 3 &&
-	   gsuit_size[2] > i + 1 ) {
-	printf("\n(CANSTACK ");
-	print_suit( 1 );
-	print_card( i );
-	printf(" ");
-	print_suit( 2 );
-	print_card( i + 1 );
-	printf(")");
+           gsuit_size[2] > i + 1 ) {
+        printf("\n(CANSTACK ");
+        print_suit( 1 );
+        print_card( i );
+        printf(" ");
+        print_suit( 2 );
+        print_card( i + 1 );
+        printf(")");
       }
     }
   }
   if ( gsuits >= 3 ) {
     for ( i = 1; i < gsuit_size[2]; i++ ) {
       if ( gsuit_size[1] > i + 1 ) {
-	printf("\n(CANSTACK ");
-	print_suit( 2 );
-	print_card( i );
-	printf(" ");
-	print_suit( 1 );
-	print_card( i + 1 );
-	printf(")");
+        printf("\n(CANSTACK ");
+        print_suit( 2 );
+        print_card( i );
+        printf(" ");
+        print_suit( 1 );
+        print_card( i + 1 );
+        printf(")");
       }
       if ( gsuits >= 4 &&
-	   gsuit_size[3] > i + 1 ) {
-	printf("\n(CANSTACK ");
-	print_suit( 2 );
-	print_card( i );
-	printf(" ");
-	print_suit( 3 );
-	print_card( i + 1 );
-	printf(")");
+           gsuit_size[3] > i + 1 ) {
+        printf("\n(CANSTACK ");
+        print_suit( 2 );
+        print_card( i );
+        printf(" ");
+        print_suit( 3 );
+        print_card( i + 1 );
+        printf(")");
       }
     }
   }
   if ( gsuits >= 4 ) {
     for ( i = 1; i < gsuit_size[3]; i++ ) {
       if ( gsuit_size[0] > i + 1 ) {
-	printf("\n(CANSTACK ");
-	print_suit( 3 );
-	print_card( i );
-	printf(" ");
-	print_suit( 0 );
-	print_card( i + 1 );
-	printf(")");
+        printf("\n(CANSTACK ");
+        print_suit( 3 );
+        print_card( i );
+        printf(" ");
+        print_suit( 0 );
+        print_card( i + 1 );
+        printf(")");
       }
       if ( gsuit_size[2] > i + 1 ) {
-	printf("\n(CANSTACK ");
-	print_suit( 3 );
-	print_card( i );
-	printf(" ");
-	print_suit( 2 );
-	print_card( i + 1 );
-	printf(")");
+        printf("\n(CANSTACK ");
+        print_suit( 3 );
+        print_card( i );
+        printf(" ");
+        print_suit( 2 );
+        print_card( i + 1 );
+        printf(")");
       }
     }
   }
-      
+
 }
 
 
@@ -508,13 +508,13 @@ void print_dynamics( void )
       print_card( gstack_member[i][0] );
       printf(")");
       for ( j = 1; j < gnum_stack[i]; j++ ) {
-	printf("\n(ON ");
-	print_suit( gstack_suit[i][j] );
-	print_card( gstack_member[i][j] );
-	printf(" ");
-	print_suit( gstack_suit[i][j-1] );
-	print_card( gstack_member[i][j-1] );
-	printf(")");
+        printf("\n(ON ");
+        print_suit( gstack_suit[i][j] );
+        print_card( gstack_member[i][j] );
+        printf(" ");
+        print_suit( gstack_suit[i][j-1] );
+        print_card( gstack_member[i][j-1] );
+        printf(")");
       }
       printf("\n(CLEAR ");
       print_suit( gstack_suit[i][gnum_stack[i]-1] );
@@ -541,7 +541,7 @@ void usage( void ) {
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
   printf("-f <num>    number of (free)cells (minimal 0)\n");
   printf("-c <num>    number of cols (minimal 1)\n");
-  printf("-s <num>    number of suits (minimal 1)\n");
+  printf("-s <num>    number of suits (minimal 1, maximal 4)\n");
   printf("-0 .. -3 <num>    suit sizes\n");
   printf("-i <num>    number of initial stacks (minimal 1)\n\n");
   printf("-r <num>    random seed (optional)\n\n");

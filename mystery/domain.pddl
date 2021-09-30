@@ -1,14 +1,15 @@
 (define (domain mystery-strips)
-   (:types space fuel
-           location vehicle cargo)
+   (:requirements :typing)
+   (:types space fuel location movable - object
+        vehicle cargo - movable)
    (:predicates
-       (at ?v ?l)
-       (conn ?l1 ?l2)
-       (has-fuel ?l ?f)
-       (fuel-neighbor ?f1 ?f2)
-       (in ?c ?v)
-       (has-space ?v ?s)
-       (space-neighbor ?s1 ?s2)
+       (at ?v - movable ?l - location)
+       (conn ?l1 ?l2 - location)
+       (has-fuel ?l - location ?f - fuel)
+       (fuel-neighbor ?f1 ?f2 - fuel)
+       (in ?c - cargo ?v - vehicle)
+       (has-space ?v - vehicle ?s - space)
+       (space-neighbor ?s1 ?s2 - space)
 
 )
 

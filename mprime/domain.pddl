@@ -5,7 +5,7 @@
    (:predicates
        (at ?o - locatable ?l - location)
        (conn ?l1 ?l2 - location)
-       (has-fuel ?l -location ?f - fuel)
+       (has-fuel ?l - location ?f - fuel)
        (fuel-neighbor ?f1 ?f2 - fuel)
        (in ?c - cargo ?v - vehicle)
        (has-space ?v - vehicle ?s - space)

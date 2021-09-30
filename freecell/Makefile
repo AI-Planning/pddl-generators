@@ -4,12 +4,12 @@
 
 ####### FLAGS
 
-TYPE	= 
-ADDONS	= 
+TYPE	=
+ADDONS	=
 
 CC      = gcc
 
-CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS) 
+CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS)
 # -g -pg
 
 LIBS    = -lm
@@ -46,5 +46,8 @@ veryclean: clean
 
 lint:
 	lclint -booltype Bool $(SOURCES) 2> output.lint
+
+test: freecell
+	./freecell -f 5 -c 1 -s 4 -0 2 -1 2 -2 2 -3 2 -i 1 -r 0
 
 # DO NOT DELETE

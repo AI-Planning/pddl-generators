@@ -16,7 +16,7 @@ def print_usage():
     )
     print("  num_cocktails (min 1)")
     print("  num_ingredients (min 2)")
-    print("  num_shots (min max[1,num_cocktails+1])")
+    print("  num_shots (min num_cocktails+1)")
     print("  random_seed (min 1, optional)")
 
 
