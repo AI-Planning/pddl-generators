@@ -1,0 +1,26 @@
+One current issue is that locked spots are distributed entirely randomly. It would be more
+interesting if we have some kind of "rooms" scenario where is more likely that one must
+traverse via some locked places.
+
+
+usage:
+
+OPTIONS   DESCRIPTIONS
+
+-x <num>    x scale (minimal 1)
+-y <num>    y scale (minimal 1)
+
+-t <num>    num different key+lock types (minimal 1)
+
+-k <num>    number keys vector (dezimal)
+-l <num>    number locks vector (dezimal)
+
+-p <num>    probability of any key being mentioned in the goal (preset: 100)
+
+-s <num>    random seed (optional)
+
+
+IPC instances:
+
+-x 5 -y 5 -t 4 -k 8 -l 8 -p ? -s 0
+

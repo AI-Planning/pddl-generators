@@ -1,0 +1,12 @@
+Instance Generator for Nurikabe
+
+Alvaro Torralba <torralba@cs.uni-saarland.de>
+Florian Pommerening <florian.pommerening@unibas.ch>
+
+This is a version of the Floortile domain where a robot must paint a certain pattern in a
+grid and cannot move into locations that have already been painted. The pattern is not
+decided in advance, but instead it must fulfill the constraints of a simplified Nurikabe
+puzzle. The grid has some positions marked with a number. When the robot is on top of a
+cell with a number N on it, it can start the paint action so that the next N cells
+(including the current position) will be painted. There is an additional constraint that
+two adjacent cells cannot belong to cells of different groups.

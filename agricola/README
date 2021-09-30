@@ -1,0 +1,9 @@
+Instance generator for the Agricola domain
+submitted by Tomas de la Rosa <trosa@inf.uc3m.es>
+
+Description: This domain is loosely based on the board game Agricola. The game models a
+farm with some workers. The game has a number of rounds and stages, in which the player
+must select actions for every worker. Some of this actions will obtain resources, and
+others will increase the number of workers. This allows the player to perform more actions
+per turn but also increases the amount of food consumed at the end of the turn,
+potentially leading into dead ends.

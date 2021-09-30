@@ -22,9 +22,9 @@ grippers/grippers
 hanoi/hanoi
 logistics/logistics
 maintenance/maintenance
-miconic-adl/miconic
-miconic-simple/miconic
-miconic-strips/miconic
+miconic/miconic
+miconic-fulladl/miconic
+miconic-simpleadl/miconic
 movie/movie
 mprime/mprime
 mystery/mystery
