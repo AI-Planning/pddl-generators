@@ -31,8 +31,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install --upgrade numpy tox z3
+        python -m pip install --upgrade pip tox
 
     - name: Run tests
       run: |
