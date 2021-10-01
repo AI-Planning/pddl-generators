@@ -50,7 +50,7 @@ collection:
 > self-explanatory in terms of how to build them (makefiles are included),
 > and how to run them. In the less obvious cases, we have also included a
 > README file.
-
+>
 > **Note:** We do not make any claims whatsoever about the validity of the
 > problem ranges generated, nor about the adequacy of the kind of problems
 > that are generated within a domain. We have made an effort to imitate
@@ -60,7 +60,7 @@ collection:
 > Nevertheless, we believe that the generators form an invaluable tool for
 > experimentation --- they have definitely done so in our own experiments.
 > Please contact us with any comments or suggestions.
-
+>
 > We thank all persons involved in the development of the domains [in this
 > repository]. We try to mention the persons involved in creating the
 > generators, but some authors are missing. Please contact us with any
