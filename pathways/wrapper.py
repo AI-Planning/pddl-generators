@@ -126,17 +126,26 @@ def main():
 
     problem_file = os.path.abspath(args.problem)
 
-    p = subprocess.run([
+    p = subprocess.run(
+        [
             os.path.join(DIR, "pathways"),
-            "--seed", str(args.seed),
-            "-out", problem_file,
-            "-R", str(args.reactions),
-            "-G", str(args.goals),
-            "-L", str(args.initial_substances),
-            "-n", "Pathways-Problem"],
+            "--seed",
+            str(args.seed),
+            "-out",
+            problem_file,
+            "-R",
+            str(args.reactions),
+            "-G",
+            str(args.goals),
+            "-L",
+            str(args.initial_substances),
+            "-n",
+            "Pathways-Problem",
+        ],
         stdout=subprocess.PIPE,
         universal_newlines=True,
-        check=True)
+        check=True,
+    )
     dummy_actions_string_original = p.stdout.strip().replace("\t", "    ")
 
     # Define molecules in domain file instead of problem file. Not sure if this is necessary.
@@ -160,15 +169,27 @@ def main():
     dummy_strips_actions = []
     for mol1, mol2, goal in goals:
         for molecule in [mol1, mol2]:
-            dummy_strips_actions.append(make_strips_dummy_action(molecule, len(dummy_strips_actions), goal))
+            dummy_strips_actions.append(
+                make_strips_dummy_action(molecule, len(dummy_strips_actions), goal)
+            )
 
     constants_pddl = "(:constants\n    {} - simple\n\n    {} - complex)\n".format(
-        " ".join(molecules["simple"]), " ".join(molecules["complex"]))
+        " ".join(molecules["simple"]), " ".join(molecules["complex"])
+    )
 
-    goal_predicates = "\n".join([f"    (goal{goal})" for goal in range(1, args.goals + 1)])
+    goal_predicates = "\n".join(
+        [f"    (goal{goal})" for goal in range(1, args.goals + 1)]
+    )
     dummy_actions_string = "\n".join([f"{action}" for action in dummy_strips_actions])
 
-    domain_parts = [DOMAIN_HEADER, constants_pddl, PREDICATES.format(**locals()), ACTIONS, f"{dummy_actions_string}\n)", ""]
+    domain_parts = [
+        DOMAIN_HEADER,
+        constants_pddl,
+        PREDICATES.format(**locals()),
+        ACTIONS,
+        f"{dummy_actions_string}\n)",
+        "",
+    ]
 
     with open(args.domain, "w") as f:
         f.write("\n".join(domain_parts))

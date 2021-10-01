@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import argparse
 from itertools import product
@@ -8,37 +8,38 @@ import sys
 
 
 def print_solver(instance_name, width, height, s):
-    print width, height
+    print(width, height)
     for (x, y, n) in s:
-        print x, y, n
+        print(x, y, n)
 
 
-def adjacent (width, height, x, y):
+def adjacent(width, height, x, y):
     res = []
     if x < width - 1:
-        res.append((x+1, y))
+        res.append((x + 1, y))
     if y < height - 1:
-        res.append((x, y+1))
+        res.append((x, y + 1))
     if x > 0:
-        res.append((x-1, y))
+        res.append((x - 1, y))
     if y > 0:
-        res.append((x, y-1))
+        res.append((x, y - 1))
     return res
 
 
-def get_adjacent_pairs (width, height):
+def get_adjacent_pairs(width, height):
     res = []
     for x in range(0, width):
         for y in range(0, height):
             if x < width - 1:
-                res.append((x, y, x+1, y))
+                res.append((x, y, x + 1, y))
             if y < height - 1:
-                res.append((x, y, x, y+1))
+                res.append((x, y, x, y + 1))
             if x > 0:
-                res.append((x, y, x-1, y))
+                res.append((x, y, x - 1, y))
             if y > 0:
-                res.append((x, y, x, y-1))
+                res.append((x, y, x, y - 1))
     return res
+
 
 def print_pddl(instance_name, width, height, s):
     max_number = max([n for (x, y, n) in s])
@@ -59,7 +60,9 @@ def print_pddl(instance_name, width, height, s):
             elif p not in blocked_positions:
                 blocked_positions.append(p)
 
-    partof_positions = [(x, y, z) for (x, y, z) in partof_positions if (x, y) not in blocked_positions]
+    partof_positions = [
+        (x, y, z) for (x, y, z) in partof_positions if (x, y) not in blocked_positions
+    ]
 
     # print available_positions
     # print blocked_positions
@@ -71,22 +74,39 @@ def print_pddl(instance_name, width, height, s):
 
     goal_facts = "\n ".join(["(group-painted g%d)" % n for n in range(0, len(s))])
 
-    next_facts =  "\n ".join(["(NEXT n%d n%d)" % (n, n+1)  for n in range(0, max_number)])
+    next_facts = "\n ".join(
+        ["(NEXT n%d n%d)" % (n, n + 1) for n in range(0, max_number)]
+    )
 
-    is_adjacent_facts = "\n ".join(["(CONNECTED pos-%s-%s pos-%s-%s)" % adj  for adj in get_adjacent_pairs(width, height)])
+    is_adjacent_facts = "\n ".join(
+        [
+            "(CONNECTED pos-%s-%s pos-%s-%s)" % adj
+            for adj in get_adjacent_pairs(width, height)
+        ]
+    )
 
-    source_facts = "\n ".join(["(SOURCE pos-%s-%s g%d)" % (s[i][0], s[i][1], i) for  i in range(0, len(s))])
+    source_facts = "\n ".join(
+        ["(SOURCE pos-%s-%s g%d)" % (s[i][0], s[i][1], i) for i in range(0, len(s))]
+    )
 
-    available_facts = "\n ".join(["(available pos-%s-%s)" % (x, y) for (x, y) in available_positions])
+    available_facts = "\n ".join(
+        ["(available pos-%s-%s)" % (x, y) for (x, y) in available_positions]
+    )
 
-    blocked_facts = "\n ".join(["(blocked pos-%s-%s)" % (x, y) for (x, y) in blocked_positions])
+    blocked_facts = "\n ".join(
+        ["(blocked pos-%s-%s)" % (x, y) for (x, y) in blocked_positions]
+    )
 
-    part_of_facts = "\n ".join(["(part-of pos-%s-%s g%d)" % (x, y, i) for (x, y, i) in partof_positions])
+    part_of_facts = "\n ".join(
+        ["(part-of pos-%s-%s g%d)" % (x, y, i) for (x, y, i) in partof_positions]
+    )
 
-    remaining_cell_facts = "\n ".join(["(remaining-cells g%d n%d)" % (i, s[i][2]) for  i in range(0, len(s))])
+    remaining_cell_facts = "\n ".join(
+        ["(remaining-cells g%d n%d)" % (i, s[i][2]) for i in range(0, len(s))]
+    )
 
-
-    print """(define (problem {instance_name})
+    print(
+        """(define (problem {instance_name})
 (:domain paint-nurikabe)
 (:objects
   {pos_objects} - cell
@@ -112,16 +132,19 @@ def print_pddl(instance_name, width, height, s):
  {goal_facts}
 ))
 )
-""".format(**locals())
+""".format(
+            **locals()
+        )
+    )
 
 
 def print_solution(width, height, m):
-    print width, height
+    print(width, height)
     for row in m:
         for cell in row:
             if cell == " ":
                 cell = "."
-            print cell,
+            print(cell, end=" ")
         print
 
 
@@ -132,8 +155,10 @@ def is_number(x):
     except ValueError:
         return False
 
+
 def is_empty(cell):
     return cell == " " or is_number(cell)
+
 
 def reconstruct_islands(colored_map):
     result = [list(row) for row in colored_map]
@@ -143,19 +168,24 @@ def reconstruct_islands(colored_map):
     for y, row in enumerate(result):
         for x, cell in enumerate(row):
             if is_empty(cell):
-                queue = [(x,y)]
+                queue = [(x, y)]
                 result[y][x] = "X"
                 island_cells = []
-                island_start = (x,y)
+                island_start = (x, y)
                 while queue:
                     cx, cy = queue.pop()
-                    island_cells.append((cx,cy))
-                    for nx, ny in [(cx + 1, cy), (cx - 1, cy), (cx, cy + 1), (cx, cy - 1)]:
+                    island_cells.append((cx, cy))
+                    for nx, ny in [
+                        (cx + 1, cy),
+                        (cx - 1, cy),
+                        (cx, cy + 1),
+                        (cx, cy - 1),
+                    ]:
                         if 0 <= ny < height and 0 <= nx < width:
                             if is_number(result[ny][nx]):
-                                island_start = (nx,ny)
+                                island_start = (nx, ny)
                             if is_empty(result[ny][nx]):
-                                queue.append((nx,ny))
+                                queue.append((nx, ny))
                                 result[ny][nx] = "X"
                 islands.append((island_start, island_cells))
     for (sx, sy), cells in islands:
@@ -173,7 +203,7 @@ def scale_down_instance(colored_map, target_width, target_height):
 
 def print_map(colored_map):
     for row in colored_map:
-        print " ".join(row)
+        print(" ".join(row))
 
 
 def map_to_instance(colored_map):
@@ -184,11 +214,12 @@ def map_to_instance(colored_map):
                 s.append((x, y, int(cell)))
     return s
 
+
 def random_map(width, height):
     STOPCHANCE = 0.01
     BRANCHCHANCE = 0.5
     cmap = [[" " for x in range(width)] for y in range(height)]
-    ends = [(random.randint(0, width-1), random.randint(0, height-1))]
+    ends = [(random.randint(0, width - 1), random.randint(0, height - 1))]
     cmap[ends[0][1]][ends[0][0]] = "#"
     next_ends = []
     while ends:
@@ -198,10 +229,19 @@ def random_map(width, height):
             neighbors = []
             for nx, ny in [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]:
                 if 0 <= ny < height and 0 <= nx < width and cmap[ny][nx] == " ":
-                    for nnx, nny in [(nx + 1, ny), (nx - 1, ny), (nx, ny + 1), (nx, ny - 1)]:
+                    for nnx, nny in [
+                        (nx + 1, ny),
+                        (nx - 1, ny),
+                        (nx, ny + 1),
+                        (nx, ny - 1),
+                    ]:
                         if (nnx, nny) == (x, y):
                             continue
-                        if 0 <= nny < height and 0 <= nnx < width and cmap[nny][nnx] == "#":
+                        if (
+                            0 <= nny < height
+                            and 0 <= nnx < width
+                            and cmap[nny][nnx] == "#"
+                        ):
                             break
                     else:
                         neighbors.append((nx, ny))
@@ -216,6 +256,7 @@ def random_map(width, height):
         next_ends = []
     return reconstruct_islands(cmap)
 
+
 def reasonable_random_map(width, height):
     size = max(width, height)
     for i in range(1000):
@@ -229,22 +270,21 @@ def generate_state_lpo(args):
     url = "http://www.logicgamesonline.com/nurikabe/archive.php?pid=%d" % args.pid
     instance_name = "nurikabe-lpo%d-%dx%d" % (args.pid, args.width, args.height)
     import urllib2
+
     try:
-        response = urllib2.urlopen(url, timeout = 5)
+        response = urllib2.urlopen(url, timeout=5)
         content = response.read()
     except urllib2.URLError as e:
-        print e
-        sys.exit(1)
+        sys.exit(e)
 
     puzzle = ""
     for line in content.splitlines():
-        if line.startswith("var solpuz = \""):
-            puzzle = line[len("var solpuz = \""):-2]
+        if line.startswith('var solpuz = "'):
+            puzzle = line[len('var solpuz = "') : -2]
             break
-    if len(puzzle) != 9*9:
-        print "Cannot find or parse puzzle"
-        sys.exit(1)
-    colored_map = [list(puzzle[i*9:(i+1)*9]) for i in range(9)]
+    if len(puzzle) != 9 * 9:
+        sys.exit("Cannot find or parse puzzle")
+    colored_map = [list(puzzle[i * 9 : (i + 1) * 9]) for i in range(9)]
     colored_map = scale_down_instance(colored_map, args.width, args.height)
     return instance_name, colored_map
 
@@ -281,9 +321,9 @@ def main():
     if args.output_type == "raw":
         print_solver(instance_name, args.width, args.height, s)
     elif args.output_type == "pddl":
-         print_pddl(instance_name, args.width, args.height, s)
+        print_pddl(instance_name, args.width, args.height, s)
     elif args.output_type == "solution":
-         print_solution(args.width, args.height, m)
+        print_solution(args.width, args.height, m)
 
 
 if __name__ == "__main__":

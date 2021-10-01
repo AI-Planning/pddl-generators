@@ -118,7 +118,7 @@ def generate_connected(num_vert, width, height, connect_distance, epsilon):
             if attempts == MAX_CONNECTION_ATTEMPTS:
                 connect_distance += 1
                 break
-                #raise ValueError("failed to connect graph: increase CONNECT_DISTANCE")
+                # raise ValueError("failed to connect graph: increase CONNECT_DISTANCE")
         graph = generate(num_vert, width, height, connect_distance, epsilon)
         if graph.is_connected():
             return graph
@@ -129,14 +129,15 @@ def generate_connected(num_vert, width, height, connect_distance, epsilon):
 def generate_connected_safe(num_vert, width, height, connect_distance, epsilon):
     multiplier = 1.5
     while True:
-        try: 
-            city = generate_connected(num_vert, width, height, connect_distance, epsilon)
+        try:
+            city = generate_connected(
+                num_vert, width, height, connect_distance, epsilon
+            )
             return city
         except ValueError:
-            width = max(width+1, int(width*multiplier) )
-            height = max(height+1, int(height*multiplier) )
-            connect_distance*=multiplier
-    
+            width = max(width + 1, int(width * multiplier))
+            height = max(height + 1, int(height * multiplier))
+            connect_distance *= multiplier
 
 
 def usage():

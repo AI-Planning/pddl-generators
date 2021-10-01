@@ -38,10 +38,10 @@ eps = 0.01
 
 
 def make_caves(branch_depths):
-    """ Generate a random tree with the branches of the given lengths.
-        Return the nodes, the node depths, and the leaf nodes.
+    """Generate a random tree with the branches of the given lengths.
+    Return the nodes, the node depths, and the leaf nodes.
 
-        ([int]) -> [(int, int)], [int], [int]
+    ([int]) -> [(int, int)], [int], [int]
     """
     edges = [(x, x + 1) for x in range(branch_depths[0])]
     node_depths = list(range(branch_depths[0] + 1))
@@ -62,9 +62,9 @@ def make_caves(branch_depths):
 
 
 def make_objectives(objective_depths, node_depths, leaves):
-    """ Make num_objectives objectives at leaves with the specified depths.
+    """Make num_objectives objectives at leaves with the specified depths.
 
-        ([int], [int]) -> [int]
+    ([int], [int]) -> [int]
     """
     objectives = []
     for obj_d in objective_depths:
@@ -83,15 +83,15 @@ def make_objectives(objective_depths, node_depths, leaves):
 def make_tanks_and_divers(
     node_depths, objectives, num_tank_adjustment, num_diver_adjustment, ordered_tanks
 ):
-    """ Make the required number of tank and diver objects.
-        |Tanks| = 2^(depth+1). (1 dummy (if ordered))
-        |Divers| = 2^(depth-1)
+    """Make the required number of tank and diver objects.
+    |Tanks| = 2^(depth+1). (1 dummy (if ordered))
+    |Divers| = 2^(depth-1)
 
-        Adjust the number of tanks and divers by num_tank_adjustment and
-        num_diver_adjustment. If either of these numbers is negative, the
-        problem will be unsatisfiable.
+    Adjust the number of tanks and divers by num_tank_adjustment and
+    num_diver_adjustment. If either of these numbers is negative, the
+    problem will be unsatisfiable.
 
-        ([int], [int], int, int, bool) -> [str], [str]
+    ([int], [int], int, int, bool) -> [str], [str]
     """
     num_tanks = num_tank_adjustment - 1
     num_divers = num_diver_adjustment
@@ -107,15 +107,15 @@ def make_tanks_and_divers(
 
 
 def make_positive_relationships(objectives, node_depths):
-    """ Create a (transitively closed) graph of relationships showing which
-        divers depend on other divers to deliver them tanks to satisfy the
-        objectives.
+    """Create a (transitively closed) graph of relationships showing which
+    divers depend on other divers to deliver them tanks to satisfy the
+    objectives.
 
-        Process - Start at each objective and walk back to the entrance keeping
-        a list of divers as we go. At each step we need 1 additional diver to
-        service each diver in our list.
+    Process - Start at each objective and walk back to the entrance keeping
+    a list of divers as we go. At each step we need 1 additional diver to
+    service each diver in our list.
 
-        ([int], [int]) -> set([(int, int)])
+    ([int], [int]) -> set([(int, int)])
     """
     cur_d = 0
     pos_relationships = set()
@@ -136,16 +136,16 @@ def make_positive_relationships(objectives, node_depths):
 
 
 def make_negative_relationships(pos_relationships, num_divers, neg_link_prob):
-    """ Make a set of negative relationships where divers preclude each other.
+    """Make a set of negative relationships where divers preclude each other.
 
-        For the problem to be satisfiable there must just be an ordering over
-        the divers that works. Lets assume that the positive relationships
-        represent this order. We are then able to rule out everything else.
+    For the problem to be satisfiable there must just be an ordering over
+    the divers that works. Lets assume that the positive relationships
+    represent this order. We are then able to rule out everything else.
 
-        In fact, we we have a neg_link_prob chance of ruling out a non-positive
-        link.
+    In fact, we we have a neg_link_prob chance of ruling out a non-positive
+    link.
 
-        (set([(int, int)]), int, ...) -> { int : [int] }
+    (set([(int, int)]), int, ...) -> { int : [int] }
     """
     neg_relationships = dict([(x, list()) for x in range(num_divers)])
     for (diver1, diver2) in itertools.combinations(range(num_divers), 2):
@@ -159,11 +159,11 @@ def make_negative_relationships(pos_relationships, num_divers, neg_link_prob):
 
 
 def add_neg_cycle(neg_relationships, num_divers, neg_cycle_frac):
-    """ Adds a negative cycle to the diver relationships, making the problem
-        have no solutions. num_divers * neg_cycle_frac (min 2) divers are
-        involved.
+    """Adds a negative cycle to the diver relationships, making the problem
+    have no solutions. num_divers * neg_cycle_frac (min 2) divers are
+    involved.
 
-        ({ int  : [int] }, int, float) -> None
+    ({ int  : [int] }, int, float) -> None
     """
     divers = random.sample(range(num_divers), max(2, int(num_divers * neg_cycle_frac)))
     for did, diver1 in enumerate(divers):
@@ -173,11 +173,11 @@ def add_neg_cycle(neg_relationships, num_divers, neg_cycle_frac):
 
 
 def make_hiring_costs(neg_relationships, min_cost, max_cost, perturb):
-    """ Make the hiring costs for the divers. The costs are inversely
-        proportional to the number of negative relation ships a diver has.
-        They are perturbed by perturb.
+    """Make the hiring costs for the divers. The costs are inversely
+    proportional to the number of negative relation ships a diver has.
+    They are perturbed by perturb.
 
-        ({ int  : [int] }, int, int, float) -> { int : int }
+    ({ int  : [int] }, int, int, float) -> { int : int }
     """
     divers = list(neg_relationships.keys())
     num_rels = [len(x) for x in list(neg_relationships.values())]
@@ -211,9 +211,9 @@ def make_hiring_costs(neg_relationships, min_cost, max_cost, perturb):
 
 
 def write_domain_file(file_name, divers, neg_relationships, strips, ordered_tanks):
-    """ Write the PDDL domain file to file_name.
+    """Write the PDDL domain file to file_name.
 
-        (str, [int], { int : [int] }, bool, bool) -> None
+    (str, [int], { int : [int] }, bool, bool) -> None
     """
     try:
         output_file = open(file_name, "w")
@@ -429,10 +429,10 @@ def write_problem_file(
     strips,
     ordered_tanks,
 ):
-    """ Write the PDDL problem file to file_name.
+    """Write the PDDL problem file to file_name.
 
-        (str, str, int, [str], [str], [int], [(int, int)], { int : [int] },
-            { int : int }, int, bool, bool) -> None
+    (str, str, int, [str], [str], [int], [(int, int)], { int : [int] },
+        { int : int }, int, bool, bool) -> None
     """
     try:
         output_file = open(file_name, "w")
@@ -467,14 +467,14 @@ def write_problem_file(
         for d_line in range(num_diver_lines):
             output_file.write(
                 "    "
-                + " ".join(ordered_divers[(d_line * 20): (d_line * 20 + 20)])
+                + " ".join(ordered_divers[(d_line * 20) : (d_line * 20 + 20)])
                 + " - diver\n"
             )
         num_tank_lines = len(tanks) // 20 + 1
         for t_line in range(num_tank_lines):
             output_file.write(
                 "    "
-                + " ".join(tanks[(t_line * 20): (t_line * 20 + 20)])
+                + " ".join(tanks[(t_line * 20) : (t_line * 20 + 20)])
                 + " - tank\n"
             )
         output_file.write("    zero one two three four - quantity\n")

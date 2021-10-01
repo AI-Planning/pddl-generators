@@ -47,14 +47,16 @@ random.seed(seed)
 #         nodes * pi * Connect^2
 connect_distance = math.sqrt((degree * size * size) / (nodes * math.pi * 0.694))
 
-city = euclidean_graph.generate_connected_safe(nodes, size, size, connect_distance, epsilon)
+city = euclidean_graph.generate_connected_safe(
+    nodes, size, size, connect_distance, epsilon
+)
 
 id = (
     "city-sequential-%dnodes-%dsize-%ddegree-%dmindistance-%dtrucks-%dpackages-%dseed"
     % (nodes, size, degree, epsilon, trucks, packages, seed)
 )
 
-#city.dump_tikz(open("%s.tex" % id, "w"))
+# city.dump_tikz(open("%s.tex" % id, "w"))
 
 print("; Transport %s" % id)
 print()

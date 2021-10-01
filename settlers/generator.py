@@ -14,8 +14,9 @@ except ImportError:
     sys.stderr.write("Cplex python library was not found!\n")
     sys.exit(1)
 
+
 def rnd_int(n):
-    return random.randint(0, n-1)
+    return random.randint(0, n - 1)
 
 
 def rnd_sample(x):
@@ -32,13 +33,13 @@ class Map(object):
     def __init__(self, locations, edges, seas, prob_coast):
         if locations == 0:
             return
-        assert(edges <= (locations * (locations - 1)) / 2)
-        assert(seas <= locations)
+        assert edges <= (locations * (locations - 1)) / 2
+        assert seas <= locations
         self.landmap = [set() for x in xrange(locations)]
         self.location_to_sea = [None for x in xrange(locations)]
         self.sea_to_locations = [[] for i in xrange(seas)]
-        self.woodland      = 0#=rnd_int(locations)
-        self.mountain      = rnd_int(locations / 2)
+        self.woodland = 0  # =rnd_int(locations)
+        self.mountain = rnd_int(locations / 2)
         self.metalliferous = rnd_int(locations / 2)
         if seas > 0 and prob_coast > 0:
             next_free_sea = 0
@@ -50,11 +51,19 @@ class Map(object):
                     self.sea_to_locations[sea].append(x)
                     next_free_sea += 1
         # make map connected
-        connected = list(sorted(set([0] + \
-            [x  \
-                for sea in [self.location_to_sea[0]] if sea != None
-                for x in self.sea_to_locations[sea]
-                ])))
+        connected = list(
+            sorted(
+                set(
+                    [0]
+                    + [
+                        x
+                        for sea in [self.location_to_sea[0]]
+                        if sea != None
+                        for x in self.sea_to_locations[sea]
+                    ]
+                )
+            )
+        )
         disconnected = rnd_shuffle([x for x in xrange(locations) if not x in connected])
         for t in disconnected:
             if t in connected:
@@ -68,10 +77,12 @@ class Map(object):
                 for t2 in self.sea_to_locations[self.location_to_sea[t]]:
                     if not t2 in connected:
                         connected.append(t2)
-        del(connected)
-        del(disconnected)
+        del connected
+        del disconnected
         # generate remaining edges, leave 2 edges open see next
-        available = [x for x in xrange(locations) if len(self.landmap[x]) < locations - 1]
+        available = [
+            x for x in xrange(locations) if len(self.landmap[x]) < locations - 1
+        ]
         while edges > 2:
             i = rnd_int(len(available))
             s = available[i]
@@ -79,14 +90,16 @@ class Map(object):
             self.landmap[s].add(t)
             self.landmap[t].add(s)
             if len(self.landmap[s]) == locations - 1:
-                del(available[i])
+                del available[i]
             if len(self.landmap[t]) == locations - 1:
                 available.remove(t)
             edges -= 1
         # make sure all of woodland, metalliferous, and mountain are connected
         reachable = self.compute_reachability()
         connected = set(reachable[self.woodland])
-        disconnected = rnd_shuffle([x for x in [self.metalliferous, self.mountain] if not x in connected])
+        disconnected = rnd_shuffle(
+            [x for x in [self.metalliferous, self.mountain] if not x in connected]
+        )
         for t in disconnected:
             if t in connected:
                 continue
@@ -107,12 +120,11 @@ class Map(object):
             self.landmap[s].add(t)
             self.landmap[t].add(s)
             if len(self.landmap[s]) == locations - 1:
-                del(available[i])
+                del available[i]
             if len(self.landmap[t]) == locations - 1:
                 available.remove(t)
             edges -= 1
         assert edges >= 0, "provided edges were not enough to make map connected"
-
 
     def compute_reachability(self):
         locations = len(self.landmap)
@@ -166,13 +178,12 @@ class Map(object):
                             i -= 1
                         for j in xrange(i, len(stack)):
                             reachable[stack[j]] = r
-                        del(stack[i:])
-                    del(q[-1])
+                        del stack[i:]
+                    del q[-1]
         return reachable
 
 
 class Goal(object):
-
     def __str__(self):
         raise NotImplementedError
 
@@ -202,7 +213,6 @@ class Goal(object):
 
 
 class RailLink(Goal):
-
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -234,8 +244,8 @@ class RailLink(Goal):
     def __str__(self):
         return "(connected-by-rail p%d p%d)" % (self.x, self.y)
 
-class House(Goal):
 
+class House(Goal):
     def __init__(self, x, n):
         self.x = x
         self.n = n
@@ -269,7 +279,6 @@ class House(Goal):
 
 
 class CoalStack(Goal):
-
     def __init__(self, x):
         self.x = x
 
@@ -302,7 +311,6 @@ class CoalStack(Goal):
 
 
 class SawMill(Goal):
-
     def __init__(self, x):
         self.x = x
 
@@ -335,7 +343,6 @@ class SawMill(Goal):
 
 
 class Ironworks(Goal):
-
     def __init__(self, x):
         self.x = x
 
@@ -368,7 +375,6 @@ class Ironworks(Goal):
 
 
 class Docks(Goal):
-
     def __init__(self, x):
         self.x = x
 
@@ -401,7 +407,6 @@ class Docks(Goal):
 
 
 class Wharf(Goal):
-
     def __init__(self, x):
         self.x = x
 
@@ -433,7 +438,9 @@ class Wharf(Goal):
         return "(has-wharf p%d)" % self.x
 
 
-NUM_BUILDINGS = 3#4 #5
+NUM_BUILDINGS = 3  # 4 #5
+
+
 def gen_building(x, excl_t):
     t = rnd_sample(set(range(NUM_BUILDINGS)) - excl_t)
     if t == 0:
@@ -449,16 +456,36 @@ def gen_building(x, excl_t):
 
 
 class SettlersInstance(object):
-    def __init__(self, params, _map = None, _goals = None):
+    def __init__(self, params, _map=None, _goals=None):
         self.params = params
-        self.comment = "Generator input: seed=%d, locations=%d, edges=%d, seas=%d, probabilities=[%d, %d, %d, %d], goals=%d, optimization=[%d, %d], C=%f, V=%f" % (params.seed, params.locations, params.edges, params.seas, params.prob_coast, params.prob_goal_house, params.prob_goal_building, params.prob_goal_raillink, params.goals, params.coef_labour, params.coef_pollution, params.constrainedness, params.vehicles)
+        self.comment = (
+            "Generator input: seed=%d, locations=%d, edges=%d, seas=%d, probabilities=[%d, %d, %d, %d], goals=%d, optimization=[%d, %d], C=%f, V=%f"
+            % (
+                params.seed,
+                params.locations,
+                params.edges,
+                params.seas,
+                params.prob_coast,
+                params.prob_goal_house,
+                params.prob_goal_building,
+                params.prob_goal_raillink,
+                params.goals,
+                params.coef_labour,
+                params.coef_pollution,
+                params.constrainedness,
+                params.vehicles,
+            )
+        )
 
         # set random seed
         random.seed(params.seed)
 
         # generate map
-        self.map = Map(params.locations, params.edges, params.seas, params.prob_coast) if _map is None \
-                else _map
+        self.map = (
+            Map(params.locations, params.edges, params.seas, params.prob_coast)
+            if _map is None
+            else _map
+        )
 
         # generate goal
         if _goals is None:
@@ -488,11 +515,13 @@ class SettlersInstance(object):
                 elif what <= ph + pb:
                     i = rnd_int(len(locb))
                     x = locb[i]
-                    t, building = gen_building(x, buildings[x])# rnd_sample(set(range(Building.TYPES)) - buildings[x])
+                    t, building = gen_building(
+                        x, buildings[x]
+                    )  # rnd_sample(set(range(Building.TYPES)) - buildings[x])
                     self.goals.append(building)
                     buildings[x].add(t)
                     if len(buildings[x]) == NUM_BUILDINGS:
-                        del(locb[i])
+                        del locb[i]
                         if len(locb) == 0:
                             p = int((float(pr) / psum) * pb)
                             pr += p
@@ -505,7 +534,7 @@ class SettlersInstance(object):
                     self.goals.append(RailLink(x, y))
                     rail_links[x].add(y)
                     if len(rail_links[x]) == len(self.map.landmap[x]):
-                        del(locr[i])
+                        del locr[i]
                         if len(locr) == 0:
                             p = int((float(pb) / psum) * pr)
                             pb += p
@@ -534,7 +563,9 @@ class SettlersInstance(object):
                 tmp[x] = abstract_locations
                 reverse_map.append(reachable[x])
                 abstract_locations += 1
-        abstr_start = tmp[min([self.map.woodland, self.map.mountain, self.map.metalliferous])]
+        abstr_start = tmp[
+            min([self.map.woodland, self.map.mountain, self.map.metalliferous])
+        ]
         loc_to_seas = [set() for i in xrange(abstract_locations)]
         sea_to_locs = [set() for i in xrange(len(self.map.sea_to_locations))]
         for x in tmp.keys():
@@ -565,11 +596,19 @@ class SettlersInstance(object):
         for g in self.goals:
             abstr_x = tmp[min(reachable[g.location()])]
             locs_req_res.add(abstr_x)
-            resources_required[g.location()] = \
-                    (g.location() not in [self.map.woodland, self.map.mountain, self.map.metalliferous]) \
-                    or (g.location() != self.map.woodland and g.timber() > 0) \
-                    or (g.location() != self.map.mountain and g.stone() > 0) \
-                    or (g.location() != self.map.metalliferous and g.ore() > 0)
+            resources_required[g.location()] = (
+                (
+                    g.location()
+                    not in [
+                        self.map.woodland,
+                        self.map.mountain,
+                        self.map.metalliferous,
+                    ]
+                )
+                or (g.location() != self.map.woodland and g.timber() > 0)
+                or (g.location() != self.map.mountain and g.stone() > 0)
+                or (g.location() != self.map.metalliferous and g.ore() > 0)
+            )
             self.num_stone += g.stone()
             self.num_timber += g.timber()
             self.num_ore += g.ore()
@@ -587,16 +626,21 @@ class SettlersInstance(object):
             elif abstr_x == abstr_start and isinstance(g, Ironworks):
                 has_ironworks = True
 
-        wharf_required = \
-            (len(locs_req_res) > 1 or not abstr_start in locs_req_res)
+        wharf_required = len(locs_req_res) > 1 or not abstr_start in locs_req_res
 
         iron_required = iron_required or wharf_required
         coal_required = coal_required or iron_required
         wood_required = wood_required or iron_required
 
-        resources_required[self.map.metalliferous] = resources_required[self.map.metalliferous] \
-                or (iron_required \
-                and (self.map.metalliferous != self.map.woodland or self.map.metalliferous != self.map.mountain))
+        resources_required[self.map.metalliferous] = resources_required[
+            self.map.metalliferous
+        ] or (
+            iron_required
+            and (
+                self.map.metalliferous != self.map.woodland
+                or self.map.metalliferous != self.map.mountain
+            )
+        )
         if resources_required[self.map.metalliferous]:
             locs_req_res.add(abstr_start)
         if iron_required and not has_ironworks:
@@ -615,8 +659,9 @@ class SettlersInstance(object):
             self.num_timber += _x.timber()
             self.num_ore += _x.ore()
 
-        abstr_start_requires_cart = wharf_required \
-            or (any([resources_required[loc] for loc in reverse_map[abstr_start]]))
+        abstr_start_requires_cart = wharf_required or (
+            any([resources_required[loc] for loc in reverse_map[abstr_start]])
+        )
         if abstr_start_requires_cart:
             self.num_timber += 1
             self.num_vehicles += 1
@@ -636,7 +681,7 @@ class SettlersInstance(object):
                 for root_sea in loc_to_seas[abstr_start]:
                     if num_wharfs == 0 and root_sea not in has_wharf[abstr_start]:
                         continue
-                    assert(0 <= root_sea and root_sea < num_seas)
+                    assert 0 <= root_sea and root_sea < num_seas
 
                     # qelement := (next sea to consider, reachable locations)
                     q = [[0, sea_to_locs[root_sea]]]
@@ -657,12 +702,18 @@ class SettlersInstance(object):
                                     if not covered[sea]:
                                         reached.update(sea_to_locs[sea])
                                         covered[sea] = True
-                                        selection = [x for x in xrange(abstract_locations) if sea in has_wharf[x]]
+                                        selection = [
+                                            x
+                                            for x in xrange(abstract_locations)
+                                            if sea in has_wharf[x]
+                                        ]
                                         queue.append(sea)
                             i += 1
 
                     # obsolete if no wharf in goal
-                    transitive_closure(q[-1][1], sea_is_covered, wharf_location_selection, root_sea)
+                    transitive_closure(
+                        q[-1][1], sea_is_covered, wharf_location_selection, root_sea
+                    )
 
                     # outer loop => at which seas should a wharf be placed
                     # inner loop => at which locations of the respective seas
@@ -679,12 +730,19 @@ class SettlersInstance(object):
                             wharf_locations = list(wharf_location_selection)
 
                             # seas where wharf needs to be placed
-                            required_seas = [l for l in xrange(num_seas) \
-                                    if sea_is_covered[l] and len(wharf_location_choices[l]) > 0]
+                            required_seas = [
+                                l
+                                for l in xrange(num_seas)
+                                if sea_is_covered[l]
+                                and len(wharf_location_choices[l]) > 0
+                            ]
                             # for each such sea, index into list of possible
                             # locations
-                            choices = [list(wharf_location_choices[required_seas[0]])] \
-                                if len(required_seas) > 0 else [[]]
+                            choices = (
+                                [list(wharf_location_choices[required_seas[0]])]
+                                if len(required_seas) > 0
+                                else [[]]
+                            )
 
                             # which sea is considered?
                             reqsea_i = 0
@@ -705,27 +763,55 @@ class SettlersInstance(object):
 
                                     # distinguish between locations with and
                                     # without access to cart
-                                    abstr_loc_requires_cart = [False for x in xrange(abstract_locations)]
+                                    abstr_loc_requires_cart = [
+                                        False for x in xrange(abstract_locations)
+                                    ]
                                     abstr_loc_requires_cart[abstr_start] = True
                                     for x in xrange(abstract_locations):
                                         if x == abstr_start:
                                             continue
                                         # resource distributors always need to
                                         # have cart
-                                        if len([sea for sea in xrange(len(wharf_locations)) \
-                                                if x in wharf_locations[sea]]) >= 1:
+                                        if (
+                                            len(
+                                                [
+                                                    sea
+                                                    for sea in xrange(
+                                                        len(wharf_locations)
+                                                    )
+                                                    if x in wharf_locations[sea]
+                                                ]
+                                            )
+                                            >= 1
+                                        ):
                                             abstr_loc_requires_cart[x] = True
                                         elif x in locs_req_res:
                                             for loc in reverse_map[x]:
                                                 if resources_required[loc]:
-                                                    if self.map.location_to_sea[loc] is None \
-                                                            or not sea_is_covered[self.map.location_to_sea[loc]]:
-                                                        abstr_loc_requires_cart[x] = True
+                                                    if (
+                                                        self.map.location_to_sea[loc]
+                                                        is None
+                                                        or not sea_is_covered[
+                                                            self.map.location_to_sea[
+                                                                loc
+                                                            ]
+                                                        ]
+                                                    ):
+                                                        abstr_loc_requires_cart[
+                                                            x
+                                                        ] = True
                                                         break
 
                                     # generate flow graph
                                     class FlowGraphNode(object):
-                                        def __init__(self, iid, ref, is_abstract, required, distr = []):
+                                        def __init__(
+                                            self,
+                                            iid,
+                                            ref,
+                                            is_abstract,
+                                            required,
+                                            distr=[],
+                                        ):
                                             self.iid = iid
                                             self.ref = ref
                                             self.is_abstract = is_abstract
@@ -734,15 +820,22 @@ class SettlersInstance(object):
                                             self.seas = set()
                                             self.distributor = set(distr)
                                             # print iid, ref, self.required
+
                                         def __eq__(self, other):
-                                            return isinstance(other, FlowGraphNode) \
-                                                    and self.__hash__() == other.__hash__()
+                                            return (
+                                                isinstance(other, FlowGraphNode)
+                                                and self.__hash__() == other.__hash__()
+                                            )
+
                                         def __hash__(self):
                                             return self.iid
+
                                     def get_successors(node):
                                         if node.is_abstract:
                                             for sea in loc_to_seas[node.ref]:
-                                                for loc in self.map.sea_to_locations[sea]:
+                                                for loc in self.map.sea_to_locations[
+                                                    sea
+                                                ]:
                                                     yield (sea, loc)
                                         else:
                                             sea = self.map.location_to_sea[node.ref]
@@ -751,8 +844,28 @@ class SettlersInstance(object):
                                                 yield
                                             for loc in self.map.sea_to_locations[sea]:
                                                 yield (sea, loc)
-                                    flow_graph_nodes = [FlowGraphNode(0, abstr_start, True, 0, [sea2  for sea2 in xrange(len(wharf_locations)) if abstr_start in wharf_locations[sea2]])]
-                                    node_lookup = [(flow_graph_nodes[0] if x in reverse_map[abstr_start] else None) for x in xrange(len(reachable))]
+
+                                    flow_graph_nodes = [
+                                        FlowGraphNode(
+                                            0,
+                                            abstr_start,
+                                            True,
+                                            0,
+                                            [
+                                                sea2
+                                                for sea2 in xrange(len(wharf_locations))
+                                                if abstr_start in wharf_locations[sea2]
+                                            ],
+                                        )
+                                    ]
+                                    node_lookup = [
+                                        (
+                                            flow_graph_nodes[0]
+                                            if x in reverse_map[abstr_start]
+                                            else None
+                                        )
+                                        for x in xrange(len(reachable))
+                                    ]
                                     i = 0
                                     while i < len(flow_graph_nodes):
                                         node = flow_graph_nodes[i]
@@ -760,13 +873,42 @@ class SettlersInstance(object):
                                             if node_lookup[loc] is None:
                                                 abstr_loc = tmp[min(reachable[loc])]
                                                 if abstr_loc_requires_cart[abstr_loc]:
-                                                    distributor = [sea2 for sea2 in xrange(len(wharf_locations)) if abstr_loc in wharf_locations[sea2]]
-                                                    flow_graph_nodes.append(FlowGraphNode(len(flow_graph_nodes), abstr_loc, True, processed_resources[abstr_loc] + 1, distributor))
+                                                    distributor = [
+                                                        sea2
+                                                        for sea2 in xrange(
+                                                            len(wharf_locations)
+                                                        )
+                                                        if abstr_loc
+                                                        in wharf_locations[sea2]
+                                                    ]
+                                                    flow_graph_nodes.append(
+                                                        FlowGraphNode(
+                                                            len(flow_graph_nodes),
+                                                            abstr_loc,
+                                                            True,
+                                                            processed_resources[
+                                                                abstr_loc
+                                                            ]
+                                                            + 1,
+                                                            distributor,
+                                                        )
+                                                    )
                                                     for loc2 in reachable[loc]:
-                                                        node_lookup[loc2] = flow_graph_nodes[-1]
+                                                        node_lookup[
+                                                            loc2
+                                                        ] = flow_graph_nodes[-1]
                                                 else:
-                                                    flow_graph_nodes.append(FlowGraphNode(len(flow_graph_nodes), loc, False, num_resources_required[loc]))
-                                                    node_lookup[loc] = flow_graph_nodes[-1]
+                                                    flow_graph_nodes.append(
+                                                        FlowGraphNode(
+                                                            len(flow_graph_nodes),
+                                                            loc,
+                                                            False,
+                                                            num_resources_required[loc],
+                                                        )
+                                                    )
+                                                    node_lookup[loc] = flow_graph_nodes[
+                                                        -1
+                                                    ]
                                             succ = node_lookup[loc]
                                             if succ != node:
                                                 node.edges.add((sea, succ.iid))
@@ -774,31 +916,97 @@ class SettlersInstance(object):
                                         i += 1
 
                                     integer = [cplex.Cplex().variables.type.integer]
-                                    lp_variables = [(["num_%d_%d_%d" % (i, sea, j)], [1.0], [0.0], [], integer) for i in xrange(len(flow_graph_nodes)) for (sea, j) in flow_graph_nodes[i].edges] \
-                                                 + [(["amount_%d_%d_%d" % (i, sea, j)], [0.0], [0.0], [], []) for i in xrange(len(flow_graph_nodes)) for (sea, j) in flow_graph_nodes[i].edges]
+                                    lp_variables = [
+                                        (
+                                            ["num_%d_%d_%d" % (i, sea, j)],
+                                            [1.0],
+                                            [0.0],
+                                            [],
+                                            integer,
+                                        )
+                                        for i in xrange(len(flow_graph_nodes))
+                                        for (sea, j) in flow_graph_nodes[i].edges
+                                    ] + [
+                                        (
+                                            ["amount_%d_%d_%d" % (i, sea, j)],
+                                            [0.0],
+                                            [0.0],
+                                            [],
+                                            [],
+                                        )
+                                        for i in xrange(len(flow_graph_nodes))
+                                        for (sea, j) in flow_graph_nodes[i].edges
+                                    ]
                                     lp_constraints = [[], [], []]
                                     asgfasas = 0
                                     for i in xrange(len(flow_graph_nodes)):
                                         node = flow_graph_nodes[i]
                                         # sync amount and num
                                         for sea, j in node.edges:
-                                            lp_constraints[0] += [[["num_%d_%d_%d" % (i, sea, j), "amount_%d_%d_%d" % (i, sea, j)], [8.0, -1.0]]]
+                                            lp_constraints[0] += [
+                                                [
+                                                    [
+                                                        "num_%d_%d_%d" % (i, sea, j),
+                                                        "amount_%d_%d_%d" % (i, sea, j),
+                                                    ],
+                                                    [8.0, -1.0],
+                                                ]
+                                            ]
                                             lp_constraints[1] += ["G"]
                                             lp_constraints[2] += [0.0]
                                         # balance equation for moves
                                         for sea in node.seas:
-                                            sea_num_in =     ["num_%d_%d_%d" % (j, sea, i) for j in xrange(len(flow_graph_nodes)) if (sea, i) in flow_graph_nodes[j].edges]
-                                            sea_num_out =    ["num_%d_%d_%d" % (i, sea, j) for (seaprime, j) in node.edges if seaprime == sea]
-                                            lp_constraints[0] += [[sea_num_in + sea_num_out, [1.0] * len(sea_num_in) + [-1.0] * len(sea_num_out)]]
+                                            sea_num_in = [
+                                                "num_%d_%d_%d" % (j, sea, i)
+                                                for j in xrange(len(flow_graph_nodes))
+                                                if (sea, i) in flow_graph_nodes[j].edges
+                                            ]
+                                            sea_num_out = [
+                                                "num_%d_%d_%d" % (i, sea, j)
+                                                for (seaprime, j) in node.edges
+                                                if seaprime == sea
+                                            ]
+                                            lp_constraints[0] += [
+                                                [
+                                                    sea_num_in + sea_num_out,
+                                                    [1.0] * len(sea_num_in)
+                                                    + [-1.0] * len(sea_num_out),
+                                                ]
+                                            ]
                                             lp_constraints[1] += ["G"]
-                                            lp_constraints[2] += [ -1.0 if sea in node.distributor else 0.0 ]
+                                            lp_constraints[2] += [
+                                                -1.0 if sea in node.distributor else 0.0
+                                            ]
                                         # balance lp_constraints amount
                                         if i > 0:
-                                            num_in =     ["num_%d_%d_%d" % (j, sea, i) for j in xrange(len(flow_graph_nodes)) for sea in xrange(num_seas) if (sea, i) in flow_graph_nodes[j].edges]
-                                            num_out =    ["num_%d_%d_%d" % (i, sea, j) for (sea, j) in node.edges]
-                                            amount_in =  ["amount_%d_%d_%d" % (j, sea, i) for j in xrange(len(flow_graph_nodes)) for sea in xrange(num_seas) if (sea, i) in flow_graph_nodes[j].edges]
-                                            amount_out = ["amount_%d_%d_%d" % (i, sea, j) for (sea, j) in node.edges]
-                                            lp_constraints[0] += [[amount_in + amount_out + num_out, [1.0] * (len(amount_in)) + [-1.0] * len(amount_out) + [-2.0] * len(num_out)]]
+                                            num_in = [
+                                                "num_%d_%d_%d" % (j, sea, i)
+                                                for j in xrange(len(flow_graph_nodes))
+                                                for sea in xrange(num_seas)
+                                                if (sea, i) in flow_graph_nodes[j].edges
+                                            ]
+                                            num_out = [
+                                                "num_%d_%d_%d" % (i, sea, j)
+                                                for (sea, j) in node.edges
+                                            ]
+                                            amount_in = [
+                                                "amount_%d_%d_%d" % (j, sea, i)
+                                                for j in xrange(len(flow_graph_nodes))
+                                                for sea in xrange(num_seas)
+                                                if (sea, i) in flow_graph_nodes[j].edges
+                                            ]
+                                            amount_out = [
+                                                "amount_%d_%d_%d" % (i, sea, j)
+                                                for (sea, j) in node.edges
+                                            ]
+                                            lp_constraints[0] += [
+                                                [
+                                                    amount_in + amount_out + num_out,
+                                                    [1.0] * (len(amount_in))
+                                                    + [-1.0] * len(amount_out)
+                                                    + [-2.0] * len(num_out),
+                                                ]
+                                            ]
                                             lp_constraints[1] += ["E"]
                                             lp_constraints[2] += [node.required]
                                         # print "NODE", node.iid, i
@@ -808,28 +1016,49 @@ class SettlersInstance(object):
                                         #     print lp_constraints[0][asgfasas], lp_constraints[1][asgfasas], lp_constraints[2][asgfasas]
                                         #     asgfasas += 1
 
-
                                     c = cplex.Cplex()
-                                    with open(os.devnull, 'w') as f:
+                                    with open(os.devnull, "w") as f:
                                         c.set_log_stream(f)
                                         c.set_warning_stream(f)
                                         c.set_error_stream(f)
                                         c.set_results_stream(f)
                                         c.parameters.threads.set(1)
-                                        c.objective.set_sense(c.objective.sense.minimize)
+                                        c.objective.set_sense(
+                                            c.objective.sense.minimize
+                                        )
                                         for names, obj, lb, ub, types in lp_variables:
-                                            c.variables.add(names=names, obj=obj, lb=lb, ub=ub, types=types)
-                                        c.linear_constraints.add(lin_expr=lp_constraints[0], senses=lp_constraints[1], rhs=lp_constraints[2])
+                                            c.variables.add(
+                                                names=names,
+                                                obj=obj,
+                                                lb=lb,
+                                                ub=ub,
+                                                types=types,
+                                            )
+                                        c.linear_constraints.add(
+                                            lin_expr=lp_constraints[0],
+                                            senses=lp_constraints[1],
+                                            rhs=lp_constraints[2],
+                                        )
                                         c.solve()
-                                        if c.solution.get_status() != cplex.Cplex.solution.status.MIP_optimal:
+                                        if (
+                                            c.solution.get_status()
+                                            != cplex.Cplex.solution.status.MIP_optimal
+                                        ):
                                             if c.solution.get_status() == 3:
-                                                print ("CPLEX proved that there is no feasible solution")
+                                                print(
+                                                    "CPLEX proved that there is no feasible solution"
+                                                )
                                             else:
-                                                print ("CPLEX failed to obtain an optimal solution", c.solution.get_status())
-                                                print (self.params)
+                                                print(
+                                                    "CPLEX failed to obtain an optimal solution",
+                                                    c.solution.get_status(),
+                                                )
+                                                print(self.params)
                                                 sys.exit(1)
 
-                                        objv = 2 * int(round(c.solution.get_objective_value()))
+                                        objv = 2 * int(
+                                            round(c.solution.get_objective_value())
+                                        )
                                         # print " -- solution --"
                                         # for i in xrange(len(flow_graph_nodes)):
                                         #     node = flow_graph_nodes[i]
@@ -839,19 +1068,29 @@ class SettlersInstance(object):
                                         vehicles = 0
                                         ore = 0
                                         for loc in xrange(abstract_locations):
-                                            if loc != abstr_start and abstr_loc_requires_cart[loc]:
+                                            if (
+                                                loc != abstr_start
+                                                and abstr_loc_requires_cart[loc]
+                                            ):
                                                 objv += 1
                                                 vehicles += 1
                                         for sea in xrange(len(wharf_locations)):
-                                            assert(len(wharf_locations[sea]) <= 1)
+                                            assert len(wharf_locations[sea]) <= 1
                                             for loc in wharf_locations[sea]:
-                                                objv += 2 + 4 + 8 # Docks + Wharf + Ship
-                                                ore  += 2 + 4 # Wharf + Ship
-                                                vehicles += 1 # Ship
+                                                objv += (
+                                                    2 + 4 + 8
+                                                )  # Docks + Wharf + Ship
+                                                ore += 2 + 4  # Wharf + Ship
+                                                vehicles += 1  # Ship
                                         # print objv, ore, vehicles
-                                        if best_num_vehicles is None \
-                                            or (best_num_vehicles > vehicles) \
-                                            or (best_num_vehicles == vehicles and best_num_timber > objv):
+                                        if (
+                                            best_num_vehicles is None
+                                            or (best_num_vehicles > vehicles)
+                                            or (
+                                                best_num_vehicles == vehicles
+                                                and best_num_timber > objv
+                                            )
+                                        ):
                                             best_num_timber = objv
                                             best_num_vehicles = vehicles
                                             best_num_ore = ore
@@ -872,17 +1111,27 @@ class SettlersInstance(object):
                                         wharf_locations[sea_id].append(loc)
                                         # print wharf_locations
                                         reqsea_i += 1
-                                        choices.append([] if reqsea_i == len(required_seas) \
-                                                else list(wharf_location_choices[required_seas[reqsea_i]]))
+                                        choices.append(
+                                            []
+                                            if reqsea_i == len(required_seas)
+                                            else list(
+                                                wharf_location_choices[
+                                                    required_seas[reqsea_i]
+                                                ]
+                                            )
+                                        )
                                 # backtrack
                                 if pop_back:
                                     reqsea_i -= 1
-                                    del (choices[-1])
+                                    del choices[-1]
                                     if reqsea_i >= 0:
                                         sea_id = required_seas[reqsea_i]
-                                        assert (wharf_locations[sea_id][-1] == choices[reqsea_i][-1])
-                                        del (wharf_locations[sea_id][-1])
-                                        del (choices[reqsea_i][-1])
+                                        assert (
+                                            wharf_locations[sea_id][-1]
+                                            == choices[reqsea_i][-1]
+                                        )
+                                        del wharf_locations[sea_id][-1]
+                                        del choices[reqsea_i][-1]
                             qterm = True
                         # not all locations are covered by currently selected seas:
                         else:
@@ -890,24 +1139,37 @@ class SettlersInstance(object):
                             while q[-1][0] < num_seas:
                                 considered_sea = q[-1][0]
                                 # if sea is not selected so far
-                                if not sea_is_covered[considered_sea] \
-                                        and len(q) < num_wharfs:
+                                if (
+                                    not sea_is_covered[considered_sea]
+                                    and len(q) < num_wharfs
+                                ):
                                     # is there any location currently reached,
                                     # which is adjacent to the considered sea?
-                                    candidate_locations = sea_to_locs[considered_sea] & q[-1][1]
-                                    if len(candidate_locations) > 0 \
-                                            and not (sea_to_locs[considered_sea] <= q[-1][1]):
+                                    candidate_locations = (
+                                        sea_to_locs[considered_sea] & q[-1][1]
+                                    )
+                                    if len(candidate_locations) > 0 and not (
+                                        sea_to_locs[considered_sea] <= q[-1][1]
+                                    ):
                                         sea_is_covered[considered_sea] = True
-                                        wharf_location_choices[considered_sea] = \
-                                                candidate_locations
-                                        q.append([0, q[-1][1] | sea_to_locs[considered_sea]])
+                                        wharf_location_choices[
+                                            considered_sea
+                                        ] = candidate_locations
+                                        q.append(
+                                            [0, q[-1][1] | sea_to_locs[considered_sea]]
+                                        )
                                         # obsolete if no wharf in goal
-                                        transitive_closure(q[-1][1], sea_is_covered, wharf_location_selection, considered_sea)
+                                        transitive_closure(
+                                            q[-1][1],
+                                            sea_is_covered,
+                                            wharf_location_selection,
+                                            considered_sea,
+                                        )
                                         break
                                 q[-1][0] += 1
                             qterm = q[-1][0] == num_seas
                         if qterm:
-                            del(q[-1])
+                            del q[-1]
                             if len(q) > 0:
                                 assert len(wharf_location_choices[q[-1][0]]) > 0
                                 sea_is_covered[q[-1][0]] = False
@@ -920,22 +1182,28 @@ class SettlersInstance(object):
                     self.num_vehicles += best_num_vehicles
                     break
 
-
     def get_vehicles(self):
         return int((self.params.vehicles * self.num_vehicles))
 
     def get_resources(self):
-        return int((self.params.constrainedness * max(self.num_stone, self.num_timber, self.num_ore)))
+        return int(
+            (
+                self.params.constrainedness
+                * max(self.num_stone, self.num_timber, self.num_ore)
+            )
+        )
 
     def get_problem(self, INDEPENDENT_COND_EFFECTS, INDEPENDENT_RESOURCE_LEVELS):
         num = {
-           "stone"   : int(self.params.constrainedness * self.num_stone),
-           "timber"  : int(self.params.constrainedness * self.num_timber),
-           "ore"     : int(self.params.constrainedness * self.num_ore),
-           "wood"    : int(self.params.constrainedness * self.num_timber),
-           "coal"    : int(self.params.constrainedness * self.num_timber),
-           "iron"    : int(self.params.constrainedness * self.num_ore),
-           "housing" : int(self.params.constrainedness * min(self.num_timber, self.num_stone)),
+            "stone": int(self.params.constrainedness * self.num_stone),
+            "timber": int(self.params.constrainedness * self.num_timber),
+            "ore": int(self.params.constrainedness * self.num_ore),
+            "wood": int(self.params.constrainedness * self.num_timber),
+            "coal": int(self.params.constrainedness * self.num_timber),
+            "iron": int(self.params.constrainedness * self.num_ore),
+            "housing": int(
+                self.params.constrainedness * min(self.num_timber, self.num_stone)
+            ),
         }
         for k in num.keys():
             num[k] = num[k] + self.params.constraint_increment
@@ -947,7 +1215,10 @@ class SettlersInstance(object):
         }
 
         max_r = max([num[r] for r in num])
-        vehicles = int((self.params.vehicles * self.num_vehicles)) + self.params.vehicle_increment
+        vehicles = (
+            int((self.params.vehicles * self.num_vehicles))
+            + self.params.vehicle_increment
+        )
 
         num_locations = len(self.map.landmap)
         num_seas = len(self.map.sea_to_locations)
@@ -958,16 +1229,34 @@ class SettlersInstance(object):
 
         ## Objects; resource values up to 10 are pre-defined as constants in the domain file
         res.append("(:objects\n")
-        res.append(" " * 4 + " ".join(["p%d" % i for i in xrange(num_locations)]) + " - place\n")
+        res.append(
+            " " * 4
+            + " ".join(["p%d" % i for i in xrange(num_locations)])
+            + " - place\n"
+        )
         if vehicles > 0:
-            res.append(" " * 4 + " ".join(["v%d" % i for i in xrange(vehicles)]) + " - vehicle\n")
+            res.append(
+                " " * 4
+                + " ".join(["v%d" % i for i in xrange(vehicles)])
+                + " - vehicle\n"
+            )
         if INDEPENDENT_RESOURCE_LEVELS:
             for k in num:
                 if num[k] > 10:
-                    res.append(" " * 4 + " ".join(["%sl%d" % (k[0], i) for i in xrange(11, num[k] + 1)]) + " - %s_level\n" % k)
+                    res.append(
+                        " " * 4
+                        + " ".join(
+                            ["%sl%d" % (k[0], i) for i in xrange(11, num[k] + 1)]
+                        )
+                        + " - %s_level\n" % k
+                    )
         else:
-        	if max_r > 10:
-        	    res.append(" " * 4 + " ".join(["l%d" % i for i in xrange(11, max_r + 1)]) + " - level\n")
+            if max_r > 10:
+                res.append(
+                    " " * 4
+                    + " ".join(["l%d" % i for i in xrange(11, max_r + 1)])
+                    + " - level\n"
+                )
         res.append(")\n")
 
         ## Initial state
@@ -1003,9 +1292,16 @@ class SettlersInstance(object):
                     for d in [1, 2, 4]:
                         if v >= d:
                             if INDEPENDENT_RESOURCE_LEVELS:
-                                res.append(" " * 4 + "(available-atleast-%s p%d %sl%d)\n" % (r, i, r[0], d))
+                                res.append(
+                                    " " * 4
+                                    + "(available-atleast-%s p%d %sl%d)\n"
+                                    % (r, i, r[0], d)
+                                )
                             else:
-                                res.append(" " * 4 + "(available-atleast %s p%d l%d)\n" % (r, i, d))
+                                res.append(
+                                    " " * 4
+                                    + "(available-atleast %s p%d l%d)\n" % (r, i, d)
+                                )
 
         # Vehicles
         for i in xrange(vehicles):
@@ -1020,14 +1316,26 @@ class SettlersInstance(object):
         if INDEPENDENT_RESOURCE_LEVELS:
             for d in [1, 2]:
                 for i in xrange(11 - d):
-                    res.append(" " * 4 + "(diff-space spl%d spl%d spl%d)\n" % (i+d, d, i))
+                    res.append(
+                        " " * 4 + "(diff-space spl%d spl%d spl%d)\n" % (i + d, d, i)
+                    )
             for r in ["housing"]:
                 for i in xrange(num[r]):
-                    res.append(" " * 4 + "(diff-{0} {1}l{2} {1}l{3} {1}l{4})\n".format (r, r[0], i+1, 1, i))
+                    res.append(
+                        " " * 4
+                        + "(diff-{0} {1}l{2} {1}l{3} {1}l{4})\n".format(
+                            r, r[0], i + 1, 1, i
+                        )
+                    )
             for r in resources:
                 for d in [1, 2, 4]:
                     for i in xrange(num[r] + 1 - d):
-                        res.append(" " * 4 + "(diff-{0} {1}l{2} {1}l{3} {1}l{4})\n".format (r, r[0], i+d, d, i))
+                        res.append(
+                            " " * 4
+                            + "(diff-{0} {1}l{2} {1}l{3} {1}l{4})\n".format(
+                                r, r[0], i + d, d, i
+                            )
+                        )
         else:
             for d in [1, 2, 4]:
                 for v in xrange(max_r + 1 - d):
@@ -1035,18 +1343,40 @@ class SettlersInstance(object):
 
         if INDEPENDENT_COND_EFFECTS:
             for r in resources:
-                for (al, r_consumed) in [(d, d2) for d in [1, 2, 4] for d2 in [1, 2, 4]]:
+                for (al, r_consumed) in [
+                    (d, d2) for d in [1, 2, 4] for d2 in [1, 2, 4]
+                ]:
                     for r_old in range(0, 8):
-                        if     r_old - r_consumed < al and al <= r_old:
+                        if r_old - r_consumed < al and al <= r_old:
                             if INDEPENDENT_RESOURCE_LEVELS:
-                                res.append (" " * 4 + "(del-atleast-{0} {1}l{2} {1}l{3} {1}l{4})\n".format (r, r[0], r_old, r_consumed, al))
+                                res.append(
+                                    " " * 4
+                                    + "(del-atleast-{0} {1}l{2} {1}l{3} {1}l{4})\n".format(
+                                        r, r[0], r_old, r_consumed, al
+                                    )
+                                )
                             else:
-                                res.append (" " * 4 + "(del-atleast {0} l{2} l{3} l{4})\n".format (r, r[0], r_old, r_consumed, al))
-                        if     r_old < al and al <= r_old + r_consumed:
+                                res.append(
+                                    " " * 4
+                                    + "(del-atleast {0} l{2} l{3} l{4})\n".format(
+                                        r, r[0], r_old, r_consumed, al
+                                    )
+                                )
+                        if r_old < al and al <= r_old + r_consumed:
                             if INDEPENDENT_RESOURCE_LEVELS:
-                                res.append (" " * 4 + "(add-atleast-{0} {1}l{2} {1}l{3} {1}l{4})\n".format (r, r[0], r_old, r_consumed, al))
+                                res.append(
+                                    " " * 4
+                                    + "(add-atleast-{0} {1}l{2} {1}l{3} {1}l{4})\n".format(
+                                        r, r[0], r_old, r_consumed, al
+                                    )
+                                )
                             else:
-                                res.append (" " * 4 + "(add-atleast {0} l{2} l{3} l{4})\n".format (r, r[0], r_old, r_consumed, al))
+                                res.append(
+                                    " " * 4
+                                    + "(add-atleast {0} l{2} l{3} l{4})\n".format(
+                                        r, r[0], r_old, r_consumed, al
+                                    )
+                                )
         # end initial state
         res.append(")\n")
 
@@ -1070,19 +1400,31 @@ class SettlersInstance(object):
         with open(self.params.domain_source) as f:
             res = f.read()
             if self.params.no_cost:
-                res = re.sub('\(:functions \(total-cost\)\)', '', res)
+                res = re.sub("\(:functions \(total-cost\)\)", "", res)
                 res = lab.sub("", res)
                 res = pol.sub("", res)
             else:
-                res = lab.sub(lambda m: "(increase (total-cost) %d)" % (coef_lab * int(m.group(1))), res)
-                res = pol.sub(lambda m: "(increase (total-cost) %d)" % (coef_pol * int(m.group(1))), res)
+                res = lab.sub(
+                    lambda m: "(increase (total-cost) %d)"
+                    % (coef_lab * int(m.group(1))),
+                    res,
+                )
+                res = pol.sub(
+                    lambda m: "(increase (total-cost) %d)"
+                    % (coef_pol * int(m.group(1))),
+                    res,
+                )
         return res
 
+    def get_num_resource_levels(self):
+        return int(
+            (
+                self.params.constrainedness
+                * max(self.num_stone, self.num_timber, self.num_ore)
+            )
+        )
 
-    def get_num_resource_levels (self):
-        return int((self.params.constrainedness * max(self.num_stone, self.num_timber, self.num_ore)))
-
-    def get_num_vehicles (self):
+    def get_num_vehicles(self):
         return int((self.params.vehicles * self.num_vehicles))
 
 
@@ -1102,24 +1444,53 @@ def generate():
     p.add_argument("--prob-goal-raillink", type=int, default=4)
     p.add_argument("--problem", default="p01.pddl")
     p.add_argument("--domain", default="domain-p01.pddl")
-    p.add_argument("--domain-source", default=os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "domains", "domain_independent_conditional_effects_independent_levels.pddl"))
-    p.add_argument("--constrainedness", "-c", type=float, default=1, help="resource constrainedness")
-    p.add_argument("--constraint-increment", "--ci", type=int, default=0, help="absolute resource constraint increment")
-    p.add_argument("--vehicles", "-v", type=float, default=1, help="vehicle constrainedness")
-    p.add_argument("--vehicle-increment", "--vi", type=int, default=0, help="absolute vehicle increment")
+    p.add_argument(
+        "--domain-source",
+        default=os.path.join(
+            os.path.abspath(os.path.dirname(sys.argv[0])),
+            "domains",
+            "domain_independent_conditional_effects_independent_levels.pddl",
+        ),
+    )
+    p.add_argument(
+        "--constrainedness",
+        "-c",
+        type=float,
+        default=1,
+        help="resource constrainedness",
+    )
+    p.add_argument(
+        "--constraint-increment",
+        "--ci",
+        type=int,
+        default=0,
+        help="absolute resource constraint increment",
+    )
+    p.add_argument(
+        "--vehicles", "-v", type=float, default=1, help="vehicle constrainedness"
+    )
+    p.add_argument(
+        "--vehicle-increment",
+        "--vi",
+        type=int,
+        default=0,
+        help="absolute vehicle increment",
+    )
     p.add_argument("--no-cost", action="store_true", default=False)
     params = p.parse_args()
     inst = SettlersInstance(params)
 
-
     with open(params.domain, "w") as f:
         f.write(inst.get_domain())
     with open(params.problem, "w") as f:
-        f.write(inst.get_problem("independent_conditional_effects" in params.domain_source, \
-                                 "independent_levels" in params.domain_source))
+        f.write(
+            inst.get_problem(
+                "independent_conditional_effects" in params.domain_source,
+                "independent_levels" in params.domain_source,
+            )
+        )
         # f.write(inst.get_problem(True, True))
 
 
 if __name__ == "__main__":
     generate()
-

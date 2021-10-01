@@ -116,8 +116,7 @@ def create_pddl(filename, prob_name, desc, track, hex):
                 if 0 <= col2 < num_cols and 0 <= row2 < num_rows:
                     if not is_wall and maze[row2][col2] != "#":
                         pos2 = pos_name(row2, col2)
-                        init.append("(MOVE-DIR %s %s %s)" % (
-                            pos, pos2, direction.name))
+                        init.append("(MOVE-DIR %s %s %s)" % (pos, pos2, direction.name))
     for direction in dirs:
         objects.append("%s - direction" % direction.name)
 
@@ -165,4 +164,3 @@ if __name__ == "__main__":
     translate_suite("microban")
     translate_suite("multiban")
     translate_suite("hexoban", hex=True)
-

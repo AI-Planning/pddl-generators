@@ -32,27 +32,27 @@ class InputException(Exception):
 
 class ArgDefinition:
     """This class stores the definition of a command line argument that can be
-        passed to the program.
+    passed to the program.
     """
 
     def __init__(
         self, var_name, needed, validator, validator_args, default_value, description
     ):
-        """ Create a new ArgDefinition.
+        """Create a new ArgDefinition.
 
-            (ArgDefinition, str, bool, function, [object], object, str) -> None
-            var_name: The name of the variable where the value will be stored.
-            needed: If the argument can be is required (default not used then).
-            validator: A function pointer that will take the read in and
-                validate the value of this argument and either throw an
-                InputException or return the parsed value (None for no
-                validation).
-            validator_args: A list of the arguments (except the value) for the
-                validator function.
-            default_value: The value that the var_name will be set to if one is
-                not given on the commane line. This will not be validated.
-            description: A string describing the argument to show after parsing
-                if the the verbose option is selected (it is by default).
+        (ArgDefinition, str, bool, function, [object], object, str) -> None
+        var_name: The name of the variable where the value will be stored.
+        needed: If the argument can be is required (default not used then).
+        validator: A function pointer that will take the read in and
+            validate the value of this argument and either throw an
+            InputException or return the parsed value (None for no
+            validation).
+        validator_args: A list of the arguments (except the value) for the
+            validator function.
+        default_value: The value that the var_name will be set to if one is
+            not given on the commane line. This will not be validated.
+        description: A string describing the argument to show after parsing
+            if the the verbose option is selected (it is by default).
         """
 
         self.var_name = var_name
@@ -64,21 +64,21 @@ class ArgDefinition:
 
 
 class FlagDefinition:
-    """ This class stores the definition of a command line flag that can be
-        passed to the program.
+    """This class stores the definition of a command line flag that can be
+    passed to the program.
     """
 
     def __init__(self, var_name, function, description):
-        """ Create a new FlagDefinition.
+        """Create a new FlagDefinition.
 
-            (FlagDefinition, str, function, str) -> None
-            var_name: The name of the variable where the value will be stored.
-            function: A pointer to a function that will be called if the flag is
-                present (or None). Flag functions are called in the order that
-                flags are defined in, before arguments are passed.
-                The function must take a single argument, the ArgProcessor.
-            description: A string describing the flag to show after parsing
-                unless the suppress flag is supplied.
+        (FlagDefinition, str, function, str) -> None
+        var_name: The name of the variable where the value will be stored.
+        function: A pointer to a function that will be called if the flag is
+            present (or None). Flag functions are called in the order that
+            flags are defined in, before arguments are passed.
+            The function must take a single argument, the ArgProcessor.
+        description: A string describing the flag to show after parsing
+            unless the suppress flag is supplied.
         """
 
         self.var_name = var_name
@@ -92,18 +92,18 @@ class FlagDefinition:
 
 
 def range_validator(value_str, args):
-    """ Validate command line args that take a range of values.
+    """Validate command line args that take a range of values.
 
-        (str, [type, object, object, bool, str]) -> object
+    (str, [type, object, object, bool, str]) -> object
 
-        value_str: The command line string representing the argument.
-        args: A list containing the parameters that the validator requires:
-              0 - type:       The python type of the cmd line arg;
-              1 - lb:         The lower bound of the cmd line arg (or None);
-              2 - ub:         The upper bound of the cmd line arg (or None);
-              3 - allow_none: If the arg can have the value 'None'; and
-              4 - error_msg:  The error message to be printed (followed by the
-                              value) if the supplied value is invalid.
+    value_str: The command line string representing the argument.
+    args: A list containing the parameters that the validator requires:
+          0 - type:       The python type of the cmd line arg;
+          1 - lb:         The lower bound of the cmd line arg (or None);
+          2 - ub:         The upper bound of the cmd line arg (or None);
+          3 - allow_none: If the arg can have the value 'None'; and
+          4 - error_msg:  The error message to be printed (followed by the
+                          value) if the supplied value is invalid.
     """
 
     assert len(args) == 5, "Error: range_validator requires 5 arguments."
@@ -121,10 +121,10 @@ def range_validator(value_str, args):
 
 
 def range_validator_advice(validator_args):
-    """ A function for the range_validator that returns a short help string
-        based on the supplied args.
+    """A function for the range_validator that returns a short help string
+    based on the supplied args.
 
-        ([type, object, object, bool, str]) -> str
+    ([type, object, object, bool, str]) -> str
     """
 
     a_type, lb, ub, allow_none, error_msg = validator_args
@@ -141,15 +141,15 @@ def range_validator_advice(validator_args):
 
 
 def enum_validator(value_str, args):
-    """ Validate cmd line args that take one of a set of str values.
+    """Validate cmd line args that take one of a set of str values.
 
-        (str, [[str], str]) -> str
-        value_str: The command line string representing the argument.
-        args:      A list containing the parameters that the validator requires:
-            0 - v_list: The list of valid string values that the cmd line arg
-                        can take; and
-            1 - error_msg: The error message to be printed (followed by the
-                           value) if the supplied value is invalid.
+    (str, [[str], str]) -> str
+    value_str: The command line string representing the argument.
+    args:      A list containing the parameters that the validator requires:
+        0 - v_list: The list of valid string values that the cmd line arg
+                    can take; and
+        1 - error_msg: The error message to be printed (followed by the
+                       value) if the supplied value is invalid.
     """
 
     assert len(args) == 2, "Error: enum_validator requires 2 arguments."
@@ -160,23 +160,23 @@ def enum_validator(value_str, args):
 
 
 def enum_validator_advice(validator_args):
-    """ A function for the enum_validator that returns a short help string based
-        on the supplied args.
+    """A function for the enum_validator that returns a short help string based
+    on the supplied args.
 
-        ([[str], str]) -> str
+    ([[str], str]) -> str
     """
 
     return " {" + ", ".join(validator_args[0]) + "}"
 
 
 def bool_validator(value_str, args):
-    """ Validate Boolean command line args.
+    """Validate Boolean command line args.
 
-        (str, [str]) -> bool
-        value_str: The command line string representing the arg.
-        args:      A list containing the parameters that the validator requires:
-                   0 - error_msg: The error message to be printed (followed by
-                                  the value) if the supplied value is invalid.
+    (str, [str]) -> bool
+    value_str: The command line string representing the arg.
+    args:      A list containing the parameters that the validator requires:
+               0 - error_msg: The error message to be printed (followed by
+                              the value) if the supplied value is invalid.
     """
 
     assert len(args) == 1, "Error: bool_validator requires 1 argument."
@@ -191,30 +191,30 @@ def bool_validator(value_str, args):
 
 
 def bool_validator_advice(validator_args):
-    """ A function for the bool_validator that returns a short help string
+    """A function for the bool_validator that returns a short help string
 
-        ([str]) -> str
+    ([str]) -> str
     """
 
     return " {True, False}"
 
 
 def seq_range_validator(value_str, args):
-    """ Validate a sequence of command line args that take a range of values,
-        each value is seperated by the specified seperator.
+    """Validate a sequence of command line args that take a range of values,
+    each value is seperated by the specified seperator.
 
-        (str, [str, type, object, object, bool, str]) -> [Number]
+    (str, [str, type, object, object, bool, str]) -> [Number]
 
-        value_str: The command line string representing the argument.
-        args: A list containing the parameters that the validator requires:
-              0 - sep:        The seperator used to separate the list of values
-              1 - min_vals:   The minimum number of values (or None);
-              2 - max_vals:   The maximum number of values (or None);
-              3 - type:       The python type of the cmd line arg;
-              4 - lb:         The lower bound of the values (or None);
-              5 - ub:         The upper bound of the values (or None);
-              6 - error_msg:  The error message to be printed (followed by the
-                              value) if the supplied value is invalid.
+    value_str: The command line string representing the argument.
+    args: A list containing the parameters that the validator requires:
+          0 - sep:        The seperator used to separate the list of values
+          1 - min_vals:   The minimum number of values (or None);
+          2 - max_vals:   The maximum number of values (or None);
+          3 - type:       The python type of the cmd line arg;
+          4 - lb:         The lower bound of the values (or None);
+          5 - ub:         The upper bound of the values (or None);
+          6 - error_msg:  The error message to be printed (followed by the
+                          value) if the supplied value is invalid.
     """
 
     assert len(args) == 7, "Error: seq_range_validator requires 7 arguments."
@@ -237,10 +237,10 @@ def seq_range_validator(value_str, args):
 
 
 def seq_range_validator_advice(validator_args):
-    """ A function for the seq_range_validator that returns a short help string
-        based on the supplied args.
+    """A function for the seq_range_validator that returns a short help string
+    based on the supplied args.
 
-        ([type, object, object, bool, str]) -> str
+    ([type, object, object, bool, str]) -> str
     """
 
     sep, min_vals, max_vals, a_type, lb, ub, error_msg = validator_args
@@ -269,10 +269,10 @@ def seq_range_validator_advice(validator_args):
 
 
 def print_usage(arg_processor):
-    """ This function prints a usage message to sys.stdout based on the
-        current argument and flag definition. It then exits.
+    """This function prints a usage message to sys.stdout based on the
+    current argument and flag definition. It then exits.
 
-        (ArgProcessor) -> None
+    (ArgProcessor) -> None
     """
     min_width = max(
         [
@@ -324,16 +324,16 @@ def print_usage(arg_processor):
 
 
 class ArgProcessor:
-    """ Objects instantiating this class will have a number of argument and
-        flag definitions added. Once parse_args() has been called, the
-        appropriate local variables of the ArgProcessor object will be set or
-        an InputException will be raised.
+    """Objects instantiating this class will have a number of argument and
+    flag definitions added. Once parse_args() has been called, the
+    appropriate local variables of the ArgProcessor object will be set or
+    an InputException will be raised.
     """
 
     def __init__(self):
-        """ Make a new ArgProcessor.
+        """Make a new ArgProcessor.
 
-            (ArgProcessor) -> None
+        (ArgProcessor) -> None
         """
         self.program_args = {}
         self.program_arg_order = []
@@ -356,11 +356,11 @@ class ArgProcessor:
         )
 
     def add_program_arg(self, param, arg_definition):
-        """ This method adds a program argument.
+        """This method adds a program argument.
 
-            (ArgProcessor, str, ArgDefinition) -> None
-            param:          The '-' prefixed param string of the argument.
-            arg_definition: The ArgDefinition object describing the argument.
+        (ArgProcessor, str, ArgDefinition) -> None
+        param:          The '-' prefixed param string of the argument.
+        arg_definition: The ArgDefinition object describing the argument.
         """
         assert param not in self.program_args, "Error: parameter name in use."
         assert (
@@ -380,18 +380,18 @@ class ArgProcessor:
         vars(self)[flag_definition.var_name] = False
 
     def register_validator(self, validator, validator_advice):
-        """ This method adds a validator and maps it to the relevant advice
-            function.
+        """This method adds a validator and maps it to the relevant advice
+        function.
 
-            (ArgProcessor, function, function) -> None
+        (ArgProcessor, function, function) -> None
         """
         self.validators.append(validator)
         self.advice_functions[validator] = validator_advice
 
     def parse_args(self):
-        """ Call this function to parse the input arguments.
+        """Call this function to parse the input arguments.
 
-            (ArgProcessor) -> None
+        (ArgProcessor) -> None
         """
         # -----------------------------------------------------------------------
         # This code is based on code from the KR Toolkit by Christian Muise
