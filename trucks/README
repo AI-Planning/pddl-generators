@@ -1,0 +1,48 @@
+Problem generator for Trucks-Propositional
+Authors: Yannis Dimopoulos, Alfonso Gerevini and Alessandro Saetti
+==================================================================
+
+trucks [options] file
+
+Command line options:
+ -t <num>       Set the number of trucks
+ -l <num>       Set the number of locations
+ -p <num>       Set the number of packages
+ -a <num>       Set the number of truck areas
+ -n <num>       Set the number of problem
+ -seed <num>    Set the seed for random number generator
+
+
+The command lines used to generate the IPC5 problems of
+Trucks-Propositional are:
+
+gen-Trucks -seed 200416 -t 1 -l 3 -p 3 -a 2 -n 1 > pfile01
+gen-Trucks -seed 9764618515 -t 1 -l 3 -p 4 -a 2 -n 2 > pfile02
+gen-Trucks -seed 12605335814 -t 1 -l 3 -p 5 -a 2 -n 3 > pfile03
+gen-Trucks -seed 680045613 -t 1 -l 3 -p 6 -a 2 -n 4 > pfile04
+gen-Trucks -seed 1922597212 -t 1 -l 3 -p 7 -a 2 -n 5 > pfile05
+gen-Trucks -seed 3846211 -t 1 -l 3 -p 8 -a 2 -n 6 > pfile06
+gen-Trucks -seed 764310 -t 1 -l 4 -p 6 -a 3 -n 7 > pfile07
+gen-Trucks -seed 234599 -t 1 -l 4 -p 7 -a 3 -n 8 > pfile08
+gen-Trucks -seed 908548 -t 1 -l 4 -p 8 -a 3 -n 9 > pfile09
+gen-Trucks -seed 78547 -t 1 -l 4 -p 9 -a 3 -n 10 > pfile10
+gen-Trucks -seed 2216746 -t 1 -l 4 -p 10 -a 3 -n 11 > pfile11
+gen-Trucks -seed 32087005 -t 1 -l 4 -p 11 -a 3 -n 12 > pfile12
+gen-Trucks -seed 21454334 -t 1 -l 5 -p 9 -a 4 -n 13 > pfile13
+gen-Trucks -seed 314313 -t 1 -l 5 -p 10 -a 4 -n 14 > pfile14
+gen-Trucks -seed 1267652 -t 1 -l 5 -p 11 -a 4 -n 15 > pfile15
+gen-Trucks -seed 1020061 -t 1 -l 5 -p 12 -a 4 -n 16 > pfile16
+gen-Trucks -seed 4287421 -t 1 -l 5 -p 13 -a 4 -n 17 > pfile17
+gen-Trucks -seed 871235621 -t 1 -l 5 -p 14 -a 4 -n 18 > pfile18
+gen-Trucks -seed 28183798 -t 1 -l 6 -p 12 -a 5 -n 19 > pfile19
+gen-Trucks -seed 78854 -t 1 -l 6 -p 13 -a 5 -n 20 > pfile20
+gen-Trucks -seed 1216 -t 1 -l 6 -p 14 -a 5 -n 21 > pfile21
+gen-Trucks -seed 92349 -t 1 -l 6 -p 15 -a 5 -n 22 > pfile22
+gen-Trucks -seed 93543 -t 1 -l 6 -p 16 -a 5 -n 23 > pfile23
+gen-Trucks -seed 76345 -t 1 -l 6 -p 17 -a 5 -n 24 > pfile24
+gen-Trucks -seed 532323 -t 1 -l 7 -p 15 -a 6 -n 25 > pfile25
+gen-Trucks -seed 432102 -t 1 -l 7 -p 16 -a 6 -n 26 > pfile26
+gen-Trucks -seed 40275209 -t 1 -l 7 -p 17 -a 6 -n 27 > pfile27
+gen-Trucks -seed 8465321 -t 1 -l 7 -p 18 -a 6 -n 28 > pfile28
+gen-Trucks -seed 9347325 -t 1 -l 7 -p 19 -a 6 -n 29 > pfile29
+gen-Trucks -seed 832250 -t 1 -l 7 -p 20 -a 6 -n 30 > pfile30

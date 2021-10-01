@@ -1,0 +1,27 @@
+2021 June bugfix:
+
+- The generator assumed that at least 1 apple will be spawn. Now it is fixed and instances
+can be generated where no apples are spawn (you only need to pick the ones that were
+already there).
+
+- Reduced the maximum number of apples by 1 when the grid has an odd number of cells, as
+  they may be hamiltonian paths. This ensures that all instances using an empty grid are
+  solvable (if other types of grids are used solvability needs to be ensured by other
+  means).
+
+
+------------------------
+
+Instance Generator for Snake
+
+Alvaro Torralba <torralba@cs.uni-saarland.de>
+Florian Pommerening <florian.pommerening@unibas.ch>
+
+
+In the game Snake, a snake moves around a grid. There is a number of apples in some grid
+cells and when the snake moves into one of these locations, it eats the apple, extends its
+length by one, and a new apple may spawn. In this version uncertainty has been removed by
+deciding the location where apples will spawn in advance. Except for the end of the game,
+there will be more than one apple on the board at the same time.
+
+Interesting properties: dead-end states

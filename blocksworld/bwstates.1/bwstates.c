@@ -65,7 +65,7 @@ char *argv[];
     sigma = (state)malloc(sizeof(STATE));
     sigma->N = 0;                                   /* Default */
     S = 1;                                          /* Default */
-    seed = (long)tp.millitm;                              /* Default */
+    seed = (long)tp.millitm;                        /* Default */
     get_options(argc,argv,&(sigma->N),&S,&seed);    /* Read command line */
     make_ratio(sigma->N,ratio);                     /* Get probabilities */
     srand48(seed);                                  /* Initialise drand48() */

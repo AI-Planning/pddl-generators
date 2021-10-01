@@ -22,7 +22,9 @@ int main(int argc, char **argv)
 		printf("Step : the increment on number of items\n");
 		printf("MinID : the start number of number problems of the same size\n");
 		printf("MaxID : the end number of number problems of the same size\n");
-		printf("Density : the % probability that each product is included in each order\n");
+		printf(
+			"Density : the probability (between 0 and 100) that each product "
+			"is included in each order\n");
 		return -1;
 	}
 	int MinItems,MaxItems,Step,MinID,MaxID,Density;

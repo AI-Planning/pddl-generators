@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (domain freecell)
-  (:requirements :strips :typing)  
+  (:requirements :strips :typing)
   (:types card colnum cellnum num suit)
   (:predicates (on ?c1 - card ?c2 - card)
 	       (incell ?c - card)
@@ -11,7 +11,7 @@
 	       (home ?c - card)
 	       (bottomcol ?c - card)
 	       (canstack ?c1 - card ?c2 - card)
-	       (suit ?c - card ?s - suit)
+	       (hassuit ?c - card ?s - suit)
 	       (value ?c - card ?v - num)
 	       (successor ?n1 - num ?n0 - num)
 	       (colsuccessor ?n1 - colnum ?n0 - colnum)
@@ -23,7 +23,7 @@
 
   (:action move
 	   :parameters (?card ?oldcard ?newcard - card)
-	   :precondition (and (clear ?card) 
+	   :precondition (and (clear ?card)
 			      (clear ?newcard)
 			      (canstack ?card ?newcard)
 			      (on ?card ?oldcard))
@@ -35,7 +35,7 @@
 
   (:action move-b
 	   :parameters (?card ?newcard - card ?cols ?ncols - colnum)
-	   :precondition (and (clear ?card) 
+	   :precondition (and (clear ?card)
 			      (bottomcol ?card)
 			      (clear ?newcard)
 			      (canstack ?card ?newcard)
@@ -50,24 +50,24 @@
 ;; Send a card to a freecell. Two versions dependent on whether or not
 ;; we generate a new stack.
 
-  (:action sendtofree 
+  (:action sendtofree
 	   :parameters (?card ?oldcard - card ?cells ?ncells - cellnum)
 	   :precondition (and
-			  (clear ?card) 
+			  (clear ?card)
 			  (on ?card ?oldcard)
 			  (cellspace ?cells)
 			  (cellsuccessor ?cells ?ncells))
 	   :effect (and
-		    (incell ?card) 
+		    (incell ?card)
 		    (clear ?oldcard)
 		    (cellspace ?ncells)
 		    (not (on ?card ?oldcard))
 		    (not (clear ?card))
 		    (not (cellspace ?cells))))
 
-  (:action sendtofree-b 
+  (:action sendtofree-b
 	   :parameters (?card - card ?cells ?ncells - cellnum ?cols ?ncols - colnum)
-	   :precondition (and (clear ?card) 
+	   :precondition (and (clear ?card)
 			      (bottomcol ?card)
 			      (cellspace ?cells)
 			      (cellsuccessor ?cells ?ncells)
@@ -92,7 +92,7 @@
 			(colsuccessor ?cols ?ncols)
 			(on ?card ?oldcard))
 	 :effect (and
-		  (bottomcol ?card) 
+		  (bottomcol ?card)
 		  (clear ?oldcard)
 		  (colspace ?ncols)
 		  (not (on ?card ?oldcard))
@@ -101,14 +101,14 @@
 ;;Send a card home
 
 (:action sendtohome
-	 :parameters (?card ?oldcard - card ?suit - suit ?vcard - num
+	 :parameters (?card ?oldcard - card ?suitname - suit ?vcard - num
 			    ?homecard - card ?vhomecard - num)
 	 :precondition (and
-			(clear ?card) 
+			(clear ?card)
 			(on ?card ?oldcard)
 			(home ?homecard)
-			(suit ?card ?suit)
-			(suit ?homecard ?suit)
+			(hassuit ?card ?suitname)
+			(hassuit ?homecard ?suitname)
 			(value ?card ?vcard)
 			(value ?homecard ?vhomecard)
 			(successor ?vcard ?vhomecard))
@@ -119,15 +119,15 @@
 		      (not (clear ?card))))
 
 (:action sendtohome-b
-	 :parameters (?card - card ?suit - suit  ?vcard - num
+	 :parameters (?card - card ?suitname - suit  ?vcard - num
 			    ?homecard - card
 			    ?vhomecard - num
 			    ?cols ?ncols - colnum)
-	 :precondition (and (clear ?card) 
+	 :precondition (and (clear ?card)
 			    (bottomcol ?card)
 			    (home ?homecard)
-			    (suit ?card ?suit)
-			    (suit ?homecard ?suit)
+			    (hassuit ?card ?suitname)
+			    (hassuit ?homecard ?suitname)
 			    (value ?card ?vcard)
 			    (value ?homecard ?vhomecard)
 			    (successor ?vcard ?vhomecard)
@@ -145,15 +145,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (:action homefromfreecell
-	 :parameters (?card - card ?suit - suit ?vcard - num
+	 :parameters (?card - card ?suitname - suit ?vcard - num
 			    ?homecard - card ?vhomecard - num
 			    ?cells ?ncells - cellnum)
     ;;Send a card home from a free cell.
-	 :precondition (and 
+	 :precondition (and
 			(incell ?card)
-			(home ?homecard) 
-			(suit ?card ?suit)
-			(suit ?homecard ?suit)
+			(home ?homecard)
+			(hassuit ?card ?suitname)
+			(hassuit ?homecard ?suitname)
 			(value ?card ?vcard)
 			(value ?homecard ?vhomecard)
 			(successor ?vcard ?vhomecard)
@@ -187,7 +187,7 @@
 			    (cellspace ?cells)
 			    (colsuccessor ?cols ?ncols)
 			    (cellsuccessor ?ncells ?cells))
-	 :effect (and (bottomcol ?card) 
+	 :effect (and (bottomcol ?card)
 		      (clear ?card)
 		      (colspace ?ncols)
 		      (cellspace ?ncells)

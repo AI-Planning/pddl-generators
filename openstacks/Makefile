@@ -18,3 +18,5 @@ test: $(TXT) $(PDDL)
 	./$(TXT) 5 34 1 1 1 40  # Deprecated, see README.
 	./$(PDDL)
 	rm domain*_1.pddl p*_1.pddl p*_1.txt
+	./generator.py 5 3 80
+	rm domain.pddl problem.pddl

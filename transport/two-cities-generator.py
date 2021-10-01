@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import copy
 import math
@@ -14,7 +14,7 @@ MAX_SEED = 10000000
 
 def road(f, t, length):
     length = int(math.ceil(length / 10.0))
-    print("  (road %s %s)" % (f, t))
+    print(f"  (road {f} {t})")
     print("  (= (road-length %s %s) %d)" % (f, t, length))
 
 
@@ -79,10 +79,10 @@ random.seed(seed)
 #         nodes * pi * Connect^2
 connect_distance = math.sqrt((degree * size * size) / (nodes * math.pi * 0.694))
 
-city_a = euclidean_graph.generate_connected(
+city_a = euclidean_graph.generate_connected_safe(
     nodes, size, size, connect_distance, epsilon
 )
-city_b = euclidean_graph.generate_connected(
+city_b = euclidean_graph.generate_connected_safe(
     nodes, size, size, connect_distance, epsilon
 )
 

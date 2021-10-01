@@ -8,15 +8,13 @@ MAX_LEVELS = 2
 
 def print_usage():
     print(
-        (
-            "Usage: "
-            + sys.argv[0]
-            + " <num_cocktails> <num_ingredients> <num_shots> [<random_seed>]"
-        )
+        "Usage: "
+        + sys.argv[0]
+        + " <num_cocktails> <num_ingredients> <num_shots> [<random_seed>]"
     )
     print("  num_cocktails (min 1)")
     print("  num_ingredients (min 2)")
-    print("  num_shots (min max[1,num_cocktails+1])")
+    print("  num_shots (min num_cocktails+1)")
     print("  random_seed (min 1, optional)")
 
 
@@ -172,11 +170,11 @@ def main():
 
     random.seed(seed)
 
-    print(("(define (problem " + name + ")"))
+    print("(define (problem " + name + ")")
     print(" (:domain barman)")
-    print((" (:objects " + get_objects() + ")"))
-    print((" (:init " + get_init() + ")"))
-    print((" (:goal" + get_goals() + "))"))
+    print(" (:objects " + get_objects() + ")")
+    print(" (:init " + get_init() + ")")
+    print(" (:goal" + get_goals() + "))")
 
 
 main()

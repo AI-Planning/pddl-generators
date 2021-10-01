@@ -4,7 +4,6 @@
 # IPC 2014
 # author: Mauro Vallati -- University of Huddersfield
 
-from __future__ import print_function
 
 import sys
 import random

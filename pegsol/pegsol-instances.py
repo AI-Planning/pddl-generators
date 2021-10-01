@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
 
 # Gives statistics for the instances of the Peg Solitaire suite.
 # We use this to pick the 30 instances to use for the competition.

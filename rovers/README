@@ -1,0 +1,26 @@
+2021 June fix: visible_from output was not using the correct data, so all objectives were visible from waypoint0 to waypoingN.
+   Apart from heavily impacting the diversity of the generated instances, this could cause some instances to be unsolvable (e.g. when waypoint0 and 1 are not reachable by the rover).
+
+
+------------------------------
+
+
+Inspired by planetary rovers problems, this domain requires that a collection of rovers
+navigate a planet surface, finding samples and communicating them back to a lander.
+
+Strips: The Strips version is an interesting challenge in its own right. In addition, a
+minor subtlety in the encoding is used to prevent parallel communication between rovers
+and the lander: communication actions precondition on the channel to the lander being
+free, and then both add and delete this fact. Because deletes occur before adds this has
+the over all effect of leaving the channel free, but it makes the fact a "moving target"
+which prevents a concurrent action from using the fact. Some planners find this mechanism
+difficult to handle.
+
+Useage: rovergen [-s|-t|-n|-u|-f <filename>]
+                <seed> <#rovers> <#waypoints> <#objectives> <#cameras> <#n-goals>
+
+IPC instances p01: 1 4 2 1 3
+              p10: 4 7 4 6 11
+              p20: 8 25 8 7 20
+              p30: 10 50 8 14 25
+              p40  14 100 11 15 69

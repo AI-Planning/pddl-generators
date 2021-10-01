@@ -17,6 +17,7 @@
 			(car-clear ?car)
 			(curb-clear ?curbdest)
 			(at-curb-num ?car ?curbsrc)
+                        (not (= ?curbsrc ?curbdest)) ; A car cannot be moved from a curb to the same curb (to avoid contradictory effects)
 		)
 		:effect (and
 			(not (curb-clear ?curbdest))
@@ -33,7 +34,8 @@
 			(car-clear ?car)
 			(car-clear ?cardest)
 			(at-curb-num ?car ?curbsrc)
-			(at-curb ?cardest)
+			(at-curb ?cardest)      
+                        (not (= ?car ?cardest))  ; A car cannot be moved onto itself
 		)
 		:effect (and
 			(not (car-clear ?cardest))
@@ -51,6 +53,7 @@
 			(car-clear ?car)
 			(curb-clear ?curbdest)
 			(behind-car ?car ?carsrc)
+                        (not (= ?car ?carsrc))  ; A car cannot be moved from itself
 		)
 		:effect (and
 			(not (curb-clear ?curbdest))
@@ -69,6 +72,10 @@
 			(car-clear ?cardest)
 			(behind-car ?car ?carsrc)
 			(at-curb ?cardest)
+                        ; The three cars must be different
+                        (not (= ?car ?carsrc))
+                        (not (= ?carsrc ?cardest))
+                        (not (= ?car ?cardest))
 		)
 		:effect (and
 			(not (car-clear ?cardest))

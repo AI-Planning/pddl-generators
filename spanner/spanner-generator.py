@@ -100,9 +100,9 @@ except BaseException:
 
 random.seed()
 
-print(("(define (problem " + name + ")"))
+print("(define (problem " + name + ")")
 print(" (:domain spanner)")
-print((" (:objects " + get_objects() + ")"))
-print((" (:init " + get_init() + ")"))
-print((" (:goal" + get_goals() + "))"))
+print(" (:objects " + get_objects() + ")")
+print(" (:init " + get_init() + ")")
+print(" (:goal" + get_goals() + "))")
 sys.exit(0)

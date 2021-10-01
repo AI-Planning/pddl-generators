@@ -1,0 +1,36 @@
+1 2 4 8 16 32 % file sizes
+0.1 0.1 0.2 0.3 0.2 0.1 % probability distribution or frequency distribution over file sizes (write 0 for normal distribution)
+
+% list of servers
+56 % capacity
+1 % base io cost
+10 20 100  % base processing costs 
+0.2 0.2 0.6 % probability distribution over processing costs with additional probability for disabled script (write 0 for normal distribution)
+
+32
+2
+20
+1.0 
+
+96
+1
+10 30
+0.1 0.9 
+
+96 
+2
+20 100
+0.5 0.5 
+
+% list of bidirectional connections
+1 2  % adjacent servers
+1 % base send cost
+
+2 3 
+2
+
+1 3
+3
+
+1 4
+2

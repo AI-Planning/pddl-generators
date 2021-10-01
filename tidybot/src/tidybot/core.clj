@@ -125,6 +125,8 @@
    objects        ;[object-name [init-x init-y] [[gx1 gy1] [gx2 gy2] ...]]
    gripper-radius]
 ;  (println width height robots carts surfaces cupboards (map cupboard-obstacles cupboards) objects )
+   (println "; " width "x" height  "with" (count robots) "robots," (count carts) "carts," (count tables) "tables, and" (count cupboards) " cupboards")
+
   (->> 
         `(~'define ~sep
            (~'problem ~name) ~sep 

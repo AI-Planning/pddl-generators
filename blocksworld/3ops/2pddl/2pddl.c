@@ -98,7 +98,7 @@ int main( int argc, char *argv[] )
   printf("\n(handempty)");
   for ( i = 1; i < gn + 1; i++ ) {
     if ( initial[i] == 0 ) {
-      printf("\n(ontable b%d)", i);
+      printf("\n(on-table b%d)", i);
     } else {
       printf("\n(on b%d b%d)", i, initial[i]);
     }

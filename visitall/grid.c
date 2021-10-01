@@ -26,6 +26,9 @@
    flag is added now to this generator: a ratio of the number of
    unavailable locations */
 
+
+/* Alvaro: We add separated width and height parameters to allow for a more fine-grained increase in difficulty */
+
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -42,7 +45,7 @@ void usage( void );
 Bool process_command_line( int argc, char *argv[] );
 
 /* globals */
-int x; 				/* size of the grid: x*x */
+int x,y; 				/* size of the grid: x*y */
 float r=1.0; 			/* ratio of cells in the goal state */
 int u=0; 			/* number of unavailable locations */
 int seed = -1;
@@ -55,6 +58,7 @@ int main( int argc, char *argv[] )
 
   /* command line treatment, first preset values */
   x = -1;
+  y = -1;
 
   if ( argc == 1 || ( argc == 2 && *++argv[0] == '?' ) ) {
     usage();
@@ -71,16 +75,16 @@ int main( int argc, char *argv[] )
 
   /* make sure that the number of unavailable locations does not
      exceed the area of the grid */
-  if (u>=x*x) {
-    printf ("\n You cannot arrange more than %d unavailable locations in a %dx%d grid\n\n", u-1, x, x);
+  if (u>=x*y) {
+    printf ("\n You cannot arrange more than %d unavailable locations in a %dx%d grid\n\n", u-1, x, y);
     exit (1);
   }
 
   /* create a mask with the usable locations */
-  char* mask = malloc (x*x);
+  char* mask = (char *)(malloc (x*y));
 
   /* make them all usable by default */
-  for (i=0;i<x*x;mask[i++]=1);
+  for (i=0;i<x*y;mask[i++]=1);
 
   /* initialize the random generator */
   static char randstate[2048];
@@ -92,10 +96,10 @@ int main( int argc, char *argv[] )
   /* and now, create up to u holes in the grid */
   i=0;
   while (i<u) {
-    int hole = random ()%(x*x);	/* pick up a random location */
+    int hole = random ()%(x*y);	/* pick up a random location */
     printf ("%d\n", hole);
     if (mask[hole] &&		/* just in case it is currently reachable */
-	(hole != (x+1)*x/2)) {	/* and it is not the initial location */
+	(hole != (x+1)*y/2)) {	/* and it is not the initial location */
       mask[hole] = 0;		/* make it unreachable */
       i++;			/* and proceed with the next one */
     }
@@ -109,8 +113,8 @@ int main( int argc, char *argv[] )
 
   printf("\n(:objects \n");
   for ( i = 0; i < x; i++ ) {
-    for ( j = 0; j < x; j++ ) {
-      if (mask[i*x+j]) 		/* in case this location is reachable */
+    for ( j = 0; j < y; j++ ) {
+      if (mask[i*y+j]) 		/* in case this location is reachable */
 	printf("\tloc-x%d-y%d\n", i, j);
     }
   }
@@ -123,8 +127,8 @@ int main( int argc, char *argv[] )
 
   do {
       initial_row = random()%x;
-      initial_col = random()%x;
-  } while (!mask[initial_row*x + initial_col]);
+      initial_col = random()%y;
+  } while (!mask[initial_row*y + initial_col]);
 
   printf("\n\t(at-robot loc-x%d-y%d)", initial_row, initial_col);
   printf("\n\t(visited loc-x%d-y%d)", initial_row, initial_col);
@@ -132,18 +136,18 @@ int main( int argc, char *argv[] )
   printf("\n");
   
   for ( i = 0; i < x; i++ ) {
-    for ( j = 0; j < x; j++ ) {
+    for ( j = 0; j < y; j++ ) {
       // can go up
-      if (( i != 0) && (mask[i*x+j]) && (mask[(i-1)*x+j]))
+      if (( i != 0) && (mask[i*y+j]) && (mask[(i-1)*y+j]))
 	printf("\t(connected loc-x%d-y%d loc-x%d-y%d)\n ", i, j, i - 1, j);
       // can go down
-      if (( i != x - 1) && (mask[i*x+j]) && (mask[(i+1)*x+j]))
+      if (( i != x - 1) && (mask[i*y+j]) && (mask[(i+1)*y+j]))
 	printf("\t(connected loc-x%d-y%d loc-x%d-y%d)\n ", i, j, i + 1, j);
       // can go left
-      if (( j != 0 ) && (mask[i*x+j]) && (mask[i*x+j-1]))
+      if (( j != 0 ) && (mask[i*y+j]) && (mask[i*y+j-1]))
 	printf("\t(connected loc-x%d-y%d loc-x%d-y%d)\n ", i, j, i, j - 1);
       // can go right
-      if (( j != x - 1 ) && (mask[i*x+j]) && (mask[i*x+j+1]))
+      if (( j != y - 1 ) && (mask[i*y+j]) && (mask[i*y+j+1]))
 	printf("\t(connected loc-x%d-y%d loc-x%d-y%d)\n ", i, j, i, j + 1);
     }
   }
@@ -155,11 +159,11 @@ int main( int argc, char *argv[] )
   printf("\n(and \n");
 
   for ( i = 0; i < x; i++ ) {
-    for ( j = 0; j < x; j++ ) {
+    for ( j = 0; j < y; j++ ) {
       /* throw a dice to decide wether (i,j) shall be included in the
          goal state or not. With ratio r=1, all are included as in the
          original version */
-      if ((mask[i*x+j] && random() % (x*x) < (r*x*x)) || ((i==initial_row) && (j==initial_col)))
+      if ((mask[i*y+j] && random() % (x*y) < (r*y*x)) || ((i==initial_row) && (j==initial_col)))
         printf("\t(visited loc-x%d-y%d)\n", i, j);
     }
   }
@@ -180,6 +184,8 @@ void usage( void )
 
   printf ("\n OPTIONS   DESCRIPTIONS\n\n");
   printf (" -n <num>    size of square grid\n");
+  printf (" -x <num>    width of rectangular grid\n");
+  printf (" -y <num>    height of rectangular grid\n");
   printf (" -r <num>    ratio of cells in the goal state\n");
   printf (" -u <num>    number of unavailable locations ---which are randomly arranged\n\n");
   printf (" -s <num>    random seed (optional)\n");
@@ -201,6 +207,13 @@ Bool process_command_line( int argc, char *argv[] )
 	switch ( option ) {
 	case 'n':
 	  sscanf( *argv, "%d", &x );
+          y = x;
+	  break;
+        case 'x':
+	  sscanf( *argv, "%d", &x );
+	  break;
+        case 'y':
+	  sscanf( *argv, "%d", &y );
 	  break;
 	case 'r':
 	  sscanf( *argv, "%f", &r );

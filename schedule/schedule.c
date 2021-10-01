@@ -4,18 +4,18 @@
  * (C) Copyright 2001 Albert Ludwigs University Freiburg
  *     Institute of Computer Science
  *
- * All rights reserved. Use of this software is permitted for 
- * non-commercial research purposes, and it may be copied only 
+ * All rights reserved. Use of this software is permitted for
+ * non-commercial research purposes, and it may be copied only
  * for that use.  All copies must include this copyright message.
  * This software is made available AS IS, and neither the authors
  * nor the  Albert Ludwigs University Freiburg make any warranty
- * about the software or its performance. 
+ * about the software or its performance.
  *********************************************************************/
 
 
 
 
-/* 
+/*
  * C code for generating randomized schedule problems...
  */
 
@@ -25,7 +25,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <time.h>
 
 
 
@@ -72,6 +73,7 @@ Bool process_command_line( int argc, char *argv[] );
  */
 int gparts, gashapes, gcolours, gwidths, ganorients;
 int gp_G_cylindrical, gp_I_colour, gp_G_colour, gp_I_hole, gp_G_hole, gp_G_surface;
+int grandom_seed;
 
 
 /* random values
@@ -88,15 +90,9 @@ int main( int argc, char *argv[] )
 
   int i;
 
-  /* seed the random() function
-   */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
   sprintf( gashape[0], "CYLINDRICAL");
   sprintf( gashape[1], "CIRCULAR");
-  sprintf( gashape[2], "OBLONG");  
+  sprintf( gashape[2], "OBLONG");
   sprintf( gcolour[0], "BLUE");
   sprintf( gcolour[1], "YELLOW");
   sprintf( gcolour[2], "RED");
@@ -123,6 +119,7 @@ int main( int argc, char *argv[] )
   gp_I_hole = 50;
   gp_G_hole = 80;
   gp_G_surface = 50;
+  grandom_seed = -1;
 
   if ( argc == 1 || ( argc == 2 && *++argv[0] == '?' ) ) {
     usage();
@@ -132,6 +129,11 @@ int main( int argc, char *argv[] )
     usage();
     exit( 1 );
   }
+
+  if (grandom_seed == -1) {
+    grandom_seed = time(NULL);
+  }
+  srand(grandom_seed);
 
   gI_ashape = ( int * ) calloc( gparts, sizeof( int ) );
   gI_surface = ( int * ) calloc( gparts, sizeof( int ) );
@@ -154,7 +156,7 @@ int main( int argc, char *argv[] )
 
   /* header
    */
-  printf("(define (problem schedule-p%d-s%d-c%d-w%d-o%d)", 
+  printf("(define (problem schedule-p%d-s%d-c%d-w%d-o%d)",
 	 gparts, gashapes, gcolours, gwidths, ganorients);
   printf("\n(:domain schedule)");
 
@@ -212,8 +214,8 @@ int main( int argc, char *argv[] )
   exit( 0 );
 
 }
-  
-  
+
+
 
 
 
@@ -244,22 +246,22 @@ void create_random_I( void )
   int i, r;
 
   for ( i = 0; i < gparts; i++ ) {
-    r = random() % (gashapes + 1);
+    r = rand() % (gashapes + 1);
     gI_ashape[i] = r;
-    r = random() % 3;
+    r = rand() % 3;
     gI_surface[i] = r;
-    r = random() % 100;
+    r = rand() % 100;
     if ( r < gp_I_colour ) {
-      r = random() % gcolours;
+      r = rand() % gcolours;
       gI_colour[i] = r;
     } else {
       gI_colour[i] = -1;
     }
-    r = random() % 100;
+    r = rand() % 100;
     if ( r < gp_I_hole ) {
-      r = random() % gwidths;
+      r = rand() % gwidths;
       gI_width[i] = r;
-      r = random() % ganorients;
+      r = rand() % ganorients;
       gI_anorient[i] = r;
     } else {
       gI_width[i] = -1;
@@ -278,31 +280,31 @@ void create_random_G( void )
   int i, r;
 
   for ( i = 0; i < gparts; i++ ) {
-    r = random() % 100;
+    r = rand() % 100;
     if ( r < gp_G_cylindrical ) {
       gG_ashape[i] = 0;
     } else {
       gG_ashape[i] = -1;
     }
-    r = random() % 100;
+    r = rand() % 100;
     if ( r < gp_G_surface ) {
-      r = random() % 3;
+      r = rand() % 3;
       gG_surface[i] = r;
     } else {
       gG_surface[i] = -1;
     }
-    r = random() % 100;
+    r = rand() % 100;
     if ( r < gp_G_colour ) {
-      r = random() % gcolours;
+      r = rand() % gcolours;
       gG_colour[i] = r;
     } else {
       gG_colour[i] = -1;
     }
-    r = random() % 100;
+    r = rand() % 100;
     if ( r < gp_G_hole ) {
-      r = random() % gwidths;
+      r = rand() % gwidths;
       gG_width[i] = r;
-      r = random() % ganorients;
+      r = rand() % ganorients;
       gG_anorient[i] = r;
     } else {
       gG_width[i] = -1;
@@ -340,7 +342,7 @@ void print_random_I( void )
       printf("\n(PAINTED P%d %s)", i, gcolour[gI_colour[i]]);
     }
     if ( gI_width[i] > -1 ) {
-      printf("\n(HAS-HOLE P%d %s %s)", i, 
+      printf("\n(HAS-HOLE P%d %s %s)", i,
 	     gwidth[gI_width[i]],
 	     ganorient[gI_anorient[i]]);
     }
@@ -368,7 +370,7 @@ void print_random_G( void )
       printf("\n(PAINTED P%d %s)", i, gcolour[gG_colour[i]]);
     }
     if ( gG_width[i] > -1 ) {
-      printf("\n(HAS-HOLE P%d %s %s)", i, 
+      printf("\n(HAS-HOLE P%d %s %s)", i,
 	     gwidth[gG_width[i]],
 	     ganorient[gG_anorient[i]]);
     }
@@ -377,7 +379,7 @@ void print_random_G( void )
 }
 
 
-  
+
 
 
 
@@ -415,8 +417,9 @@ void usage( void )
   printf("-E <num>    probability of colour in G (preset: %d)\n\n", gp_G_colour);
   printf("-R <num>    probability of hole in I (preset: %d)\n", gp_I_hole);
   printf("-T <num>    probability of hole in G (preset: %d)\n", gp_G_hole);
-  printf("-Y <num>    probability of surface condition in G (preset: %d)\n\n", 
+  printf("-Y <num>    probability of surface condition in G (preset: %d)\n",
 	 gp_G_surface);
+  printf("-r <num>    random seed (minimal 1, optional)\n\n");
 
 }
 
@@ -470,6 +473,9 @@ Bool process_command_line( int argc, char *argv[] )
 	case 'Y':
 	  sscanf( *argv, "%d", &gp_G_surface );
 	  break;
+  case 'r':
+    sscanf( *argv, "%d", &grandom_seed );
+    break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );
 	  return FALSE;

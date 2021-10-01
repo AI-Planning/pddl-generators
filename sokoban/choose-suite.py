@@ -1,11 +1,10 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from rolling_stone_data import rs_data
 
-rs_nodes = dict(
-    (instance, nodes) for instance, moves, pushes, nodes in rs_data if moves is not None
-)
+rs_nodes = {
+    instance: nodes for instance, moves, pushes, nodes in rs_data if moves is not None
+}
 
 
 def r(begin, end=None):
@@ -48,7 +47,7 @@ for no, instance in enumerate(instances):
 assert len(instances) == 155, len(instances)
 assert len(solved_by_base) == 123, len(solved_by_base)
 assert len(rs_nodes) == 145, len(rs_nodes)
-assert set(solved_by_base - set(rs_nodes)) == set([154])
+assert set(solved_by_base - set(rs_nodes)) == {154}
 
 # "instances" now contains, in sequence:
 # 122 instances solved by blind search and Rolling Stone.

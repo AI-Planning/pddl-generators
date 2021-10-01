@@ -139,11 +139,11 @@ except BaseException:
     )
     sys.exit(1)
 
-print(("(define (problem " + name + ")"))
+print("(define (problem " + name + ")")
 print(" (:domain floor-tile)")
-print((" (:objects " + get_objects() + ")"))
-print((" (:init " + get_init() + ")"))
-print((" (:goal " + get_goals() + ")"))
+print(" (:objects " + get_objects() + ")")
+print(" (:init " + get_init() + ")")
+print(" (:goal " + get_goals() + ")")
 
 if mode_flag == "time":
     print(" (:metric minimize (total-time))")

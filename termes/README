@@ -1,0 +1,15 @@
+Instance Generator and solver for TERMES domain:
+  Alvaro Torralba <torralba@cs.uni-saarland.de>
+  Florian Pommerening <florian.pommerening@unibas.ch>
+
+
+
+This domain models the Harvard TERMES robots, based on termites. They cannot only carry
+blocks but also climb on them so that they can build complex structures. This domain, in
+its full generality, is a multi-agent planning benchmark, but here we model only a single
+robot.
+
+Domain submitted by Sven Koenig and Satish Kumar
+Publication: S. Koenig and S. Kumar. A Case for Collaborative Construction as Testbed for Cooperative
+Multi-Agent Planning. In Proceedings of the ICAPS-17 Scheduling and Planning Applications
+Workshop (SPARK), 2017.

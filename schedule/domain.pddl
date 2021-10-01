@@ -3,7 +3,7 @@
 
 (define (domain schedule)
   (:requirements :adl :typing)
-  (:types temperature
+  (:types temperature-type
 	  ashape
 	  surface
 	  machine
@@ -12,13 +12,13 @@
 	  width
 	  anorient)
 
-  (:constants cold hot - temperature
+  (:constants cold hot - temperature-type
 	      cylindrical - ashape 
 	      polisher roller lathe grinder punch drill-press
 	      spray-painter immersion-painter - machine
               polished rough smooth - surface)
 
-  (:predicates (temperature ?obj - part ?temp - temperature)
+  (:predicates (temperature ?obj - part ?temp - temperature-type)
 	       (busy ?machine - machine)
 	       (scheduled ?obj - part)
 	       (objscheduled)
@@ -69,7 +69,7 @@
 			    (when (and (shape ?x ?oldshape)
                                        (not (= ?oldshape cylindrical)))
 			      (not (shape ?x ?oldshape))))
-		    (forall (?oldtemp - temperature)
+		    (forall (?oldtemp - temperature-type)
 			    (when (and (temperature ?x ?oldtemp)
                                        (not (= ?oldtemp hot)))
 			      (not (temperature ?x ?oldtemp))))))

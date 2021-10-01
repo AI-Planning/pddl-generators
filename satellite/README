@@ -1,0 +1,67 @@
+Fix June 2021:
+
+Added code to make sure that:
+  - all modes are supported by at least one instrument
+  - all observations are interesting
+
+This ensures that some observations can be made, so that all instances have at least a goal.
+
+
+
+---------------------------------
+
+
+
+Usage: satgen [-T <d>|-u|-s|-t|-n|-c] <seed> <#s> <#i> <#m> <#t> <#o>
+
+        where: #s = number of satellites, #i = max instruments/satellite,
+                #m = number of modes, #t = number of targets
+                #o = number of observations
+
+IPC instances:
+
+   1 1 3 7 3
+   10 3 5 205 178
+
+
+Clearly, what we scale is the number of modes, targets, satellites, and observations.
+Number of instruments per satellite we may fix to 3.
+Targets should be at least 5
+
+                    sat  mod   tar   obs
+p01-pfile1.pddl       1    3    7     3
+p02-pfile2.pddl       1    3    8     5
+p03-pfile3.pddl       2    3    8     4
+p04-pfile4.pddl       2    3    10    7
+p05-pfile5.pddl       3    3    10    6
+p06-pfile6.pddl       3    4    11    7
+p07-pfile7.pddl       4    4    12    7
+p08-pfile8.pddl       4    4    15    10
+p09-pfile9.pddl       5    5    15    10
+p10-pfile10.pddl      5    5    17    11
+p11-pfile11.pddl      5    5    20    11
+p12-pfile12.pddl      5    5    25    19
+p13-pfile13.pddl      5    5    30    24
+p14-pfile14.pddl      6    5    25    16
+p15-pfile15.pddl      8    5    25    18
+p16-pfile16.pddl      10   5    25    19
+p17-pfile17.pddl      12   5    25    17
+p18-pfile18.pddl      5    5    25    13
+p19-pfile19.pddl      5    8    25    27
+p20-pfile20.pddl      5    10   25    40
+p21-HC-pfile1.pddl    5    3    43    34
+p22-HC-pfile2.pddl    5    3    53    43
+p23-HC-pfile3.pddl    7    3    53    47
+p24-HC-pfile4.pddl    7    3    73    66
+p25-HC-pfile5.pddl    8    3    73    60
+p26-HC-pfile6.pddl    8    4    74    64
+p27-HC-pfile7.pddl    10   4    75    64
+p28-HC-pfile8.pddl    10   4    105   93
+p29-HC-pfile9.pddl    15   5    105   87
+p30-HC-pfile10.pddl   15   5    125   108
+p31-HC-pfile11.pddl   15   5    155   130
+p32-HC-pfile12.pddl   15   5    205   178
+p33-HC-pfile13.pddl   15   5    255   226
+p34-HC-pfile14.pddl   5    5    205   140
+p35-HC-pfile15.pddl   8    5    205   184
+p36-HC-pfile16.pddl   10   5    205   175

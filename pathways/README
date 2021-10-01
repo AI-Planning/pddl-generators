@@ -1,0 +1,58 @@
+Pathways-Propositional Problem file generator
+Authors:  Yannis Dimopoulos, Alfonso Gerevini and Alessandro Saetti
+===================================================================
+
+Usage: pathways [options]
+
+Command line options:
+ -out <file>    Set the problem file name
+ -n <string>    Set the problem name (default PathwaysProb)
+ -R <num>       Set the min number of reactions used in the reach. analysis
+ -G <num>       Set the number of goals
+ -L <num>       Set the desired number of initial substances (in metric field)
+--seed <num>    Set the seed for the random number generator
+
+The reactions in the generated problems are based on files
+"Pathways-SimpleSubs" and "Pathways-Reactions". The generator selects
+reactions and defines goals according to an algorithm that performs a
+sort of reachability analysis. The command lines used to generate the
+IPC5 problems of Pathways-Propositional are:
+
+pathways --seed 2004 -out pfile01 -R 12 -G 01 -L 3 -n Pathways-01 > domain-dummyAct.pddl
+pathways --seed 1146 -out pfile02 -R 24 -G 02 -L 3 -n Pathways-02 > domain-dummyAct.pddl
+pathways --seed 126053358 -out pfile03 -R 36 -G 03 -L 3 -n Pathways-03 > domain-dummyAct.pddl
+pathways --seed 6800456 -out pfile04 -R 48 -G 04 -L 3 -n Pathways-04 > domain-dummyAct.pddl
+pathways --seed 387462 -out pfile05 -R 72 -G 06 -L 7 -n Pathways-05 > domain-dummyAct.pddl
+pathways --seed 231459 -out pfile06 -R 96 -G 08 -L 10 -n Pathways-06 > domain-dummyAct.pddl
+pathways --seed 2211674 -out pfile07 -R 132 -G 11 -L 10 -n Pathways-07 > domain-dummyAct.pddl
+pathways --seed 32908700 -out pfile08 -R 144 -G 12 -L 17 -n Pathways-08 > domain-dummyAct.pddl
+pathways --seed 21545433 -out pfile09 -R 156 -G 13 -L 12 -n Pathways-09 > domain-dummyAct.pddl
+pathways --seed 3286431 -out pfile10 -R 168 -G 14 -L 14 -n Pathways-10 > domain-dummyAct.pddl
+pathways --seed 1276765 -out pfile11 -R 180 -G 15 -L 10 -n Pathways-11 > domain-dummyAct.pddl
+pathways --seed 1062006 -out pfile12 -R 192 -G 16 -L 17 -n Pathways-12 > domain-dummyAct.pddl
+pathways --seed 428365421 -out pfile13 -R 204 -G 17 -L 19 -n Pathways-13 > domain-dummyAct.pddl
+pathways --seed 871235621 -out pfile14 -R 216 -G 18 -L 18 -n Pathways-14 > domain-dummyAct.pddl
+pathways --seed 281837981 -out pfile15 -R 228 -G 19 -L 18 -n Pathways-15 > domain-dummyAct.pddl
+pathways --seed 78854 -out pfile16 -R 240 -G 20 -L 22 -n Pathways-16 > domain-dummyAct.pddl
+pathways --seed 1216 -out pfile17 -R 252 -G 21 -L 20 -n Pathways-17 > domain-dummyAct.pddl
+pathways --seed 763451 -out pfile18 -R 288 -G 24 -L 20 -n Pathways-18 > domain-dummyAct.pddl
+pathways --seed 432102 -out pfile19 -R 312 -G 26 -L 24 -n Pathways-19 > domain-dummyAct.pddl
+pathways --seed 40275209 -out pfile20 -R 324 -G 27 -L 21 -n Pathways-20 > domain-dummyAct.pddl
+pathways --seed 8465321 -out pfile21 -R 336 -G 28 -L 22 -n Pathways-21 > domain-dummyAct.pddl
+pathways --seed 9347325 -out pfile22 -R 348 -G 29 -L 21 -n Pathways-22 > domain-dummyAct.pddl
+pathways --seed 723452 -out pfile23 -R 360 -G 30 -L 25 -n Pathways-23 > domain-dummyAct.pddl
+pathways --seed 98766 -out pfile24 -R 372 -G 31 -L 28 -n Pathways-24 > domain-dummyAct.pddl
+pathways --seed 276314 -out pfile25 -R 396 -G 33 -L 34 -n Pathways-25 > domain-dummyAct.pddl
+pathways --seed 82254 -out pfile26 -R 408 -G 34 -L 29 -n Pathways-26 > domain-dummyAct.pddl
+pathways --seed 447198776 -out pfile27 -R 420 -G 35 -L 30 -n Pathways-27 > domain-dummyAct.pddl
+pathways --seed 8632 -out pfile28 -R 444 -G 37 -L 35 -n Pathways-28 > domain-dummyAct.pddl
+pathways --seed 822562 -out pfile29 -R 468 -G 39 -L 27 -n Pathways-29 > domain-dummyAct.pddl
+pathways --seed 37463 -out pfile30 -R 480 -G 40 -L 27 -n Pathways-30 > domain-dummyAct.pddl
+
+
+The atoms in ":goal" field are dummy. Each of these command line also
+outputs a set of dummy operators, whose (disjunctive) preconditions
+state the real goals of the planning problem.
+
+
+**NOTE**: The generator may produce unsolvable tasks.

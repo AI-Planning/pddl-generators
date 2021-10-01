@@ -4,7 +4,7 @@ bwstates \- BWSTATES: Blocks World States
 .SH SYNOPSIS
 .LP
 .B bwstates
-[ 
+[
 .I -n integer
 ] [
 .I -r integer
@@ -20,15 +20,15 @@ being generated. For a full description see
 .I Generating Random States of Blocks World
 available as a technical report from the address below.
 .SH OPTIONS
-.TP 15 
+.TP 15
 .BI \-n " N"
 sets the number of blocks in the domain to N. N is a non-negative integer,
 default 0.
-.TP 15 
+.TP 15
 .BI \-r " R"
 causes R to be used as the seed for the random number generator drand48().
-R is a non-negative integer, default 3088.
-.TP 
+R is a non-negative integer, default random.
+.TP
 .BI \-s " S"
 specifies the number of states to be produced. S is a positive integer,
 default 1.
