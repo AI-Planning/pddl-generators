@@ -47,7 +47,7 @@ struct Waypoint{
 		rock=(x%2==0);
 		x = rnd(10);
 		sunny=(x<3);
-		
+
 	};
 };
 
@@ -61,7 +61,7 @@ struct Camera{
 	bool high_res;
 	bool low_res;
 	Camera(int rovs,int obs) : cal_targ(rnd(obs)),onboard(rnd(rovs)){
-	
+
 		int x = rnd(7);
 		colour=(x%2==0);
 		x/=2;
@@ -101,17 +101,36 @@ struct Camera{
 };
 
 struct Objective{
-	vector<int> vis_from;
+	set<int> vis_from;
 	vector<int> requests;
 	Objective(int locs) {
 		int x = rnd1(locs);
 		for(int i = 0;i<x;i++){
 			int y = rnd(locs);
-			vis_from.push_back(y);
-		}
-	}
+			vis_from.insert(y);
+                }
+        }
+
+    void make_visible_from(const set<int> & locations){
+        for(int loc1: vis_from){
+            for(int loc2: locations){
+                if(loc1 == loc2) return;
+            }
+        }
+
+
+        //Make it visible from a random location. Selecting the yth random element from a set in
+        // a bit of a hacky way
+        int y = rnd(locations.size());
+        for(int loc2: locations){
+            if (y-- == 0){
+                vis_from.insert(loc2);
+                return;
+            }
+        }
+    }
 };
-	
+
 
 
 typedef map<int,set<int> > graph;
@@ -124,14 +143,14 @@ struct Map {
 	void explore(graph & g,int start,set<int> & reached)
 	{
 		queue<int> togo;
-		
+
 		togo.push(start);
 		reached.insert(start);
 		while(!togo.empty())
 		{
 			int loc = togo.front();
 			togo.pop();
-			
+
 			for(set<int>::const_iterator i = g[loc].begin();i != g[loc].end();++i)
 			{
 				if(find(reached.begin(),reached.end(),*i)==reached.end())
@@ -143,8 +162,8 @@ struct Map {
 		};
 	};
 
-	void connect(graph & g) 
-	{	
+	void connect(graph & g)
+	{
 		set<int> reached;
 		int start = rnd(waypoints);
 		explore(g,start,reached);
@@ -163,7 +182,7 @@ struct Map {
 			start = next;
 			explore(g,start,reached);
 		};
-		
+
 	};
 
 
@@ -172,42 +191,42 @@ struct Map {
 		for(int i = 0;i < s;++i)
 		{
 			for(int j = 0;j < 5;++j)
-			{	
+			{
 				int f = rnd(s);
 				int t = rnd(s);
 				if(f==t) continue;
 				if(path[t].find(f)==path[t].end())
 					path[f].insert(t);
 			};
-			
+
 		};
 		connect(path);
-		
+
 	};
 	Map(){};
 
 	void write(ostream & o) const
 	{
-		
+
 		for(graph::const_iterator i = path.begin();i != path.end();++i)
 		{
 			for(set<int>::const_iterator j = i->second.begin();
 							j != i->second.end();++j)
 			{
 				if(i->first == *j) continue;
-				if(path.find(*j)->second.find(i->first) 
+				if(path.find(*j)->second.find(i->first)
 				     != path.find(*j)->second.end()
 				   && *j < i->first) continue;
-				
-				o << "\t(visible waypoint" << i->first << " waypoint" << 
+
+				o << "\t(visible waypoint" << i->first << " waypoint" <<
 				*j << ")\n\t(visible waypoint" <<
-				*j << " waypoint" << i->first 
+				*j << " waypoint" << i->first
 				<< ")\n";
 
 
 			};
 		};
-		
+
 	};
 
 	int size() const {return waypoints;};
@@ -222,6 +241,9 @@ struct Rover{
 	bool soil;
 	bool rock;
 	bool image;
+
+        set<int> reachable_locs;
+
 	Rover(int locs,Map & m) : location(rnd(locs)){
 		rechargerate=rnd1(10)+10;
 		int x = rnd(7);
@@ -230,17 +252,16 @@ struct Rover{
 		rock=x%2==0?true:false;
 		x/=2;
 		image=x%2==0?true:false;
-		
+
 		int radius = locs/3 + rnd(locs);
 		vector<int> reachables;
-
+                reachable_locs.insert(location);
 		reachables.push_back(location);
 		while(radius && !reachables.empty()){
-				
-			
 				int l = reachables.front();
+
 				reachables.erase(reachables.begin());
-				
+
 				for(int i = 0;i<locs;i++){
 					if(m.path[l].find(i)!=m.path[l].end() || m.path[i].find(l)!=m.path[i].end()){
 						int j = 0;
@@ -255,29 +276,30 @@ struct Rover{
 								travs.push_back(make_pair(l,i));
 								travs.push_back(make_pair(i,l));
 								reachables.push_back(i);
+                                                                reachable_locs.insert(i);
 							}
 						}
 					}
 				}
 				radius--;
-				
+
 		}
-			
-			
-			
+
+
+
 	};
 
 	void makeVisible(int gp,Map mp){
-		
+
 		vector<pair<int,int> >::const_iterator vi = travs.begin();
 		for(;(vi != travs.end());++vi){
 			int l1 = vi->first;
 			int l2 = vi->second;
-		
+
 			if(mp.path[l1].find(gp)!=mp.path[l1].end() || mp.path[l2].find(gp)!=mp.path[l2].end()){
 
 					break;
-					
+
 			}
 
 		}
@@ -289,13 +311,13 @@ struct Rover{
 		}
 	}
 
-	
+
 	void makeChargeable(vector<Waypoint> & waypoints){
 		vector<pair<int,int> >::const_iterator vi = travs.begin();
 		for(;(vi != travs.end());++vi){
 			int l1 = vi->first;
-			
-		
+
+
 			if(waypoints[l1].sunny){
 				break;
 			}
@@ -345,17 +367,17 @@ struct RoverDescriptor {
 };
 
 
-vector<pair<int,int> > getsuitable(vector<Rover> rovers,vector<Objective> objectives){ 
+vector<pair<int,int> > getsuitable(vector<Rover> rovers,vector<Objective> objectives){
 	vector<pair<int,int> > ps;
 	for(int k = 0;k<rovers.size();++k){
-	
+
 		for(int v =0;v<objectives.size();++v){
-			for(vector<int>::iterator w = objectives[v].vis_from.begin();w!=objectives[v].vis_from.end();++w){
+                    for(auto loc_vis_from :  objectives[v].vis_from){
 				vector<pair<int,int> >::const_iterator vi = rovers[k].travs.begin();
 				for(;(vi != rovers[k].travs.end());++vi){
-	
-					if(vi->second == *w || vi->first == *w){
-				
+
+                                    if(vi->second == loc_vis_from || vi->first == loc_vis_from){
+
 						if(!rovers[k].cams.empty()){
 							ps.push_back(make_pair(v,k));
 						}
@@ -367,23 +389,23 @@ vector<pair<int,int> > getsuitable(vector<Rover> rovers,vector<Objective> object
 	return ps;
 }
 
-vector<int> rock_sites(vector<Rover> rovers,vector<Waypoint> waypoints){ 
+vector<int> rock_sites(vector<Rover> rovers,vector<Waypoint> waypoints){
 	set<pair<int,int> > ps;
 	for(int k = 0;k<rovers.size();++k){
-	
+
 		for(int v =0;v<waypoints.size();++v){
-			
+
 				vector<pair<int,int> >::const_iterator vi = rovers[k].travs.begin();
 				for(;(vi != rovers[k].travs.end());++vi){
-	
+
 					if(vi->second == v || vi->first == v){
-				
+
 						if(rovers[k].rock && waypoints[v].rock){
 						  ps.insert(make_pair(k,v));
 						}
 					}
 				}
-			
+
 		}
 	}
 	vector<int> vps;
@@ -393,30 +415,30 @@ vector<int> rock_sites(vector<Rover> rovers,vector<Waypoint> waypoints){
 	return vps;
 }
 
-vector<int> soil_sites(vector<Rover> rovers,vector<Waypoint> waypoints){ 
+vector<int> soil_sites(vector<Rover> rovers,vector<Waypoint> waypoints){
 	set<pair<int,int> > ps;
 	for(int k = 0;k<rovers.size();++k){
-	
+
 		for(int v =0;v<waypoints.size();++v){
-			
+
 				vector<pair<int,int> >::const_iterator vi = rovers[k].travs.begin();
 				for(;(vi != rovers[k].travs.end());++vi){
-	
+
 					if(vi->second == v || vi->first == v){
-				
+
 						if(rovers[k].soil && waypoints[v].soil){
 						  ps.insert(make_pair(k,v));
 						}
 					}
 				}
-			
+
 		}
 	}
 	vector<int> vps;
 	for(set<pair<int,int> >::iterator it = ps.begin(); it!=ps.end();++it){
 	  vps.push_back(it->second);
 	}
-	
+
 	return vps;
 }
 
@@ -440,20 +462,20 @@ private:
 	vector<Waypoint> waypoints;
 	vector<Goal> thegoals;
 
-	
+
 
 	void location(ostream & o,int i) const
 	{
 			o << "waypoint" << i;
-		
+
 
 	};
 
 	void observation(ostream & o,int i) const
 	{
-		
+
 			o << "objective" << i;
-		
+
 
 	};
 
@@ -470,9 +492,9 @@ private:
 
 	void mounted(ostream & o,int i) const
 	{
-		
+
 			o << "rover" << i;
-		
+
 
 	};
 	void mounted(ostream & o,const Camera & l) const
@@ -482,7 +504,7 @@ private:
 
 
 public:
-	RoverDom(unsigned int s,const RoverDescriptor & d) : 
+	RoverDom(unsigned int s,const RoverDescriptor & d) :
 		seed(s), probtype(d.probtype)
 	{
 		srandom(s);
@@ -491,20 +513,19 @@ public:
 		numCameras = d.numCameras;
 		numObjectives = d.numObjectives;
 		numgoals = d.numgoals;
-		
+
 		Map mp(numWaypoints);
 		m = mp;
-		
+
 
 		GP = rnd(numWaypoints);
-		
+
 		for(int i = 0;i < numRovers;++i)
 		{
 			Rover r(numWaypoints,mp);
-			
+
 			r.makeVisible(GP,mp);
 			rovers.push_back(r);
-		
 		};
 		for(int i = 0;i < numCameras;++i)
 		{
@@ -547,27 +568,27 @@ public:
 				}
 			}
 		};
-	
+
 		for(int i = 0;i < numRovers;++i)
 		{
-			
+
 			rovers[i].makeChargeable(waypoints);
-			
-		
-		};	
-		
+
+
+		};
+
 
 		int numsoilgoals = rnd1(numgoals) + numgoals/3;
 		int numrockgoals = rnd1(numgoals) + numgoals/3;
 		int numimagegoals = rnd1(numgoals) + numgoals/3;
-		
+
 		vector<int> accessible_for_soil = soil_sites(rovers,waypoints);
 		set<int> ss;
 		copy(accessible_for_soil.begin(),accessible_for_soil.end(),inserter(ss,ss.begin()));
 		numsoilgoals = min(numsoilgoals,(int)ss.size());
-		
+
 		if(!accessible_for_soil.empty()){
-			for(int i = 0;i<numsoilgoals;){ 
+			for(int i = 0;i<numsoilgoals;){
 
 					int fi = rnd(accessible_for_soil.size());
 					int s = accessible_for_soil[fi];
@@ -578,32 +599,38 @@ public:
 					  thegoals.push_back(g);
 					  ++i;
 					}
-				
+
 			}
 		}
 		vector<int> accessible_for_rock = rock_sites(rovers,waypoints);
-		
+
 		ss.clear();
 		copy(accessible_for_rock.begin(),accessible_for_rock.end(),inserter(ss,ss.begin()));
 		numrockgoals = min(numrockgoals,(int)ss.size());
-		
+
 		if(!accessible_for_rock.empty()){
 			for(int i = 0;i<numrockgoals;){
-				
+
 					int fi = rnd(accessible_for_rock.size());
 					vector<int>::pointer s = &accessible_for_rock[fi];
-										
+
 					if(!waypoints[*s].visited_r){
-							
+
 						Goal g("(communicated_rock_data waypoint",*s,")");
 						waypoints[*s].visited_r = true;
 						thegoals.push_back(g);
 						++i;
 					}
-					
-				
-			} 
+
+
+			}
 		}
+
+                //Ensure that all cameras can be calibrated
+                for (const Camera & c : cameras) {
+                    objectives[c.cal_targ].make_visible_from(rovers[c.onboard].reachable_locs);
+                }
+
 		vector<pair<int,int> > image_suitable_rovers = getsuitable(rovers,objectives);
 		numimagegoals = min((int)image_suitable_rovers.size(),numimagegoals);
 		for(int i = 0;i<numimagegoals;++i){
@@ -611,11 +638,11 @@ public:
 				vector<pair<int,int> >::pointer f = &image_suitable_rovers[fi];
 				int x = rnd(rovers[(*f).second].cams.size());
 				int w = (*f).first;
-				
+
 				int xth = (rovers[(*f).second].cams)[x];
-				
+
 				int mode = cameras[xth].getmode();
-				
+
 				switch(mode)
 				{
 					case 1:
@@ -627,7 +654,7 @@ public:
 						}
 					};
 						break;
-					
+
 					case 2:
 					{
 						if(find(objectives[w].requests.begin(),objectives[w].requests.end(),2)==objectives[w].requests.end()){
@@ -636,9 +663,9 @@ public:
 							thegoals.push_back(g);
 						}
 					};
-					
-						break;						
-					
+
+						break;
+
 					default:
 					{
 						if(find(objectives[w].requests.begin(),objectives[w].requests.end(),3)==objectives[w].requests.end()){
@@ -648,12 +675,12 @@ public:
 						}
 					};
 				}
-					
-						
-			
+
+
+
 		}
-			
-				
+
+
 
 
 
@@ -662,7 +689,7 @@ public:
 	void write(ostream & o) const
 	{
 		o << "(define (problem roverprob" << seed << ") (:domain Rover)\n(:objects\n\t";
-		
+
 		o << "general ";
 		if(typing==ON) o << "- Lander\n\t";
 
@@ -702,27 +729,27 @@ public:
 
 		m.write(o);
 
-		if(typing==OFF) 
+		if(typing==OFF)
 		{
 				o << "\t(lander general)\n";
 		}
-		if(typing==OFF) 
+		if(typing==OFF)
 		{
 				o << "\t(mode colour)\n";
 				o << "\t(mode high_res)\n";
 				o << "\t(mode low_res)\n";
-				
+
 		};
 
 		if(probtype==RoverDescriptor::NUMERIC)
 			o << "\t(= (recharges) 0)\n";
 
 		for(int i = 0;i<waypoints.size();++i){
-			if(typing==OFF) 
+			if(typing==OFF)
 			{
 				o << "\t(waypoint waypoint" << i << ")\n";
-				
-				
+
+
 			};
 			if(waypoints[i].soil){
 				o << "\t(at_soil_sample waypoint" << i << ")\n";
@@ -730,16 +757,16 @@ public:
 			if(waypoints[i].rock){
 				o << "\t(at_rock_sample waypoint" << i << ")\n";
 			}
-			
+
 			if(waypoints[i].sunny && (probtype==RoverDescriptor::NUMERIC || probtype==RoverDescriptor::TIMED)){
 				o << "\t(in_sun waypoint" << i << ")\n";
 			}
 		};
 
-		
+
 		o << "\t(at_lander general waypoint" << GP << ")\n";
 		o << "\t(channel_free general)\n";
-		
+
 		for(int i = 0;i < rovers.size();++i)
 		{
 			if(probtype == RoverDescriptor::NUMERIC || probtype == RoverDescriptor::TIMED) {
@@ -748,13 +775,13 @@ public:
 			if(probtype == RoverDescriptor::TIMED){
 				o << "\t(= (recharge-rate rover" << i << ") " << rovers[i].rechargerate << ")\n";
 			}
-			if(typing==OFF) 
+			if(typing==OFF)
 			{
 				o << "\t(rover rover" << i << ")\n";
 				o << "\t(store rover" << i << "store)\n";
-				
+
 			};
-			o << "\t(at rover" << i << " ";	
+			o << "\t(at rover" << i << " ";
 			location(o,rovers[i]);
 			o << ")\n";
 			o << "\t(available rover" << i << ")\n";
@@ -781,15 +808,15 @@ public:
 
 		for(int i = 0;i < cameras.size();++i)
 		{
-			if(typing==OFF) 
+			if(typing==OFF)
 			{
 				o << "\t(camera camera" << i << ")\n";
-				
+
 			};
-			o << "\t(on_board camera" << i << " ";	
+			o << "\t(on_board camera" << i << " ";
 			mounted(o,cameras[i]);
 			o << ")\n";
-			o << "\t(calibration_target camera" << i << " ";	
+			o << "\t(calibration_target camera" << i << " ";
 			target(o,cameras[i]);
 			o << ")\n";
 
@@ -807,16 +834,16 @@ public:
 
 		for(int i = 0;i < objectives.size();++i)
 		{
-			if(typing==OFF) 
+			if(typing==OFF)
 			{
 				o << "\t(objective objective" << i << ")\n";
-				
+
 			};
 
-			for(int j = 0;j<objectives[i].vis_from.size();++j){
-				o << "\t(visible_from objective" << i << " waypoint" << j << ")\n";
+			for(int loc_vis_from : objectives[i].vis_from){
+				o << "\t(visible_from objective" << i << " waypoint" << loc_vis_from << ")\n";
 			}
-		}; 
+		};
 
 		o << ")\n\n(:goal (and\n";
 
@@ -834,8 +861,8 @@ public:
 			{
 				o << "\t)\n)\n)\n";
 			};
-		}	
-		
+		}
+
 	};
 
 };
@@ -866,7 +893,7 @@ RoverDescriptor commandLine(int & seed,string & filename,int argc, char * argv[]
 	int val[5];
 
 	if(argc <= 0) usage(1);
-	
+
 	seed = atoi(argv[0]);
 	--argc;
 	++argv;
@@ -905,7 +932,7 @@ RoverDescriptor commandLine(int & seed,string & filename,int argc, char * argv[]
 			--argc;
 			++argv;
 		}
-		else 
+		else
 		{
 			if(nxt == 5) usage(4);
 			val[nxt++] = atoi(argv[0]);
@@ -915,10 +942,10 @@ RoverDescriptor commandLine(int & seed,string & filename,int argc, char * argv[]
 	};
 
 	if(nxt < 5) usage(5);
-	
+
 	return RoverDescriptor(val[0],val[1],val[2],val[3],val[4],probtype);
 };
-						
+
 
 
 int main(int argc,char * argv[])
@@ -930,7 +957,7 @@ int main(int argc,char * argv[])
 	RoverDom rp(seed,d);
 
 	//ostream o;
-	//if(filename != "") 
+	//if(filename != "")
 	//{
 	//	ofstream o(filename.c_str());
 	//	o << rp;
@@ -942,5 +969,3 @@ int main(int argc,char * argv[])
 
 	return 0;
 };
-
-

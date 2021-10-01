@@ -24,3 +24,15 @@ p17-->p17 IPC
 p18-->p19 IPC
 p19-->p18 IPC
 p20-->p20 IPC
+
+
+
+    wood_factor = float(sys.argv[1])
+    size = int(sys.argv[2])
+    num_machines = int(sys.argv[3])
+    seed = int(sys.argv[4])
+
+tasks = [generate_instance(size, wood_factor)
+         for wood_factor in [1.4, 1.2, 1.0]
+         for size in range (3, 33, 3)]
+

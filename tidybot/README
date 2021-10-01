@@ -1,0 +1,102 @@
+Tidybot
+Author: Bhaskara Marthi
+
+From the original description: The Tidybot domain models a household
+cleaning task, in which one or more robots must pick up a set of objects
+and put them into goal locations. The world is structured as a 2d grid,
+divided into navigable locations and surfaces on which objects may lie.
+Robots have a gripper, which moves relative to the robot, up to some
+maximum radius. Existing objects block the gripper, so that it may be
+necessary to move one object out of the way to put another one down.
+Robots can carry one object at a time in the gripper, but may also make
+use of a cart, that can hold multiple objects. The instance generator
+creates worlds that contain rectangular surfaces ("tables"), as well as
+U-shaped enclosures ("cupboards"), which are the goal locations of
+objects.
+
+In many real-world problems, the difficulty is due to the large state
+space and number of objects, rather than due to complex, "puzzle-like"
+combinatorial constraints. Humans are able to quickly find feasible
+solutions in such domains, because they seem to be able to decompose the
+problem into separate parts and make use of the geometrical structure.
+This domain is thus intended to exercise the ability of planners to find
+and exploit structure in large but mostly unconstrained problems.
+
+Optimal reasoning in such problems is challenging for humans as well, and
+a secondary motivation for the domain is to test the ability to do optimal
+reasoning in geometrically structured worlds. The presence of the carts
+adds another combinatorial decision: it might be worthwhile to spend some
+time fetching the cart to avoid later having to go back and forth with
+each object.
+
+The instance generator is provided as a .jar file, together with the
+source code (in the Clojure language). To generate an instance: java -cp
+tidybot.jar tidybot world-size num-tables num-cupboards table-min-size
+table-max-size cupboard-size
+
+The number of objects will be num-cupboards * objects-per-cupboard, where
+objects-per-cupboard = (cupboard-size - 2)^2. Thus, num-cupboards should
+be >= 1, otherwise there will be no objects. It is recommended to set
+cupboard-size = 4. Scaling world-size will then increase the number of
+literals/states, while scaling num-cupboards will increase the number of
+objects and goals. Scaling num-tables will tend to make the domain more
+constrained (since there are more obstacles), and also to increase the
+branching factor, since there are more places to set objects down.
+
+Problems with the same size can be quite different in difficulty, so we
+will generate various problems of the same size. The automatic generator
+returns error quite often (9 out of 10 times at least) when the size of
+the world is lower than 9. But problems with size 9 are quite challenging
+even for the satisficing planners. In addition some of the generated
+problems are unsolvable or are equal to other generated problems. This
+makes it quite hard to generate problems for this domain.
+
+For the satisficing track, problems with world size=8 are solved quite
+easily, but problems with size=9 are challenging. The following table
+shows the parameters chosen for the problems at IPC 2011.
+
+
+problem & size  & tables & cupboards & goal positions
+p01     & 9x9   & 5      & 1         & 6
+p02     & 9x9   & 6      & 1         & 6
+p03     & 9x9   & 3      & 1         & 7
+p04     & 9x9   & 3      & 1         & 6
+p05     & 9x9   & 3      & 1         & 5
+p06     & 9x9   & 6      & 1         & 6
+p07     & 9x9   & 3      & 1         & 8
+p08     & 9x9   & 3      & 1         & 6
+p09     & 10x10 & 9      & 1         & 7
+p10     & 10x10 & 9      & 1         & 7
+p11     & 10x10 & 3      & 1         & 7
+p12     & 10x10 & 2      & 1         & 7
+p13     & 10x10 & 6      & 1         & 5
+p14     & 10x10 & 8      & 1         & 7
+p15     & 10x10 & 6      & 1         & 7
+p16     & 10x10 & 3      & 1         & 5
+p17     & 11x11 & 9      & 1         & 8
+p18     & 11x11 & 7      & 1         & 6
+p19     & 12x12 & 5      & 3         & 15
+p20     & 12x12 & 7      & 2         & 11
+
+
+problem & size  & tables & cupboards & goal positions
+p01    & 5    & 0    & 1    & 4
+p02    & 6    & 0    & 1    & 4
+p03    & 6    & 0    & 1    & 4
+p04    & 6    & 0    & 1    & 4
+p05    & 7    & 0    & 1    & 4
+p06    & 7    & 0    & 1    & 4
+p07    & 7    & 0    & 1    & 4
+p08    & 7    & 0    & 1    & 4
+p09    & 8    & 0    & 1    & 4
+p10    & 8    & 0    & 1    & 4
+p11    & 8    & 0    & 1    & 4
+p12    & 8    & 0    & 1    & 4
+p13    & 8    & 0    & 1    & 4
+p14    & 9    & 3    & 1    & 6
+p15    & 9    & 2    & 1    & 7
+p16    & 9    & 5    & 1    & 6
+p17    & 9    & 4    & 1    & 6
+p18    & 9    & 3    & 1    & 7
+p19    & 9    & 4    & 1    & 5
+p20    & 9    & 5    & 1    & 5
