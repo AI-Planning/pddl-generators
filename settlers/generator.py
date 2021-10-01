@@ -112,7 +112,7 @@ class Map(object):
                 available.remove(t)
             edges -= 1
         assert edges >= 0, "provided edges were not enough to make map connected"
-    
+
 
     def compute_reachability(self):
         locations = len(self.landmap)
@@ -660,7 +660,7 @@ class SettlersInstance(object):
                                         selection = [x for x in xrange(abstract_locations) if sea in has_wharf[x]]
                                         queue.append(sea)
                             i += 1
-                    
+
                     # obsolete if no wharf in goal
                     transitive_closure(q[-1][1], sea_is_covered, wharf_location_selection, root_sea)
 
@@ -702,7 +702,7 @@ class SettlersInstance(object):
                                     #   does not have any wharf
                                     # otherwise all resources can be transported
                                     # via ship
-                                     
+
                                     # distinguish between locations with and
                                     # without access to cart
                                     abstr_loc_requires_cart = [False for x in xrange(abstract_locations)]
@@ -722,7 +722,7 @@ class SettlersInstance(object):
                                                             or not sea_is_covered[self.map.location_to_sea[loc]]:
                                                         abstr_loc_requires_cart[x] = True
                                                         break
-                                    
+
                                     # generate flow graph
                                     class FlowGraphNode(object):
                                         def __init__(self, iid, ref, is_abstract, required, distr = []):
@@ -772,7 +772,7 @@ class SettlersInstance(object):
                                                 node.edges.add((sea, succ.iid))
                                             node.seas.add(sea)
                                         i += 1
-                                                
+
                                     integer = [cplex.Cplex().variables.type.integer]
                                     lp_variables = [(["num_%d_%d_%d" % (i, sea, j)], [1.0], [0.0], [], integer) for i in xrange(len(flow_graph_nodes)) for (sea, j) in flow_graph_nodes[i].edges] \
                                                  + [(["amount_%d_%d_%d" % (i, sea, j)], [0.0], [0.0], [], []) for i in xrange(len(flow_graph_nodes)) for (sea, j) in flow_graph_nodes[i].edges]
@@ -919,14 +919,14 @@ class SettlersInstance(object):
                     self.num_ore += best_num_ore
                     self.num_vehicles += best_num_vehicles
                     break
-            
+
 
     def get_vehicles(self):
         return int((self.params.vehicles * self.num_vehicles))
 
     def get_resources(self):
         return int((self.params.constrainedness * max(self.num_stone, self.num_timber, self.num_ore)))
-        
+
     def get_problem(self, INDEPENDENT_COND_EFFECTS, INDEPENDENT_RESOURCE_LEVELS):
         num = {
            "stone"   : int(self.params.constrainedness * self.num_stone),
@@ -961,11 +961,11 @@ class SettlersInstance(object):
         res.append(" " * 4 + " ".join(["p%d" % i for i in xrange(num_locations)]) + " - place\n")
         if vehicles > 0:
             res.append(" " * 4 + " ".join(["v%d" % i for i in xrange(vehicles)]) + " - vehicle\n")
-	if INDEPENDENT_RESOURCE_LEVELS: 
+        if INDEPENDENT_RESOURCE_LEVELS:
             for k in num:
                 if num[k] > 10:
                     res.append(" " * 4 + " ".join(["%sl%d" % (k[0], i) for i in xrange(11, num[k] + 1)]) + " - %s_level\n" % k)
-	else:
+        else:
         	if max_r > 10:
         	    res.append(" " * 4 + " ".join(["l%d" % i for i in xrange(11, max_r + 1)]) + " - level\n")
         res.append(")\n")
@@ -1079,10 +1079,10 @@ class SettlersInstance(object):
         return res
 
 
-    def get_num_resource_levels (self): 
+    def get_num_resource_levels (self):
         return int((self.params.constrainedness * max(self.num_stone, self.num_timber, self.num_ore)))
 
-    def get_num_vehicles (self): 
+    def get_num_vehicles (self):
         return int((self.params.vehicles * self.num_vehicles))
 
 
@@ -1111,7 +1111,7 @@ def generate():
     params = p.parse_args()
     inst = SettlersInstance(params)
 
-    
+
     with open(params.domain, "w") as f:
         f.write(inst.get_domain())
     with open(params.problem, "w") as f:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 
 from generator import *
 
@@ -19,17 +19,17 @@ def generate(seed, locations, edges, seas, goals, constrainedness, constraint_in
     params = {"no_cost" : False,
               "coef_labour" : 5,
               "coef_pollution" : 10,
-              "name" : "settlers", 
+              "name" : "settlers",
               "prob_coast" : 2,
               "prob_goal_house": 3,
               "prob_goal_building": 3,
               "prob_goal_raillink": 4,
               "domain_source" :  "domain_independent_conditional_effects_independent_levels.pddl"
     }
-    
+
     params.update(**copy_locals)
     params  = Struct(**params)
-   
+
     return SettlersInstance(params)
 
 
@@ -77,9 +77,9 @@ for (folder, map_name, selection, goal_range) in [
         ("sat", "small", ["medium"], range(4, 11)),
         ("sat", "large", ["medium"], range(4, 11)),
         ("sat", "huge", ["medium"], range(3, 9))]:
-    
+
     const, inc_res, vconst, inc_vehicles = resource_constrainedness[folder]
-    for goals in goal_range:   
+    for goals in goal_range:
         loc, edges, seas = maps[map_name]
         instances = []
         while len(instances) < 100:
@@ -92,6 +92,6 @@ for (folder, map_name, selection, goal_range) in [
         instances = sorted(instances, key=lambda x : (x.get_resources(), x.get_vehicles()))
 
         assert(len(instances) == NUM_INSTANCES_SEL)
-        for hardness in selection: 
+        for hardness in selection:
             write_instance (folder, instances[hardness_instance[hardness]], map_name, const, vconst, hardness)
 
