@@ -275,12 +275,12 @@ def print_usage(arg_processor):
     (ArgProcessor) -> None
     """
     min_width = max(
-        [
+        
             len(x)
             for x in arg_processor.program_arg_order + arg_processor.program_flag_order
-        ]
+        
     )
-    print("Usage: python {} ".format(sys.argv[0]))
+    print(f"Usage: python {sys.argv[0]} ")
     print("The following flags and arguments can be supplied:")
     print("Flags:")
     for flag in arg_processor.program_flag_order:
@@ -422,7 +422,7 @@ class ArgProcessor:
             min_width = (
                 max(
                     len("Flags:"),
-                    max([len(x.description) for x in iter(self.program_args.values())]),
+                    max(len(x.description) for x in iter(self.program_args.values())),
                 )
                 + 1
             )

@@ -56,7 +56,7 @@ def main():
     random.seed(args.seed)
 
     if args.output:
-        sys.stdout = open("{}/{}.pddl".format(args.output, instance_name), "w")
+        sys.stdout = open(f"{args.output}/{instance_name}.pddl", "w")
 
     positions = [(x, y) for x in range(args.x) for y in range(args.y)]
     assert args.locks < len(positions), "There cannot be more locks than positions"

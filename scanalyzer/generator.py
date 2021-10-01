@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: latin-1 -*-
 
 import argparse
 import random
@@ -49,7 +48,7 @@ def create_pddl(half_segment_ids, problem_type, size, prob_no):
             for half in half_segment_ids:
                 objects.append("empty%s - car" % half)
                 objects.append("segback%s - segment" % half)
-                init.append("(on empty%s segback%s)" % (half, half))
+                init.append(f"(on empty{half} segback{half})")
     else:
 
         if len(half_segment_ids) == 2:

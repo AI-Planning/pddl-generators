@@ -13,7 +13,7 @@ MAX_SEED = 10000000
 
 def road(f, t, length):
     length = int(math.ceil(length / 10.0))
-    print("  (road %s %s)" % (f, t))
+    print(f"  (road {f} {t})")
     print("  (= (road-length %s %s) %d)" % (f, t, length))
 
 

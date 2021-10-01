@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
 
 from math import ceil
 
@@ -25,7 +24,7 @@ def default_machines(num_machines):
     return {machine: num_machines for machine in _machines}
 
 
-class Part(object):
+class Part:
     def __init__(self, index, woods, colours, problemtype=None):
         self.name = "p%d" % index
         self.problemtype = problemtype
@@ -58,7 +57,7 @@ class Part(object):
             )
             self.initprops["wood"] = self.goalprops["wood"]
 
-            poss_colours = set(colours + ["natural"]) - set([self.goalprops["colour"]])
+            poss_colours = set(colours + ["natural"]) - {self.goalprops["colour"]}
             self.initprops["colour"] = random.choice(list(poss_colours))
 
         self.initprops = dict()
@@ -82,12 +81,12 @@ class Part(object):
 
     def dump_init(self, indent="", out=None):
         if self.initprops:
-            print("%s(available %s)" % (indent, self.name), file=out)
+            print(f"{indent}(available {self.name})", file=out)
 
             for prop, val in self.initprops.items():
-                print("%s(%s %s %s)" % (indent, prop, self.name, val), file=out)
+                print(f"{indent}({prop} {self.name} {val})", file=out)
         else:
-            print("%s(unused %s)" % (indent, self.name), file=out)
+            print(f"{indent}(unused {self.name})", file=out)
 
         print(
             "%s(goalsize %s %s)"
@@ -95,7 +94,7 @@ class Part(object):
             file=out,
         )
         print(
-            "%s(= (spray-varnish-cost %s) %s)" % (indent, self.name, self.size * 5),
+            f"{indent}(= (spray-varnish-cost {self.name}) {self.size * 5})",
             file=out,
         )
         print(
@@ -110,16 +109,16 @@ class Part(object):
         )
 
     def dump_goal(self, indent="", out=None):
-        print("%s(available %s)" % (indent, self.name), file=out)
+        print(f"{indent}(available {self.name})", file=out)
 
         for choice in self.goalselection:
             print(
-                "%s(%s %s %s)" % (indent, choice, self.name, self.goalprops[choice]),
+                f"{indent}({choice} {self.name} {self.goalprops[choice]})",
                 file=out,
             )
 
 
-class Board(object):
+class Board:
     def __init__(self, index, wood, size):
         self.wood = wood
         self.name = "b%d" % index
@@ -131,14 +130,14 @@ class Board(object):
             "%s(boardsize %s %s%d)" % (indent, self.name, _boardsize_prefix, self.size),
             file=out,
         )
-        print("%s(wood %s %s)" % (indent, self.name, self.wood), file=out)
+        print(f"{indent}(wood {self.name} {self.wood})", file=out)
         print(
-            "%s(surface-condition %s %s)" % (indent, self.name, self.surface), file=out
+            f"{indent}(surface-condition {self.name} {self.surface})", file=out
         )
-        print("%s(available %s)" % (indent, self.name), file=out)
+        print(f"{indent}(available {self.name})", file=out)
 
 
-class Machine(object):
+class Machine:
     def __init__(self, name, type):
         self.name = name
         self.type = type
@@ -146,13 +145,13 @@ class Machine(object):
 
     def dump_init(self, indent, out=None):
         if self.type == "highspeed-saw":
-            print("%s(empty %s)" % (indent, self.name), file=out)
+            print(f"{indent}(empty {self.name})", file=out)
 
         for colour in self.colours:
-            print("%s(has-colour %s %s)" % (indent, self.name, colour), file=out)
+            print(f"{indent}(has-colour {self.name} {colour})", file=out)
 
 
-class Task(object):
+class Task:
     def __init__(
         self,
         nr_parts,
@@ -222,7 +221,7 @@ class Task(object):
         self.machines = dict()
         for type, number in machines.items():
             if number:
-                m = [Machine("%s%s" % (type, nr), type) for nr in range(number)]
+                m = [Machine(f"{type}{nr}", type) for nr in range(number)]
                 self.machines[type] = m
 
     def _assign_colours_to_machines(self):
@@ -310,17 +309,17 @@ class Task(object):
 
         for type, machines in self.machines.items():
             print(
-                "%s  %s - %s" % (indent, " ".join([m.name for m in machines]), type),
+                "{}  {} - {}".format(indent, " ".join([m.name for m in machines]), type),
                 file=out,
             )
 
-        print("%s  %s - acolour" % (indent, " ".join(self.colours)), file=out)
-        print("%s  %s - awood" % (indent, " ".join(self.woods)), file=out)
+        print("{}  {} - acolour".format(indent, " ".join(self.colours)), file=out)
+        print("{}  {} - awood".format(indent, " ".join(self.woods)), file=out)
         print(
-            "%s  %s - part" % (indent, " ".join([p.name for p in self.parts])), file=out
+            "{}  {} - part".format(indent, " ".join([p.name for p in self.parts])), file=out
         )
         print(
-            "%s  %s - board" % (indent, " ".join([b.name for b in self.boards])),
+            "{}  {} - board".format(indent, " ".join([b.name for b in self.boards])),
             file=out,
         )
 
@@ -329,7 +328,7 @@ class Task(object):
             for size in range(self.max_board_size + 1)
         ]
 
-        print("%s  %s - aboardsize" % (indent, " ".join(boardsizes)), file=out)
+        print("{}  {} - aboardsize".format(indent, " ".join(boardsizes)), file=out)
         print(indent + ")", file=out)
 
     def _dump_init(self, indent="", out=None):

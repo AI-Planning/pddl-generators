@@ -133,7 +133,7 @@ def remove_slack(grid):
     num_rows = len(grid)
     num_columns = len(grid[0])
     non_null_rows = sorted(
-        set([y for x in range(num_columns) for y in range(num_rows) if grid[y][x] > 0])
+        {y for x in range(num_columns) for y in range(num_rows) if grid[y][x] > 0}
     )
 
     if not non_null_rows:
@@ -145,7 +145,7 @@ def remove_slack(grid):
     num_columns = len(grid[0])
 
     non_null_columns = sorted(
-        set([x for x in range(num_columns) for y in range(num_rows) if grid[y][x] > 0])
+        {x for x in range(num_columns) for y in range(num_rows) if grid[y][x] > 0}
     )
 
     grid = list(map(lambda x: x[non_null_columns[0] : non_null_columns[-1] + 1], grid))
@@ -272,7 +272,7 @@ def main():
     problem_size = grid_size_x * grid_size_y * max_height
 
     instance_name_list += [
-        "{:04d}".format(problem_size),
+        f"{problem_size:04d}",
         "{}x{}x{}".format(
             grid_size_x, grid_size_y, max_height, args.min_height, args.num_towers
         ),
@@ -295,7 +295,7 @@ def main():
         if args.output_type == "pddl":
             print("\n".join(lines))
         else:
-            f = open("instances/p-{}.pddl".format(instance_name), "w")
+            f = open(f"instances/p-{instance_name}.pddl", "w")
             f.write("\n".join(lines))
             f.close()
     elif args.output_type == "readable":
@@ -323,7 +323,7 @@ def main():
                 goal_grid,
             )
         if plan:
-            f = open("plans/p-{}.pddl".format(instance_name), "w")
+            f = open(f"plans/p-{instance_name}.pddl", "w")
             f.write("\n".join(plan))
             f.close()
 

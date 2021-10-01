@@ -10,7 +10,7 @@ import sys
 
 def print_pddl(instance_name, num_floors, elevators, passengers, cost_slow, cost_fast):
 
-    num_counts = max(num_floors, max([e.capacity + 1 for e in elevators]))
+    num_counts = max(num_floors, max(e.capacity + 1 for e in elevators))
 
     count_objects = [f"n{i}" for i in range(num_counts)]
     next_facts = "\n       ".join(
@@ -198,7 +198,7 @@ def main():
     fast_cost = Cost(args.stop_fast_cost, args.fast_cost)
 
     if args.output:
-        sys.stdout = open("{}/{}.pddl".format(args.output, instance_name), "w")
+        sys.stdout = open(f"{args.output}/{instance_name}.pddl", "w")
 
     print(
         f"""; {floors} floors, area size: {args.area_size}, areas: {args.areas}, passengers: {args.passengers}"""

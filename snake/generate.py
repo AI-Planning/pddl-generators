@@ -130,11 +130,11 @@ class Board:
 
 
 def print_list(l):
-    print(" ".join([str(len(l))] + ["{} {}".format(a, b) for (a, b) in l]))
+    print(" ".join([str(len(l))] + [f"{a} {b}" for (a, b) in l]))
 
 
 def print_solver(instance_name, board, snake, apples, spawn_apples):
-    print("{} {}".format(board.width(), board.height()))
+    print(f"{board.width()} {board.height()}")
     # print_list (board.blocked_positions())
     print_list(snake)
     print_list(apples)
@@ -173,30 +173,30 @@ def print_pddl(instance_name, board, snake, apples, spawn_apples):
     pos_objects = " ".join([pos_name(pos) for pos in positions])
     is_adjacent_facts = "\n ".join(
         [
-            "(isAdjacent {} {})".format(pos_name(adj1), pos_name(adj2))
+            f"(isAdjacent {pos_name(adj1)} {pos_name(adj2)})"
             for (adj1, adj2) in get_adjacent_pairs(board.width(), board.height())
         ]
     )
 
-    head_snake = "(headSnake {})".format(pos_name(snake[0]))
-    tail_snake = "(tailSnake {})".format(pos_name(snake[-1]))
+    head_snake = f"(headSnake {pos_name(snake[0])})"
+    tail_snake = f"(tailSnake {pos_name(snake[-1])})"
 
     next_snake_facts = "\n ".join(
         [
-            "(nextSnake {} {})".format(pos_name(snake[i]), pos_name(snake[i + 1]))
+            f"(nextSnake {pos_name(snake[i])} {pos_name(snake[i + 1])})"
             for i in range(0, len(snake) - 1)
         ]
     )
     blocked_facts = "\n ".join(
-        ["(blocked {})".format(pos_name(sn)) for sn in board.blocked_positions()]
+        [f"(blocked {pos_name(sn)})" for sn in board.blocked_positions()]
     )
 
-    is_point_facts = "\n ".join(["(isPoint {})".format(pos_name(a)) for a in apples])
+    is_point_facts = "\n ".join([f"(isPoint {pos_name(a)})" for a in apples])
 
     spawn_apples_facts = []
     if spawn_apples:
-        spawn_apples_facts = ["(spawn {})".format(pos_name(spawn_apples[0]))] + [
-            "(nextSpawn {} dummyPoint)".format(pos_name(spawn_apples[-1]))
+        spawn_apples_facts = [f"(spawn {pos_name(spawn_apples[0])})"] + [
+            f"(nextSpawn {pos_name(spawn_apples[-1])} dummyPoint)"
         ]
         if len(spawn_apples) > 1:
             spawn_apples_facts += [
@@ -211,7 +211,7 @@ def print_pddl(instance_name, board, snake, apples, spawn_apples):
     next_point_facts = "\n ".join(spawn_apples_facts)
 
     goal_facts = "\n ".join(
-        ["(not (isPoint {}))".format(pos_name(a)) for a in apples + spawn_apples]
+        [f"(not (isPoint {pos_name(a)}))" for a in apples + spawn_apples]
     )
 
     print(
@@ -328,7 +328,7 @@ def main():
     assert len(snake) == args.snake_size + 1
 
     if args.output:
-        sys.stdout = open("{}/{}.pddl".format(args.output, instance_name), "w")
+        sys.stdout = open(f"{args.output}/{instance_name}.pddl", "w")
     if args.output_type == "raw":
         print_solver(instance_name, board, snake, apples, spawn_apples)
     elif args.output_type == "readable":

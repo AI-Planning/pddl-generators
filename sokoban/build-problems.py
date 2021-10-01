@@ -32,7 +32,7 @@ def split_descriptions(lines):
             comments = []
 
 
-class Direction(object):
+class Direction:
     def __init__(self, name, dy=0, dx=0):
         self.name = name
         self.dy = dy
@@ -103,11 +103,11 @@ def create_pddl(filename, prob_name, desc, track, hex):
             if is_player:
                 player = "player-%02d" % next(player_counter)
                 objects.append("%s - player" % player)
-                init.append("(at %s %s)" % (player, pos))
+                init.append(f"(at {player} {pos})")
             if is_stone:
                 stone = "stone-%02d" % next(stone_counter)
                 objects.append("%s - stone" % stone)
-                init.append("(at %s %s)" % (stone, pos))
+                init.append(f"(at {stone} {pos})")
                 if is_goal:
                     init.append("(at-goal %s)" % stone)
                 goal.append("(at-goal %s)" % stone)
@@ -116,7 +116,7 @@ def create_pddl(filename, prob_name, desc, track, hex):
                 if 0 <= col2 < num_cols and 0 <= row2 < num_rows:
                     if not is_wall and maze[row2][col2] != "#":
                         pos2 = pos_name(row2, col2)
-                        init.append("(MOVE-DIR %s %s %s)" % (pos, pos2, direction.name))
+                        init.append(f"(MOVE-DIR {pos} {pos2} {direction.name})")
     for direction in dirs:
         objects.append("%s - direction" % direction.name)
 

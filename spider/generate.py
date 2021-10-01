@@ -10,7 +10,7 @@ import sys
 def generate_for_solver(instance_name, num_decks, num_suits, num_values, s):
     lines = []
     deals, piles = s
-    lines.append("{} {} {}".format(num_decks, num_suits, num_values))
+    lines.append(f"{num_decks} {num_suits} {num_values}")
 
     lines.append(str(len(deals)))
     for deal in deals:
@@ -40,7 +40,7 @@ def generate_readable(instance_name, num_decks, num_suits, num_values, s):
         lines += [
             "deal %s: " % i
             + " ".join(
-                ["d%s-s%s-v%s" % (deck, suite, value) for deck, suite, value in deal]
+                [f"d{deck}-s{suite}-v{value}" for deck, suite, value in deal]
             )
         ]
     lines += ["", "Initial configuration of piles"]
@@ -48,7 +48,7 @@ def generate_readable(instance_name, num_decks, num_suits, num_values, s):
         lines += [
             "pile %s: " % i
             + " ".join(
-                ["d%s-s%s-v%s" % (deck, suite, value) for deck, suite, value in pile]
+                [f"d{deck}-s{suite}-v{value}" for deck, suite, value in pile]
             )
         ]
     return lines
@@ -61,7 +61,7 @@ def generate_for_pddl(instance_name, num_decks, num_suits, num_values, s):
 
     objects = []
     objects += [
-        "card-d%s-s%s-v%s - card" % (deck, suit, value)
+        f"card-d{deck}-s{suit}-v{value} - card"
         for deck in range(num_decks)
         for suit in range(num_suits)
         for value in range(num_values)
@@ -78,7 +78,7 @@ def generate_for_pddl(instance_name, num_decks, num_suits, num_values, s):
         ]
         facts += ["(on card-d%s-s%s-v%s pile-%s)" % (pile[0] + (pile_id,))]
         facts += ["(clear card-d%s-s%s-v%s)" % pile[-1]]
-        facts += ["(part-of-tableau pile-%s pile-%s)" % (pile_id, pile_id)]
+        facts += [f"(part-of-tableau pile-{pile_id} pile-{pile_id})"]
         facts += [
             "(part-of-tableau card-d%s-s%s-v%s pile-%s)" % (card + (pile_id,))
             for card in pile
@@ -118,7 +118,7 @@ def generate_for_pddl(instance_name, num_decks, num_suits, num_values, s):
         for value in range(num_values - 1)
     ]
     facts += [
-        "(IS-ACE card-d%s-s%s-v0)" % (deck, suit)
+        f"(IS-ACE card-d{deck}-s{suit}-v0)"
         for deck in range(num_decks)
         for suit in range(num_suits)
     ]
@@ -128,7 +128,7 @@ def generate_for_pddl(instance_name, num_decks, num_suits, num_values, s):
         for suit in range(num_suits)
     ]
     facts += [
-        "(NEXT-DEAL deal-%s deal-%s)" % (deal_id, deal_id + 1)
+        f"(NEXT-DEAL deal-{deal_id} deal-{deal_id + 1})"
         for deal_id in range(len(deals))
     ]
     for deal_id, deal in enumerate(deals):
@@ -149,7 +149,7 @@ def generate_for_pddl(instance_name, num_decks, num_suits, num_values, s):
         ["(clear pile-%s)" % pile_id for pile_id in range(len(piles))]
         + ["(clear deal-%s)" % deal_id for deal_id in range(len(deals))]
         + [
-            "(on card-d%s-s%s-v%s discard)" % (deck, suit, value)
+            f"(on card-d{deck}-s{suit}-v{value} discard)"
             for deck in range(num_decks)
             for suit in range(num_suits)
             for value in range(num_values)
@@ -235,7 +235,7 @@ def parse():
 
 def main():
     args = parse()
-    instance_name = "spider-%s-%s-%s-%s-%s-%s" % (
+    instance_name = "spider-{}-{}-{}-{}-{}-{}".format(
         args.num_decks,
         args.num_suits,
         args.num_values,

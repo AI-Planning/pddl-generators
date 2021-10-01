@@ -1,7 +1,5 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
 
-from __future__ import print_function
 
 from collections import defaultdict
 import itertools
@@ -14,7 +12,7 @@ MAX_CONNECTION_ATTEMPTS = 100
 MAX_SEED = 10000000
 
 
-class Point(object):
+class Point:
     def __init__(self, name, x, y):
         self.name = name
         self.x = x
@@ -33,7 +31,7 @@ class Point(object):
         return int(round(self.distance(other)))
 
 
-class Graph(object):
+class Graph:
     def __init__(self):
         self.vertices = []
         self.edges = []
@@ -64,7 +62,7 @@ class Graph(object):
             print("(location %s)" % v.name, file=out)
         for u, v in self.edges:
             dist = u.round_distance(v)
-            print("(connected %s %s)" % (u.name, v.name), file=out)
+            print(f"(connected {u.name} {v.name})", file=out)
             print("(= (distance %s %s) %d)" % (u.name, v.name, dist), file=out)
 
     def dump_tikz(self, out=None):
@@ -80,7 +78,7 @@ class Graph(object):
             )
         for u, v in self.edges:
             if u < v:
-                print(r"  \draw (%s) -- (%s);" % (u.name, v.name), file=out)
+                print(fr"  \draw ({u.name}) -- ({v.name});", file=out)
         print(r"\end{tikzpicture}", file=out)
         print(r"\clearpage", file=out)
         print(r"\begin{verbatim}", file=out)
@@ -165,7 +163,7 @@ def main(seed, graph_params):
         g = generate_connected(*graph_params)
     except ValueError as e:
         raise SystemExit(str(e))
-    print("%% %s %s" % (seed, " ".join(map(str, graph_params))))
+    print("% {} {}".format(seed, " ".join(map(str, graph_params))))
     g.dump_tikz()
 
 

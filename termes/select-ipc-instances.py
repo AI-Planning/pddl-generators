@@ -20,7 +20,7 @@ for range_num_towers, range_height in [
 ]:
     for height in range_height:
         for num_towers in range_num_towers:
-            dimensions = "{}x{}x{}".format(size_x, size_y, height)
+            dimensions = f"{size_x}x{size_y}x{height}"
             instance_set = sorted(instances_by_key[(dimensions, str(num_towers))])
             random_selected_instance = numpy.random.choice(instance_set)
             print(random_selected_instance)

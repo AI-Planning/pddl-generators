@@ -147,7 +147,7 @@ def make_negative_relationships(pos_relationships, num_divers, neg_link_prob):
 
     (set([(int, int)]), int, ...) -> { int : [int] }
     """
-    neg_relationships = dict([(x, list()) for x in range(num_divers)])
+    neg_relationships = {x: list() for x in range(num_divers)}
     for (diver1, diver2) in itertools.combinations(range(num_divers), 2):
         if (
             diver1,
@@ -186,13 +186,13 @@ def make_hiring_costs(neg_relationships, min_cost, max_cost, perturb):
     cost_range = max_cost - min_cost
 
     if cost_range == 0:
-        return dict([(d, min_cost) for d in divers])
+        return {d: min_cost for d in divers}
 
     if rel_range == 0:
         mid_cost = int(min_cost + cost_range / 2.0)
-        return dict([(d, mid_cost) for d in divers])
+        return {d: mid_cost for d in divers}
 
-    rel_dict = dict([(n, list()) for n in num_rels])
+    rel_dict = {n: list() for n in num_rels}
     for nid, num in enumerate(num_rels):
         rel_dict[num].append(divers[nid])
     sorted_rels = sorted(zip(list(rel_dict.keys()), list(rel_dict.values())))
@@ -411,7 +411,7 @@ def write_domain_file(file_name, divers, neg_relationships, strips, ordered_tank
 
         output_file.write(")\n")
         output_file.close()
-    except IOError:
+    except OSError:
         print("Error: could not write to the domain file:", file_name)
 
 
@@ -539,7 +539,7 @@ def write_problem_file(
         output_file.write(")\n")
 
         output_file.close()
-    except IOError:
+    except OSError:
         print("Error: could not write to the problem file:", file_name)
 
 

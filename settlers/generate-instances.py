@@ -54,7 +54,7 @@ def write_instance(folder, inst, map_name, const, vconst, name):
         folder, folder, map_name, len(inst.goals), name
     )
 
-    with open("instances-{}/domain.pddl".format(folder), "w") as f:
+    with open(f"instances-{folder}/domain.pddl", "w") as f:
         f.write(inst.get_domain())
     with open(problem, "w") as f:
         f.write(inst.get_problem(True, True))

@@ -42,7 +42,7 @@ def get_adjacent_pairs(width, height):
 
 
 def print_pddl(instance_name, width, height, s):
-    max_number = max([n for (x, y, n) in s])
+    max_number = max(n for (x, y, n) in s)
     number_objects = " ".join(["n%d" % n for n in range(1, max_number + 1)])
 
     positions = list(product(range(width), range(height)))
@@ -90,11 +90,11 @@ def print_pddl(instance_name, width, height, s):
     )
 
     available_facts = "\n ".join(
-        ["(available pos-%s-%s)" % (x, y) for (x, y) in available_positions]
+        [f"(available pos-{x}-{y})" for (x, y) in available_positions]
     )
 
     blocked_facts = "\n ".join(
-        ["(blocked pos-%s-%s)" % (x, y) for (x, y) in blocked_positions]
+        [f"(blocked pos-{x}-{y})" for (x, y) in blocked_positions]
     )
 
     part_of_facts = "\n ".join(
@@ -246,7 +246,7 @@ def random_map(width, height):
                     else:
                         neighbors.append((nx, ny))
             if neighbors:
-                successors = set([random.choice(neighbors)])
+                successors = {random.choice(neighbors)}
                 if random.random() < BRANCHCHANCE:
                     successors.add(random.choice(neighbors))
                 for nx, ny in successors:

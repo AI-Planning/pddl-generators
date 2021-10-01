@@ -340,7 +340,7 @@ def solve(
             key=lambda w: (i_grid[w[1]][w[0]], -order_grid[w[1]][w[0]]),
         )
 
-        plan.append("(create-block {})".format(depot_loc))
+        plan.append(f"(create-block {depot_loc})")
 
         path = get_shortest_path(i_grid, depots[0], (x, y), True, order_grid)
         if not path:
@@ -403,7 +403,7 @@ def solve(
 
         i_grid[y][x] -= 1
 
-        plan.append("(destroy-block {})".format(depot_loc))
+        plan.append(f"(destroy-block {depot_loc})")
 
     while plan[-1].startswith("(move"):
         plan.pop()

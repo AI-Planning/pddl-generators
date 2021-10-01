@@ -17,14 +17,13 @@
 #   no slice symbols have to be declared in advance.
 #
 
-from __future__ import print_function
 
 from math import ceil
 import random
 import sys
 
 
-class Task(object):
+class Task:
     def __init__(
         self,
         seed,
@@ -75,14 +74,14 @@ class Task(object):
 
     def _dump_objects(self, indent="", out=None):
         print(indent + "(:objects", file=out)
-        print("%s  %s - child" % (indent, " ".join(self.children)), file=out)
-        print("%s  %s - bread-portion" % (indent, " ".join(self.breads)), file=out)
-        print("%s  %s - content-portion" % (indent, " ".join(self.contents)), file=out)
-        print("%s  %s - tray" % (indent, " ".join(self.trays)), file=out)
-        print("%s  %s - place" % (indent, " ".join(self.tables)), file=out)
+        print("{}  {} - child".format(indent, " ".join(self.children)), file=out)
+        print("{}  {} - bread-portion".format(indent, " ".join(self.breads)), file=out)
+        print("{}  {} - content-portion".format(indent, " ".join(self.contents)), file=out)
+        print("{}  {} - tray".format(indent, " ".join(self.trays)), file=out)
+        print("{}  {} - place".format(indent, " ".join(self.tables)), file=out)
 
         if self.type != "numeric":
-            print("%s  %s - sandwich" % (indent, " ".join(self.sandwiches)), file=out)
+            print("{}  {} - sandwich".format(indent, " ".join(self.sandwiches)), file=out)
 
         print(indent + ")", file=out)
 
@@ -90,49 +89,49 @@ class Task(object):
         print(indent + "(:init", file=out)
 
         for t in self.trays:
-            print(indent + "%s (at %s kitchen)" % (indent, t), file=out)
+            print(indent + f"{indent} (at {t} kitchen)", file=out)
         for b in self.breads:
-            print(indent + "%s (at_kitchen_bread %s)" % (indent, b), file=out)
+            print(indent + f"{indent} (at_kitchen_bread {b})", file=out)
         for c in self.contents:
-            print(indent + "%s (at_kitchen_content %s)" % (indent, c), file=out)
+            print(indent + f"{indent} (at_kitchen_content {c})", file=out)
 
         for b in random.sample(self.breads, self.n_allergie):
-            print(indent + "%s (no_gluten_bread %s)" % (indent, b), file=out)
+            print(indent + f"{indent} (no_gluten_bread {b})", file=out)
 
         for c in random.sample(self.contents, self.n_allergie):
-            print(indent + "%s (no_gluten_content %s)" % (indent, c), file=out)
+            print(indent + f"{indent} (no_gluten_content {c})", file=out)
 
         allergie_children = set(random.sample(self.children, self.n_allergie))
         no_allergie_children = set(self.children).difference(allergie_children)
 
         for c in list(allergie_children):
-            print(indent + "%s (allergic_gluten %s)" % (indent, c), file=out)
+            print(indent + f"{indent} (allergic_gluten {c})", file=out)
         for c in list(no_allergie_children):
-            print(indent + "%s (not_allergic_gluten %s)" % (indent, c), file=out)
+            print(indent + f"{indent} (not_allergic_gluten {c})", file=out)
 
         for c in self.children:
             print(
-                indent + "%s (waiting %s %s)" % (indent, c, random.choice(self.tables)),
+                indent + f"{indent} (waiting {c} {random.choice(self.tables)})",
                 file=out,
             )
 
         if self.type == "pool":
             for s in self.sandwiches:
-                print(indent + "%s (notexist %s)" % (indent, s), file=out)
+                print(indent + f"{indent} (notexist {s})", file=out)
 
         elif self.type == "control":
-            print("%s   (current %s)" % (indent, self.sandwiches[0]), file=out)
+            print(f"{indent}   (current {self.sandwiches[0]})", file=out)
             for i in range(1, len(self.sandwiches)):
-                print("%s   (next sandw%s sandw%s)" % (indent, i, i + 1), file=out)
+                print(f"{indent}   (next sandw{i} sandw{i + 1})", file=out)
         elif self.type == "numeric":
             print("%s   (= (nsandwiches-at_kitchen-no_gluten)  0)" % indent, file=out)
             print("%s   (= (nsandwiches-at_kitchen)  0)" % indent, file=out)
             for t in self.trays:
                 print(
-                    "%s   (= (nsandwiches-ontray-no_gluten %s)  0)" % (indent, t),
+                    f"{indent}   (= (nsandwiches-ontray-no_gluten {t})  0)",
                     file=out,
                 )
-                print("%s   (= (nsandwiches-ontray %s)  0)" % (indent, t), file=out)
+                print(f"{indent}   (= (nsandwiches-ontray {t})  0)", file=out)
 
         print(indent + ")", file=out)
 
@@ -140,7 +139,7 @@ class Task(object):
         print(indent + "(:goal", file=out)
         print(indent + "  (and", file=out)
         for g in self.children:
-            print(indent + "%s (served %s)" % (indent, g), file=out)
+            print(indent + f"{indent} (served {g})", file=out)
         print(indent + "  )", file=out)
         print(indent + ")", file=out)
 
@@ -149,7 +148,7 @@ class Task(object):
 
 
 def enum_objects(pddltype, n):
-    return ["%s%s" % (pddltype, i) for i in range(1, n + 1)]
+    return [f"{pddltype}{i}" for i in range(1, n + 1)]
 
 
 def usage():

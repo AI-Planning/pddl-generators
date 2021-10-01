@@ -91,11 +91,11 @@ except BaseException:
 random.seed()
 
 
-print(("(define (problem " + name + ")"))
+print("(define (problem " + name + ")")
 print(" (:domain domain-tms-2-3-light)")
-print((" (:objects " + get_objects() + ")"))
-print((" (:init " + get_init() + ")"))
-print((" (:goal" + get_goals() + ")"))
+print(" (:objects " + get_objects() + ")")
+print(" (:init " + get_init() + ")")
+print(" (:goal" + get_goals() + ")")
 print(" (:metric minimize (total-time))")
 print(")")
 

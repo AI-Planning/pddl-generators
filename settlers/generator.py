@@ -1,5 +1,4 @@
 #!/usr/bin/env python2.7
-# -*- coding: utf-8 -*-
 
 import sys
 import os
@@ -29,7 +28,7 @@ def rnd_shuffle(x):
     return y
 
 
-class Map(object):
+class Map:
     def __init__(self, locations, edges, seas, prob_coast):
         if locations == 0:
             return
@@ -86,7 +85,7 @@ class Map(object):
         while edges > 2:
             i = rnd_int(len(available))
             s = available[i]
-            t = rnd_sample(set(range(locations)) - self.landmap[s] - set([s]))
+            t = rnd_sample(set(range(locations)) - self.landmap[s] - {s})
             self.landmap[s].add(t)
             self.landmap[t].add(s)
             if len(self.landmap[s]) == locations - 1:
@@ -116,7 +115,7 @@ class Map(object):
         while edges > 0:
             i = rnd_int(len(available))
             s = available[i]
-            t = rnd_sample(set(range(locations)) - self.landmap[s] - set([s]))
+            t = rnd_sample(set(range(locations)) - self.landmap[s] - {s})
             self.landmap[s].add(t)
             self.landmap[t].add(s)
             if len(self.landmap[s]) == locations - 1:
@@ -183,7 +182,7 @@ class Map(object):
         return reachable
 
 
-class Goal(object):
+class Goal:
     def __str__(self):
         raise NotImplementedError
 
@@ -455,7 +454,7 @@ def gen_building(x, excl_t):
     #     return t, Wharf(x)
 
 
-class SettlersInstance(object):
+class SettlersInstance:
     def __init__(self, params, _map=None, _goals=None):
         self.params = params
         self.comment = (
@@ -498,7 +497,7 @@ class SettlersInstance(object):
             buildings = defaultdict(set)
             for x in xrange(params.locations):
                 if self.map.location_to_sea[x] is None:
-                    buildings[x] = set([3, 4])
+                    buildings[x] = {3, 4}
             locr = [x for x in xrange(params.locations) if len(self.map.landmap[x]) > 0]
             rail_links = defaultdict(set)
             houses = defaultdict(lambda: 0)
@@ -803,7 +802,7 @@ class SettlersInstance(object):
                                                         break
 
                                     # generate flow graph
-                                    class FlowGraphNode(object):
+                                    class FlowGraphNode:
                                         def __init__(
                                             self,
                                             iid,
@@ -1183,14 +1182,12 @@ class SettlersInstance(object):
                     break
 
     def get_vehicles(self):
-        return int((self.params.vehicles * self.num_vehicles))
+        return int(self.params.vehicles * self.num_vehicles)
 
     def get_resources(self):
         return int(
-            (
                 self.params.constrainedness
                 * max(self.num_stone, self.num_timber, self.num_ore)
-            )
         )
 
     def get_problem(self, INDEPENDENT_COND_EFFECTS, INDEPENDENT_RESOURCE_LEVELS):
@@ -1214,9 +1211,9 @@ class SettlersInstance(object):
             "ore": self.map.metalliferous,
         }
 
-        max_r = max([num[r] for r in num])
+        max_r = max(num[r] for r in num)
         vehicles = (
-            int((self.params.vehicles * self.num_vehicles))
+            int(self.params.vehicles * self.num_vehicles)
             + self.params.vehicle_increment
         )
 
@@ -1224,7 +1221,7 @@ class SettlersInstance(object):
         num_seas = len(self.map.sea_to_locations)
 
         res = [";; %s\n\n" % self.comment]
-        res.append("(define (problem {0})\n".format(self.params.name))
+        res.append(f"(define (problem {self.params.name})\n")
         res.append("(:domain civ)\n")
 
         ## Objects; resource values up to 10 are pre-defined as constants in the domain file
@@ -1395,12 +1392,12 @@ class SettlersInstance(object):
     def get_domain(self):
         coef_lab = self.params.coef_labour
         coef_pol = self.params.coef_pollution
-        lab = re.compile("\(increase \(labour\) (\d+)\)")
-        pol = re.compile("\(increase \(pollution\) (\d+)\)")
+        lab = re.compile(r"\(increase \(labour\) (\d+)\)")
+        pol = re.compile(r"\(increase \(pollution\) (\d+)\)")
         with open(self.params.domain_source) as f:
             res = f.read()
             if self.params.no_cost:
-                res = re.sub("\(:functions \(total-cost\)\)", "", res)
+                res = re.sub(r"\(:functions \(total-cost\)\)", "", res)
                 res = lab.sub("", res)
                 res = pol.sub("", res)
             else:
@@ -1418,14 +1415,12 @@ class SettlersInstance(object):
 
     def get_num_resource_levels(self):
         return int(
-            (
                 self.params.constrainedness
                 * max(self.num_stone, self.num_timber, self.num_ore)
-            )
         )
 
     def get_num_vehicles(self):
-        return int((self.params.vehicles * self.num_vehicles))
+        return int(self.params.vehicles * self.num_vehicles)
 
 
 def generate():

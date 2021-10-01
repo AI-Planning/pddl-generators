@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Usage:
 # $./generator.py [number of data items] [number of layers] [number of scripts] network
@@ -161,7 +160,7 @@ class DistributedComputing:
 
     def _generate_data_items(self):
         for i in range(self.num_data_items):
-            self.data_items["data{}".format(i + 1)] = {}
+            self.data_items[f"data{i + 1}"] = {}
 
     def _assign_sizes_to_data_items(self):
         self.data_sizes = set()
@@ -179,7 +178,7 @@ class DistributedComputing:
         # Generate at one script for each data item
         for layer_nr in range(1, self.num_layers):
             for data_item in layers[layer_nr]:
-                script = "script{}".format(script_nr)
+                script = f"script{script_nr}"
                 properties = {}
                 input1 = numpy.random.choice(layers[layer_nr - 1])
                 # Enforce different data inputs
@@ -199,7 +198,7 @@ class DistributedComputing:
         while script_nr <= self.num_scripts:
             layer_nr = numpy.random.choice(range(1, self.num_layers))
             output = numpy.random.choice(layers[layer_nr])
-            script = "script{}".format(script_nr)
+            script = f"script{script_nr}"
             properties = {}
             input1 = numpy.random.choice(layers[layer_nr - 1])
             # Enforce different data inputs
@@ -260,18 +259,18 @@ class DistributedComputing:
 
     def _determine_max_capacity(self):
         self.max_capacity = max(
-            [properties["capacity"] for server, properties in self.servers.items()]
+            properties["capacity"] for server, properties in self.servers.items()
         )
 
     def _check_required_capacity(self):
-        min_space = max([value["size"] for (key, value) in self.data_items.items()])
+        min_space = max(value["size"] for (key, value) in self.data_items.items())
         max_space = max(
-            [
+            
                 self.data_items[value["input1"]]["size"]
                 + self.data_items[value["input2"]]["size"]
                 + self.data_items[value["output"]]["size"]
                 for (key, value) in self.scripts.items()
-            ]
+            
         )
         for server, properties in self.servers.items():
             capacity = properties["capacity"]
@@ -326,17 +325,17 @@ class DistributedComputing:
                 self.send_costs[
                     (
                         (
-                            "server{}".format(connection[0]),
-                            "server{}".format(connection[1]),
+                            f"server{connection[0]}",
+                            f"server{connection[1]}",
                         ),
-                        "number{}".format(data_size),
+                        f"number{data_size}",
                     )
                 ] = (data_size * props["send"])
 
     def _compute_io_costs(self):
         for data_size in self.data_sizes:
             for server, props in self.servers.items():
-                self.io_costs[(server, "number{}".format(data_size))] = (
+                self.io_costs[(server, f"number{data_size}")] = (
                     data_size * props["io"]
                 )
 
@@ -359,30 +358,30 @@ class DistributedComputing:
 
     def _write_objects(self):
         data_items = sorted(
-            [data_item for data_item in self.data_items],
+            (data_item for data_item in self.data_items),
             key=lambda x: self._natural_keys(x),
         )
         print("    (:objects")
         for data_item in data_items[:-1]:
-            print("              {}".format(data_item))
-        print("              {} - data".format(data_items[-1]))
+            print(f"              {data_item}")
+        print(f"              {data_items[-1]} - data")
 
         scripts = sorted(
-            [script for script in self.scripts], key=lambda x: self._natural_keys(x)
+            (script for script in self.scripts), key=lambda x: self._natural_keys(x)
         )
         for script in scripts[:-1]:
-            print("              {}".format(script))
-        print("              {} - script".format(scripts[-1]))
+            print(f"              {script}")
+        print(f"              {scripts[-1]} - script")
         servers = sorted(
-            [server for server in self.servers], key=lambda x: self._natural_keys(x)
+            (server for server in self.servers), key=lambda x: self._natural_keys(x)
         )
         for server in servers[:-1]:
-            print("              {}".format(server))
-        print("              {} - server".format(servers[-1]))
+            print(f"              {server}")
+        print(f"              {servers[-1]} - server")
         for number in range(0, self.max_capacity):
-            print("              number{}".format(number))
-        print("              number{} - numbers".format(self.max_capacity))
-        print("    )".format(self.max_capacity))
+            print(f"              number{number}")
+        print(f"              number{self.max_capacity} - numbers")
+        print(f"    )")
 
     def _write_initial_state(self):
         print("    (:init")
@@ -405,14 +404,14 @@ class DistributedComputing:
                 )
             )
         script_server_pairs = sorted(
-            [
+            (
                 (pair[1], pair[0])
                 for pair in self.server_script_pairs
                 if self.server_script_pairs[pair]["base_processing_cost"] >= 0
-            ],
+            ),
             key=lambda x: self._natural_keys(x[0] + x[1]),
         )
-        connections = sorted([connection for connection in self.connections])
+        connections = sorted(connection for connection in self.connections)
         for connection in connections:
             print(
                 "           (CONNECTED server{} server{})".format(
@@ -454,7 +453,7 @@ class DistributedComputing:
                         )
                     )
         capacities = sorted(
-            set([value["capacity"] for (key, value) in self.servers.items()])
+            {value["capacity"] for (key, value) in self.servers.items()}
         )
         for i in range(1, self.max_capacity + 1):
             for j in capacities:
@@ -468,34 +467,34 @@ class DistributedComputing:
 
     def _write_predicates(self):
         init_server_data = sorted(
-            [(pair[1], pair[0]) for pair in self.server_data_item_pairs_init],
+            ((pair[1], pair[0]) for pair in self.server_data_item_pairs_init),
             key=lambda x: self._natural_keys(x[0]),
         )
         for pair in init_server_data:
-            print("           (saved {} {})".format(pair[0], pair[1]))
+            print(f"           (saved {pair[0]} {pair[1]})")
         servers = sorted(
-            [server for server in self.servers], key=lambda x: self._natural_keys(x)
+            (server for server in self.servers), key=lambda x: self._natural_keys(x)
         )
         for server in servers:
-            print("           (usage {} number0)".format(server))
+            print(f"           (usage {server} number0)")
 
     def _write_cost_predicates(self):
         print("           (= (total-cost) 0)")
         process_costs = OrderedDict(
             sorted(
                 self.process_costs.items(),
-                key=lambda x: self._natural_keys("{}{}".format(x[0], x[1])),
+                key=lambda x: self._natural_keys(f"{x[0]}{x[1]}"),
             )
         )
         for pair, value in process_costs.items():
             print(
-                "           (= (process-cost {} {}) {})".format(pair[0], pair[1], value)
+                f"           (= (process-cost {pair[0]} {pair[1]}) {value})"
             )
         send_costs = OrderedDict(
             sorted(
                 self.send_costs.items(),
                 key=lambda x: self._natural_keys(
-                    "{}{}{}".format(x[0][0], x[0][1], x[1])
+                    f"{x[0][0]}{x[0][1]}{x[1]}"
                 ),
             )
         )
@@ -513,21 +512,21 @@ class DistributedComputing:
         io_costs = OrderedDict(
             sorted(
                 self.io_costs.items(),
-                key=lambda x: self._natural_keys("{}{}".format(x[0], x[1])),
+                key=lambda x: self._natural_keys(f"{x[0]}{x[1]}"),
             )
         )
         for pair, value in io_costs.items():
-            print("           (= (io-cost {} {}) {})".format(pair[0], pair[1], value))
+            print(f"           (= (io-cost {pair[0]} {pair[1]}) {value})")
 
     def _write_goals(self):
         print("    (:goal")
         print("           (and")
         goal_server_data = sorted(
-            [(pair[1], pair[0]) for pair in self.server_data_item_pairs_goal],
+            ((pair[1], pair[0]) for pair in self.server_data_item_pairs_goal),
             key=lambda x: self._natural_keys(x[0]),
         )
         for pair in goal_server_data:
-            print("                (saved {} {})".format(pair[0], pair[1]))
+            print(f"                (saved {pair[0]} {pair[1]})")
         print("           )")
         print("    )")
 
@@ -535,7 +534,7 @@ class DistributedComputing:
         return int(text) if text.isdigit() else text
 
     def _natural_keys(self, text):
-        return [self._atoi(c) for c in re.split("(\d+)", text)]
+        return [self._atoi(c) for c in re.split(r"(\d+)", text)]
 
 
 if __name__ == "__main__":
