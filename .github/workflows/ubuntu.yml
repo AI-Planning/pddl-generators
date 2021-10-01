@@ -36,8 +36,3 @@ jobs:
     - name: Run tests
       run: |
         tox -e py
-
-    - name: Check style
-      if: matrix.python-version == '3.8'
-      run: |
-        tox -e style
