@@ -269,12 +269,13 @@ def reasonable_random_map(width, height):
 def generate_state_lpo(args):
     url = "http://www.logicgamesonline.com/nurikabe/archive.php?pid=%d" % args.pid
     instance_name = "nurikabe-lpo%d-%dx%d" % (args.pid, args.width, args.height)
-    import urllib2
+    from urllib.error import URLError
+    from urllib.request import urlopen
 
     try:
-        response = urllib2.urlopen(url, timeout=5)
-        content = response.read()
-    except urllib2.URLError as e:
+        response = urlopen(url, timeout=5)
+        content = response.read().decode("utf-8")
+    except URLError as e:
         sys.exit(e)
 
     puzzle = ""
