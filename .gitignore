@@ -48,7 +48,7 @@ schedule/schedule
 storage/storage
 sokoban/random/sokoban-generator-typed
 sokoban/random/sokoban-generator-untyped
-tidybot/tidybot-.*-snapshot-standalone.jar
+tidybot/tidybot.jar
 tpp/tpp
 trucks/trucks
 trucks/adl2strips/ff
