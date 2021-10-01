@@ -2,7 +2,6 @@
 
 import argparse
 
-import sys
 import itertools
 import random
 
@@ -64,7 +63,7 @@ def factChain(pred, tagtype, n, rev=False, indent="\n    ", start0=False):
 
     facts = list()
     for i in range(len(objlist) - 1):
-        facts.append(narypred(pred, objlist[i : i + 2]))
+        facts.append(narypred(pred, objlist[i:i + 2]))
     return indent.join(facts)
 
 

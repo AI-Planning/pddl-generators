@@ -6,6 +6,7 @@ import random
 
 import sys
 
+
 # Board notation:
 #
 class Board:

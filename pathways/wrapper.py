@@ -156,7 +156,7 @@ def main():
 
     goals = get_goals(dummy_actions_string_original)
 
-    for mol1, mol2, goal in goals:
+    for mol1, mol2, _goal in goals:
         for molecule in [mol1, mol2]:
             if molecule not in set(molecules["simple"]) | set(molecules["complex"]):
                 print(f"Molecule {molecule} is undefined --> will define it now")
