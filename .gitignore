@@ -42,7 +42,7 @@ npuzzle/n-puzzle-generator
 openstacks/generate_pddl
 openstacks/generate_problems
 pathways/pathways
-rover/rovgen
+rovers/rovgen
 satellite/satgen
 schedule/schedule
 storage/storage
