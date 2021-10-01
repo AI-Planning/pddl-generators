@@ -46,11 +46,3 @@ gen-Trucks -seed 40275209 -t 1 -l 7 -p 17 -a 6 -n 27 > pfile27
 gen-Trucks -seed 8465321 -t 1 -l 7 -p 18 -a 6 -n 28 > pfile28
 gen-Trucks -seed 9347325 -t 1 -l 7 -p 19 -a 6 -n 29 > pfile29
 gen-Trucks -seed 832250 -t 1 -l 7 -p 20 -a 6 -n 30 > pfile30
-
-
-New instances:
-
-I suggest to keep -t 1 (as in all IPC instances). -n is not relevant (we can use 1...20 for the final instances as in the IPC).
-
-Then, we scale linearly the number of locations, packages and truck areas.
-

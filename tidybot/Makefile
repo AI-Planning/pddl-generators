@@ -1,4 +1,4 @@
-tidybot:
+tidybot.jar:
 	./lein compile
 	./lein uberjar
 
