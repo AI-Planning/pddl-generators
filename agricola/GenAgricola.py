@@ -63,7 +63,7 @@ def factChain(pred, tagtype, n, rev=False, indent="\n    ", start0=False):
 
     facts = list()
     for i in range(len(objlist) - 1):
-        facts.append(narypred(pred, objlist[i:i + 2]))
+        facts.append(narypred(pred, objlist[i : i + 2]))
     return indent.join(facts)
 
 
@@ -148,13 +148,13 @@ def get_init():
     dfacts = []
     random.shuffle(s1cards)
     strinit += indent + "(open_action " + s1cards[0] + ")"
-    for k in range(4):
+    for k in range(min(4, num_rounds)):
         dfacts.append("(DRAWCARD_ROUND " + s1cards[k] + " round" + str(k + 1) + ")")
     strinit += indent + indent.join(dfacts)
 
     dfacts = []
     random.shuffle(s2cards)
-    for k in range(4):
+    for k in range(min(4, num_rounds - 4)):
         dfacts.append("(DRAWCARD_ROUND " + s2cards[k] + " round" + str(k + 5) + ")")
     strinit += indent + indent.join(dfacts)
 
