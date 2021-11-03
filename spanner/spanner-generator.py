@@ -76,6 +76,7 @@ def parse_args():
     parser.add_argument("spanners", type=int, help="number of spanners (min 1)")
     parser.add_argument("nuts", type=int, help="number of nuts (min 1 and <= spanners)")
     parser.add_argument("locations", type=int, help="number of locations (min 1)")
+    parser.add_argument("--seed", type=int, default=None, help="random seed (default: use time-based seed)")
     parser.add_argument("--problem-name", default="prob", help="number of locations (min 1)")
     return parser.parse_args()
 
@@ -83,7 +84,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    random.seed()
+    random.seed(args.seed)
 
     print("(define (problem " + args.problem_name + ")")
     print(" (:domain spanner)")
