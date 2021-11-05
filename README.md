@@ -9,6 +9,10 @@ Planning Competitions (IPC).
 * Build single generator: ``cd assembly; make``
 * Test generators: ``sudo apt install python-tox && tox``
 
+## Docker instructions
+* Build in Docker image: ``docker build -t pddl-generators .``
+* Run Docker container: ``docker run -ti -t pddl-generators``
+
 # Feedback
 * Bug reports and pull requests are appreciated.
 
