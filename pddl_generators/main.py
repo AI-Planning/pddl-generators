@@ -33,9 +33,66 @@ parser.add_argument("--output-directory","-d",
                     default="output",
                     metavar="DIRNAME",
                     help=
-                    "Directory to store the generated files. "
-                    "If the directory does not exist, it creates it first (including the parents). "
+                    "Directory to store the generated files. \n"
+                    "If the directory does not exist, it creates it first (including the parents). \n"
                     )
+
+parser.add_argument("--output","-o",
+                    metavar="FILENAME1",
+                    help=
+                    "If given, override the default name handling for problem file generation. \n"
+                    "If the pathname is absolute, it is used as it is; DIRNAME is ignored. \n"
+                    "If the pathname is relative, it is seen as a path relative to DIRNAME. \n"
+                    "\n"
+                    "If not given, the file is stored under DIRNAME and as {hash}.pddl , where \n"
+                    "{hash} is a md5 hash of the parameters given to each generator. \n"
+                    "\n"
+                    "If the generator also generates a compiled domain file, it is written to a file with \n"
+                    "a suffix {basename}-domain.pddl where {basename} is the basename of the problem file. \n"
+                    "You can override this behavior with --output-domain. \n"
+                    "\n"
+                    "If the argument is STDOUT, it writes to the standard output. \n"
+                    "If the argument is STDOUT for a domain that also generates a domain file, two outputs are \n"
+                    "separated by a separator specified by --separator option. \n"
+                    "\n"
+                    "In all cases, the output contains a meta-information of how the generator was called \n"
+                    "in a form of Lisp-style comment with each line starting with ;; . \n"
+                    "The format mimicks File-Local Variable of Emacs \n"
+                    "(see https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html). \n"
+                    "\n"
+                    "It contains several fields: \n"
+                    "The first line contains 'pddl-generators:'. \n"
+                    "'command:' field contains the exact command line used to run the generator, \n"
+                    "'dict:' field which contains a dictionary which was parsed from the command line, and \n"
+                    "'date:' field contains the date of creation. \n"
+                    "The last line contains 'end:'. \n"
+                    )
+
+parser.add_argument("--output-domain",
+                    metavar="FILENAME2",
+                    help=
+                    "If given, override the default name handling for domain file generation. \n"
+                    "If the pathname is absolute, it is used as it is; DIRNAME is ignored. \n"
+                    "If the pathname is relative, it is seen as a path relative to DIRNAME. \n"
+                    "\n"
+                    "If missing and the generator generates a new domain file for each problem instance, \n"
+                    "the filename defaults to {basename}-domain.pddl \n"
+                    "where {basename} is the basename of FILENAME1. \n"
+                    "\n"
+                    "If missing and the domain comes with a shared domain file, \n"
+                    "the value is set to the path of the domain file inside pddl-generator source tree \n"
+                    "(likely under site-packages/). \n"
+                    "\n"
+                    "Finally, if given while the domain comes with a shared domain file, \n"
+                    "it copies the domain file to the specified location. \n"
+                    )
+
+parser.add_argument("--separator",
+                    default=";; domain file",
+                    help=
+                    "See --output. When the generator produces both a problem and a domain file, \n"
+                    "and if the --output is specified as STDOUT, two files are concatenated with \n"
+                    "a line containing the string specified by this option. ")
 
 parser.add_argument("--seed","-s",
                     type=int,
