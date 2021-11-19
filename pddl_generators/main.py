@@ -6,7 +6,8 @@ import glob
 import argparse
 import textwrap
 import importlib
-
+import tempfile
+import hashlib
 
 # list domains
 domains = []
@@ -155,9 +156,95 @@ def main(args):
         if args.domain is None:
             parser.error("Missing a required argument: domain")
 
-    dispatch(args)
+    m, args2 = dispatch(args)
 
+    handle_output_directory(args, args2, m)
+
+    try:
+        m.main(args, args2)
+    finally:
+        if args.output_is_stdout:
+            handle_output_to_stdout(args, m)
+        else:
+            print(args.output)
+            print(args.output_domain)
     pass
+
+
+def handle_output_directory(args, args2, m):
+
+    # handle STDOUT
+    if args.output == "STDOUT":
+        args.output_is_stdout = True
+        fd, args.output = tempfile.mkstemp()
+        os.close(fd)
+        fd, args.output_domain = tempfile.mkstemp()
+        os.close(fd)
+        return
+    else:
+        args.output_is_stdout = False
+
+    # make directory absolute
+    if not os.path.isabs(args.output_directory):
+        args.output_directory = os.path.abspath(args.output_directory)
+
+    if args.output is not None:
+        # make output absolute
+        if not os.path.isabs(args.output):
+            args.output = os.path.join(args.output_directory, args.output)
+        # ensure the output directory exist
+        os.makedirs(os.path.dirname(args.output),exist_ok=True)
+    else:
+        # ensure the output directory exist
+        os.makedirs(args.output_directory,exist_ok=True)
+
+        # assign the default pathname
+        dict2 = vars(args2)
+        dict2["seed"] = args.seed # seed also affects the md5 -- this is the only variable in args that affects the generator parameter
+        tuples = tuple([ (key, dict2[key]) for key in sorted(dict2.keys())])
+        # note: we cannot use "hash" primitive in python because it is sensitive to PRNG.
+        # Hash uniqueness is guaranteed only within a single python process.
+        md5 = hashlib.md5(bytes(str(tuples),"utf-8")).hexdigest()
+        args.output = os.path.join(args.output_directory, md5+".pddl")
+
+
+    if args.output_domain is None:
+        if m.domain_file is None:
+            dir_and_name, ext = os.path.splitext(args.output)
+            args.output_domain = dir_and_name+"-domain"+ext
+            # no need to run makedirs, it is already run for args.output
+
+        else:
+            args.output_domain = os.path.join(os.path.abspath(os.path.dirname(__file__)), args.domain, m.domain_file)
+            # no need to run makedirs, the file already exist in the source tree
+    else:
+        # ensure the output directory exist
+        dir = os.path.dirname(args.output_domain)
+        args.debug and print(f"ensuring directory: {dir}",file=sys.stderr)
+        os.makedirs(dir,exist_ok=True)
+
+        if m.domain_file is None:
+            pass
+        else:
+            args.debug and print(f"copying a domain file {m.domain_file} to {args.output_domain}",file=sys.stderr)
+            subprocess.run(["cp", m.domain_file, args.output_domain])
+
+
+def handle_output_to_stdout(args, m):
+    try:
+        with open(args.output) as f:
+            s = f.read()
+            print(s)
+        if m.domain_file is None:
+            print(args.separator)
+            with open(args.output_domain) as f:
+                s = f.read()
+                print(s)
+    finally:
+        # remove temporary files
+        os.remove(args.output)
+        os.remove(args.output_domain)
+
 
 
 def helpall():
@@ -201,7 +288,7 @@ def dispatch(args):
         print(e)
         sys.exit(1)
 
-    m.main(args, args2)
+    return m, args2
 
 
 if __name__ == "__main__":
