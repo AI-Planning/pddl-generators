@@ -37,6 +37,11 @@ parser.add_argument("--output-directory","-d",
                     "If the directory does not exist, it creates it first (including the parents). "
                     )
 
+parser.add_argument("--seed","-s",
+                    type=int,
+                    default=42,
+                    help="Random seed.")
+
 
 def main(args):
     pass
