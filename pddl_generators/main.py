@@ -145,8 +145,39 @@ parser.add_argument("rest",
 
 
 def main(args):
+
+    if args.helpall:
+        helpall()
+        return
+    else:
+        if args.domain is None:
+            parser.error("Missing a required argument: domain")
+
     pass
 
+
+def helpall():
+
+    for domain in domains:
+        print(f"\n\n################################ {domain} ################################\n")
+        try:
+            m = importlib.import_module("pddl_generators."+domain)
+        except ModuleNotFoundError as e:
+            print(f"ModuleNotFoundError while loading pddl_generators.{domain}, probably the domain is not supported by this uniform api yet.")
+            continue
+        except Exception as e:
+            print(e)
+            continue
+
+
+        try:
+            assert hasattr(m, "parser"),        f"the module {m.__name__} lacks a parser"
+            assert hasattr(m, "main"),          f"the module {m.__name__} lacks a main function"
+            assert hasattr(m, "domain_file"),   f"the module {m.__name__} lacks domain_file attribute"
+            m.parser.print_help()
+        except AssertionError as e:
+            print(e)
+            continue
 
 
 if __name__ == "__main__":
