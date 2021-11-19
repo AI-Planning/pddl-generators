@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/pddl-generators"
 
 for DIR in * ; do
     if [ -d $DIR ]; then
