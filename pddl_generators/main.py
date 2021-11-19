@@ -6,7 +6,18 @@ import argparse
 import textwrap
 
 
+# list domains
+domains = []
+for path in sorted(
+        glob.glob(
+            os.path.join(
+                os.path.dirname(__file__),"*",""))):
 
+    name = os.path.basename(os.path.dirname(path))
+    if "__" not in name:
+        domains.append(name)
+
+assert "blocksworld-3ops" in domains
 
 
 parser = argparse.ArgumentParser(
