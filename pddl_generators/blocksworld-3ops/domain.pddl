@@ -1,0 +1,1 @@
+../__blocksworld/3ops/domain.pddl

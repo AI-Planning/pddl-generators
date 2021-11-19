@@ -1,0 +1,1 @@
+../__blocksworld/matching-typed/domain.pddl
