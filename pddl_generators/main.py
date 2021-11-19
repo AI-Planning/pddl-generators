@@ -1,9 +1,11 @@
 
+import sys
 import os
 import os.path
 import glob
 import argparse
 import textwrap
+import importlib
 
 
 # list domains
@@ -153,6 +155,8 @@ def main(args):
         if args.domain is None:
             parser.error("Missing a required argument: domain")
 
+    dispatch(args)
+
     pass
 
 
@@ -178,6 +182,26 @@ def helpall():
         except AssertionError as e:
             print(e)
             continue
+
+
+
+def dispatch(args):
+    try:
+        m = importlib.import_module("pddl_generators."+args.domain)
+    except ModuleNotFoundError as e:
+        print(f"ModuleNotFoundError while loading {args.domain}, probably the domain is not supported by this uniform api yet.")
+        sys.exit(1)
+
+    try:
+        assert hasattr(m, "parser"),        f"the module {m.__name__} lacks a parser"
+        assert hasattr(m, "main"),          f"the module {m.__name__} lacks a main function"
+        assert hasattr(m, "domain_file"),   f"the module {m.__name__} lacks domain_file attribute"
+        args2 = m.parser.parse_args(args.rest)
+    except AssertionError as e:
+        print(e)
+        sys.exit(1)
+
+    m.main(args, args2)
 
 
 if __name__ == "__main__":
