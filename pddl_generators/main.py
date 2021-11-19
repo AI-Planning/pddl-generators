@@ -42,6 +42,10 @@ parser.add_argument("--seed","-s",
                     default=42,
                     help="Random seed.")
 
+parser.add_argument("--helpall",
+                    action="store_true",
+                    help="Generate help messages for all domains.")
+
 
 def main(args):
     pass
