@@ -46,6 +46,23 @@ parser.add_argument("--helpall",
                     action="store_true",
                     help="Generate help messages for all domains.")
 
+# parser.add_argument("--remove-trivial",
+#                     action="store_true",
+#                     help="Remove an instance whose initial state already satisfies its goal condition.\n"
+#                     " NOT IMPLEMENTED YET, work in progress.")
+#
+# parser.add_argument("--remove-cost",
+#                     action="store_true",
+#                     help="Remove action cost from the generated instances.\n"
+#                     " Also from the domain, if it generates a domain compiled from ADL.\n"
+#                     " NOT IMPLEMENTED YET, work in progress.")
+#
+# parser.add_argument("--remove-delete",
+#                     action="store_true",
+#                     help="Remove delete effects from the domain, if it generates a domain compiled from ADL.\n"
+#                     " NOT IMPLEMENTED YET, work in progress.")
+
+
 parser.add_argument("rest",
                     nargs="*",
                     help="Remaining command line arguments for each domain.")
