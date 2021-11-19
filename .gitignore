@@ -1,4 +1,5 @@
 *.o
+**/__pycache__/
 Makefile.depend
 .tox/
 assembly/assembly
