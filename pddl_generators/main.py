@@ -23,6 +23,13 @@ parser = argparse.ArgumentParser(
 )
 
 
+parser.add_argument("domain",
+                    metavar="domain",
+                    nargs="?",  # note: for --help and --helpall to work
+                    choices=domains,
+                    help="domain name, one of: \n" + textwrap.fill(", ".join(domains), 100))
+
+
 def main(args):
     pass
 
