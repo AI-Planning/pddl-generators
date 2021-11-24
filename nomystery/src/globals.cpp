@@ -21,7 +21,7 @@ void usage() {
 	printf(
 			"-c <float>  constrainedness: (int) (<-c> * <optimalcost>) will be the initial fuel supply (>= 1; preset: %f)\n\n",
 			g_c);
-	printf("-s <int>    random seed (>= 1; preset: %d)\n", g_seed);
+	printf("-s <int>    random seed (>= 0; preset: %d)\n", g_seed);
 	printf("-e < 0 | 1 > type of encoding (0 = hard; 1 = hard_cost; preset: %d)\n", g_encoding);
 }
 
@@ -61,7 +61,7 @@ bool process_command_line(int argc, char *argv[]) {
 					sscanf(*argv, "%d", &g_seed);
 					break;
 				default:
-					cout << endl << endl << "unknown option: " << option << " entered" << endl << endl;
+					cerr << endl << endl << "unknown option: " << option << " entered" << endl << endl;
 					return false;
 				}
 			} else {
@@ -69,7 +69,7 @@ bool process_command_line(int argc, char *argv[]) {
 			}
 		}
 	}
-	if (g_num_locations < 2 || g_num_trucks < 1 || g_num_packages < 1 || g_n < 1 || g_m < 1 || g_seed < 1) {
+	if (g_num_locations < 2 || g_num_trucks < 1 || g_num_packages < 1 || g_n < 1 || g_m < 1 || g_seed < 0) {
 		return false;
 	}
 	return true;
@@ -250,7 +250,7 @@ void create_random_graph() {
             g_distances[s].resize(g_graph.size(), std::numeric_limits<int>::max());
 
             g_distances[s][s] = 0;
-            
+
             std::priority_queue<pair<int, int>, std::vector<pair<int, int>>, std::greater<pair<int, int>> > queue;
             queue.push(make_pair(0, s));
             while (!queue.empty()) {
@@ -275,7 +275,7 @@ void create_random_graph() {
             }
 
         }
-        
+
 }
 
 void g_dump(int input) {
@@ -323,10 +323,10 @@ void select_initials_goals() {
                 }
                 if (find(g_goals_per_initial[initial].begin(), g_goals_per_initial[initial].end(), goal) == g_goals_per_initial[initial].end()) {
                     g_goals_per_initial[initial].push_back(goal);
-                }		
+                }
 	}
 
-        
+
 }
 
 void dump_problem() {
@@ -416,6 +416,6 @@ State get_initial_state(){
     for (int loc : g_goals_per_initial[initial_state.truck_at]) {
         initial_state.locations_to_deliver[loc] --;
     }
-    
+
     return initial_state;
 }

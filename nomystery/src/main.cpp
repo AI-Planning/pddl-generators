@@ -5,7 +5,7 @@
 #include "utils.h"
 
 #include <iostream>
-#include <fstream>  
+#include <fstream>
 #include <ctime>
 
 using namespace std;
