@@ -29,6 +29,14 @@ parser.add_argument("domain",
                     choices=domains,
                     help="domain name, one of: \n" + textwrap.fill(", ".join(domains), 100))
 
+parser.add_argument("--output-directory","-d",
+                    default="output",
+                    metavar="DIRNAME",
+                    help=
+                    "Directory to store the generated files. \n"
+                    "If the directory does not exist, it creates it first (including the parents). \n"
+                    )
+
 
 def main(args):
     pass
