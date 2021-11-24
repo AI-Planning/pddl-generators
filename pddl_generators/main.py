@@ -46,6 +46,10 @@ parser.add_argument("--helpall",
                     action="store_true",
                     help="Generate help messages for all domains.")
 
+parser.add_argument("rest",
+                    nargs="*",
+                    help="Remaining command line arguments for each domain.")
+
 
 def main(args):
     pass
