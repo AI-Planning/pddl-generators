@@ -150,7 +150,8 @@ parser.add_argument("rest",
                     help="Remaining command line arguments for each domain.")
 
 
-def main(args):
+def main():
+    args = parser.parse_args()
 
     if args.helpall:
         helpall()
@@ -346,7 +347,4 @@ def dispatch(args):
 
     return m, args2
 
-
-if __name__ == "__main__":
-    main(parser.parse_args())
 

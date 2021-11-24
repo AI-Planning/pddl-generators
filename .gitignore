@@ -4,3 +4,4 @@ Makefile.depend
 .tox/
 *~
 #*
+*.egg-info
