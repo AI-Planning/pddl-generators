@@ -341,7 +341,7 @@ void usage( void )
   printf("-s <num>    max amount of space (minimal 1)\n\n");
   printf("-v <num>    number of vehicles (minimal 1)\n");
   printf("-c <num>    number of cargos (minimal 1)\n");
-  printf("-r <num>    random seed (minimal 1, optional)\n\n");
+  printf("-r <num>    random seed (optional)\n\n");
 }
 
 
