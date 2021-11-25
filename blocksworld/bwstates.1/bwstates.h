@@ -20,7 +20,9 @@
 * problems you desire but no larger.
 */
 
+#ifndef SZ
 #define SZ 1000
+#endif
 #define SZZ (((SZ+2)*(SZ+2)+3)/4)
 
 typedef float bigarray[SZZ];
