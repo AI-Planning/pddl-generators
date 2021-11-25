@@ -3,20 +3,20 @@
  * (C) Copyright 2001 Albert Ludwigs University Freiburg
  *     Institute of Computer Science
  *
- * All rights reserved. Use of this software is permitted for 
- * non-commercial research purposes, and it may be copied only 
+ * All rights reserved. Use of this software is permitted for
+ * non-commercial research purposes, and it may be copied only
  * for that use.  All copies must include this copyright message.
  * This software is made available AS IS, and neither the authors
  * nor the  Albert Ludwigs University Freiburg make any warranty
- * about the software or its performance. 
- * 
+ * about the software or its performance.
+ *
  * -------------------------------------
  * Gripper generator modified to create the turnandopen problems of IPC2011
  *********************************************************************/
 
 
 
-/* 
+/*
  * C code for generating turnandopen problems
  */
 
@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/timeb.h>
+#include <sys/time.h>
 
 
 
@@ -58,6 +58,7 @@ Bool process_command_line( int argc, char *argv[] );
 int gobjects;
 int grooms;
 int grobots;
+long grandom_seed;
 
 
 int main( int argc, char *argv[] )
@@ -68,10 +69,10 @@ int main( int argc, char *argv[] )
 
   /* seed the random() function
    */
-  struct timeb tp;
-  ftime( &tp );
-  srandom(tp.millitm);
-
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv, &tz);
+  grandom_seed = tv.tv_usec;
 
   /* command line treatment, first preset values
    */
@@ -88,6 +89,8 @@ int main( int argc, char *argv[] )
     usage();
     exit( 1 );
   }
+
+  srandom( grandom_seed );
 
   /* now output problem in PDDL syntax
    */
@@ -129,17 +132,17 @@ int main( int argc, char *argv[] )
   }
 
   for ( i = 0; i < grobots; i++ ) {
-    printf("\n(at-robby robot%d room%d)", i + 1, 1+(int)(rand() / (((double)RAND_MAX + 1)/ grooms)));
+    printf("\n(at-robby robot%d room%d)", i + 1, 1+(int)(random() / (((double)RAND_MAX + 1)/ grooms)));
     printf("\n(free robot%d rgripper%d)", i + 1, i + 1);
     printf("\n(free robot%d lgripper%d)", i + 1, i + 1);
   }
-  
-  for ( i = 0; i < gobjects; i++ ) printf("\n(at ball%d room%d)", i + 1, 1+(int)(rand() / (((double)RAND_MAX + 1)/ grooms)));
+
+  for ( i = 0; i < gobjects; i++ ) printf("\n(at ball%d room%d)", i + 1, 1+(int)(random() / (((double)RAND_MAX + 1)/ grooms)));
   printf("\n)");
 
   printf("\n(:goal");
   printf("\n(and");
-  for ( i = 0; i < gobjects; i++ ) printf("\n(at ball%d room%d)", i + 1, 1+(int)(rand() / (((double)RAND_MAX + 1)/ grooms)));
+  for ( i = 0; i < gobjects; i++ ) printf("\n(at ball%d room%d)", i + 1, 1+(int)(random() / (((double)RAND_MAX + 1)/ grooms)));
   printf("\n)");
   printf("\n)");
 
@@ -152,8 +155,8 @@ int main( int argc, char *argv[] )
   exit( 0 );
 
 }
-  
-  
+
+
 
 
 

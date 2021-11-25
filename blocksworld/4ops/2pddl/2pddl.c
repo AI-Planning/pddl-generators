@@ -17,7 +17,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <strings.h>
-#include <sys/timeb.h>
 #include <math.h>
 #include <string.h>
 

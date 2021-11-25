@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/timeb.h>
 
 
 
@@ -70,13 +69,6 @@ int main( int argc, char *argv[] )
 {
 
   int i;
-
-  /* seed the random() function
-   */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
 
   /* command line treatment, first preset values
    */
