@@ -15,6 +15,15 @@ if (defined $seed)
     chomp $seed;
     srand($seed);
 }
+else
+{
+    # Do not call srand() (i.e., without an argument) more than once per process. The
+    # internal state of the random number generator should contain more entropy than
+    # can be provided by any seed, so calling srand again actually loses randomness.
+    #
+    # https://perldoc.perl.org/functions/srand
+    srand;
+}
 
 my $max_cars = 2 * $num_curbs - 2;
 
@@ -257,7 +266,6 @@ sub init_config {
 
 sub shuffle {
   my (@a) = @_;
-  srand;
   @new = ();
   while (@a) {
     push(@new, splice(@a, rand @a, 1));
