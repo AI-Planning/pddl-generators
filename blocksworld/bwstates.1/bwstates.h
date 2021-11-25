@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-#include <sys/timeb.h>
-
+#include <sys/time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
