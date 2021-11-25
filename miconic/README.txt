@@ -13,6 +13,7 @@ OPTIONS   DESCRIPTIONS
 
 -f <num>    number of floors (minimal 2)
 -p <num>    number of passengers (minimal 1)
+-r <num>    random seed (optional)
 
 
 IPC instances: linear scaling where passengers go from 1 to 30. Number of floors is
