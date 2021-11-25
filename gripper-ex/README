@@ -1,0 +1,4 @@
+
+Gripper with multi-robot, multi-gripper, multi-rooms configuration.
+
+usage: gripper.py [-h] [--seed SEED] balls robots grippers rooms
