@@ -21,7 +21,6 @@
 #include <math.h>
 
 
-#define MAX_LENGTH 256
 #define MAX_SAMPLE 50
 
 /* data structures ... (ha ha)
@@ -160,8 +159,8 @@ Bool process_command_line( int argc, char *argv[] )
       if ( --argc && ++argv ) {
 	switch ( option ) {
 	case 'd':
-	  gdata = ( char * ) calloc( MAX_LENGTH, sizeof( char ) );
-	  strncpy( gdata, *argv, MAX_LENGTH );
+          gdata = ( char * ) calloc( strlen(*argv), sizeof( char ) );
+	  strcpy( gdata, *argv );
 	  break;
 	case 'n':
 	  sscanf( *argv, "%d", &gn );
