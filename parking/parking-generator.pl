@@ -1,13 +1,20 @@
 #!/usr/bin/perl -w
 
-if ($#ARGV < 1 || $#ARGV > 3) {
-  die "usage: $0 base_name number_of_curbs number_of_cars mode\n";
+if ($#ARGV < 1 || $#ARGV > 4) {
+  die "usage: $0 base_name number_of_curbs number_of_cars mode [random_seed]\n";
 }
 my $base_name = $ARGV[0];    # base file name
 my $num_curbs = $ARGV[1];                        # number of curbs
 my $num_cars = $ARGV[2];                         # number of cars
 
 my $mode = $ARGV[3];                         # time|seq mode
+
+my $seed = $ARGV[4];                         # optional random seed
+if (defined $seed)
+{
+    chomp $seed;
+    srand($seed);
+}
 
 my $max_cars = 2 * $num_curbs - 2;
 
