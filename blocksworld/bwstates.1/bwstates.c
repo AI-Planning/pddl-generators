@@ -46,7 +46,6 @@
 
 #include "bwstates.h"
 
-#include <unistd.h>
 
 
 main(argc,argv)

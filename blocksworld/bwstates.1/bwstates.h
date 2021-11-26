@@ -2,6 +2,9 @@
 #include <math.h>
 #include <sys/timeb.h>
 
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /*
 * The constant SZ is the maximum number of blocks allowed in a state.

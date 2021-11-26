@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/timeb.h>
+#include <string.h>
 
 
 

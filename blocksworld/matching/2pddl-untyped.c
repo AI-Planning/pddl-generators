@@ -19,6 +19,7 @@
 #include <strings.h>
 #include <sys/timeb.h>
 #include <math.h>
+#include <string.h>
 
 
 #define MAX_SAMPLE 50
