@@ -5,7 +5,7 @@
 TYPE	=
 ADDONS	=
 CC      = gcc
-CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS)
+CFLAGS	= -O6 -Wall -g $(TYPE) $(ADDONS)
 LIBS    = -lm
 SOURCES = grid.c
 OBJECTS = $(SOURCES:.c=.o)
