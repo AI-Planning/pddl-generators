@@ -46,4 +46,5 @@ OPTIONS   DESCRIPTIONS
 -n <num>    number of robots (minimal 1)
 -r <num>    number of rooms (minimal 1)
 -o <num>    number of balls (minimal 1)
+-s <num>    random seed
 

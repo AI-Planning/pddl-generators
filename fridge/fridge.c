@@ -190,7 +190,8 @@ void usage( void )
 
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
   printf("-s <num>    number of screws per plane (minimal 1)\n");
-  printf("-f <num>    number of fridges (minimal 1)\n\n");
+  printf("-f <num>    number of fridges (minimal 1)\n");
+  printf("-r <num>    random seed\n\n");
 
 }
 
@@ -216,6 +217,9 @@ Bool process_command_line( int argc, char *argv[] )
 	  break;
 	case 'f':
 	  sscanf( *argv, "%d", &gfridges );
+	  break;
+	case 'r':
+	  sscanf( *argv, "%ld", &grandom_seed);
 	  break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );

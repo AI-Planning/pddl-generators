@@ -244,7 +244,8 @@ void usage( void )
   printf("\nusage:\n");
 
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
-  printf("-o <num>    number of objects (minimal 1)\n\n");
+  printf("-o <num>    number of objects (minimal 1)\n");
+  printf("-s <num>    random seed\n\n");
 
 }
 
@@ -267,6 +268,9 @@ Bool process_command_line( int argc, char *argv[] )
 	switch ( option ) {
 	case 'o':
 	  sscanf( *argv, "%d", &gobjects );
+	  break;
+	case 's':
+	  sscanf( *argv, "%ld", &grandom_seed);
 	  break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );

@@ -593,8 +593,9 @@ void usage( void )
   printf("-r <num>    p of requires any resource (preset: %d)\n", gp_requires);
   printf("-t <num>    p of transient part to any node in father rows (preset: %d)\n",
 	 gp_transient_part);
-  printf("-o <num>    p of remove order to transient part (preset: %d)\n\n",
+  printf("-o <num>    p of remove order to transient part (preset: %d)\n",
 	 gp_remove_order);
+  printf("-s <num>    random seed\n\n");
 
 }
 
@@ -638,6 +639,9 @@ Bool process_command_line( int argc, char *argv[] )
 	  break;	
 	case 'o':
 	  sscanf( *argv, "%d", &gp_remove_order);
+	  break;
+	case 's':
+	  sscanf( *argv, "%ld", &grandom_seed);
 	  break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );

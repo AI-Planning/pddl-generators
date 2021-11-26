@@ -23,6 +23,7 @@
     *   -t probability that an item is transient part for any higher-in-tree item
     *   -a probability that a pair of items has an assemble order constraint
     *   -o probability that an item has a remove ordering constraint with a transient part
+    *   -s random seed
 *   Generation: Create a tree of depth -d. Nodes have sons with
     probability -h. If they do have sons, then a random number between 1
     and -m, biased to be lower the deeper the node is in the tree. With

@@ -897,7 +897,8 @@ void usage( void )
 
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
   printf("-f <num>    number of floors (minimal 2)\n");
-  printf("-p <num>    number of passengers (minimal 1)\n\n");
+  printf("-p <num>    number of passengers (minimal 1)\n");
+  printf("-r <num>    random seed (optional)\n\n");
 
 }
 
@@ -924,6 +925,9 @@ Bool process_command_line( int argc, char *argv[] )
 	case 'p':
 	  sscanf( *argv, "%d", &gpassengers );
 	  break;
+        case 'r':
+            sscanf( *argv, "%ld", &grandom_seed );
+            break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );
 	  return FALSE;

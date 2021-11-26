@@ -910,8 +910,9 @@ void usage( void )
   printf("-B <num>    percentage of conflict_B s (preset: %d)\n\n", gp_con_B);
 
   printf("-N <num>    percentage of people with no-access (preset: %d)\n", gp_no_access);
-  printf("-F <num>    percentage of floors not to be accessed by those (preset: %d)\n\n",
+  printf("-F <num>    percentage of floors not to be accessed by those (preset: %d)\n",
 	 gp_no_access_floors);
+  printf("-r <num>    random seed (optional)\n\n");
 
 }
 
@@ -965,6 +966,9 @@ Bool process_command_line( int argc, char *argv[] )
 	case 'F':
 	  sscanf( *argv, "%d", &gp_no_access_floors );
 	  break;
+        case 'r':
+            sscanf( *argv, "%ld", &grandom_seed );
+            break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );
 	  return FALSE;

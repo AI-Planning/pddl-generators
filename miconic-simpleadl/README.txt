@@ -8,5 +8,6 @@
 *   Parameters:
     *   -f number of floors
     *   -p number of passengers
+    *   -r random seed
 *   Generation: Original generator used in the AIPS-2000 competition.
     Simply distribute origin and destination floors at random.

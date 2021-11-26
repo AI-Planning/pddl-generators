@@ -666,7 +666,8 @@ void usage()
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
   printf("-n <num>    grid size (minimal 5)\n");
   printf("-b <num>    number of boxes (minimal 1)\n");
-  printf("-w <num>    number of walls (minimal 0)\n\n");
+  printf("-w <num>    number of walls (minimal 0)\n");
+  printf("-s <num>    random seed\n\n");
 
 }
 
@@ -695,6 +696,9 @@ bool process_command_line( int argc, char *argv[] )
 	  break;
 	case 'w':
 	  sscanf( *argv, "%d", &num_walls);
+	  break;
+	case 's':
+	  sscanf( *argv, "%ld", &grandom_seed);
 	  break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );

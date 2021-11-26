@@ -191,10 +191,11 @@ void usage( void )
 
   printf("\nusage:\n");
 
-  printf("\nOPTIONS   DESCRIPTIONS\n\n");
-  printf("-n <num>    number of robots (minimal 1)\n\n");
-  printf("-r <num>    number of rooms (minimal 1)\n\n");
-  printf("-o <num>    number of balls (minimal 1)\n\n");
+  printf("\nOPTIONS   DESCRIPTIONS\n");
+  printf("-n <num>    number of robots (minimal 1)\n");
+  printf("-r <num>    number of rooms (minimal 1)\n");
+  printf("-o <num>    number of balls (minimal 1)\n");
+  printf("-s <num>    random seed\n\n");
 }
 
 
@@ -222,6 +223,9 @@ Bool process_command_line( int argc, char *argv[] )
 	  break;
 	case 'o':
 	  sscanf( *argv, "%d", &gobjects );
+	  break;
+	case 's':
+	  sscanf( *argv, "%ld", &grandom_seed );
 	  break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );
