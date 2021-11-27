@@ -200,7 +200,6 @@ let generate nDay nCrew nUtil =
     Crew provided.  for each combination of day/crew we create 3
     instances where the available time utilization is 50%, 75% and 100%
   *)
-  Random.self_init ();
   create_instance nDay nCrew nUtil stdout
 
 
