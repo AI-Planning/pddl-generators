@@ -54,19 +54,19 @@ def get_goals():
 # MAIN
 # *****************#
 # Reading the command line arguments
-try:
-    name = sys.argv[1]
-    NUM_MATCHES = int(sys.argv[2])
-except BaseException:
-    print("Usage: " + sys.argv[0] + " <name> <num_matches>")
-    sys.exit(1)
-
-random.seed()
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("matches", type=int, help="number of matches")
+parser.add_argument("--seed", type=int, help="random seed")
+args = parser.parse_args()
+NUM_MATCHES = args.matches
+if args.seed is not None:
+    random.seed(args.seed)
 
 
 NUM_FUSES = NUM_MATCHES * 2
 
-print("(define (problem " + name + ")")
+print("(define (problem prob)")
 print(" (:domain matchcellar)")
 print(" (:objects " + get_objects(NUM_FUSES) + ")")
 print(" (:init " + get_init() + ")")
