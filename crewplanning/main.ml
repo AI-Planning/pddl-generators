@@ -4,24 +4,25 @@
 
 let get_args () =
   let  nDay = ref 1
-  and nCrew = ref 1 in
+   and nCrew = ref 1
+   and nUtil = ref 1 in
     Arg.parse ["-day", Arg.Int (fun i -> nDay := i),
-	       "\tupper limit on number of day: plan horizon";
+	       "number of day: plan horizon";
 	       "-crew", Arg.Int (fun i -> nCrew := i),
-	       "\tupper limit on the number of crew members"]
+	       "number of crew members";
+	       "-util", Arg.Int (fun i -> nUtil := i),
+	       "utilization level. 2: 50%, 3: 75%, 4:100% "]
       (fun s -> raise (Arg.Bad s))
-      "Test generator for OP2, by Minh Do (minh.do@parc.com)";
-    !nDay, !nCrew
+      "Test generator for OP2, by Minh Do (minh.do@parc.com)\nRevised for modern ocaml system, by Masataro Asai (guicho271828@gmail.com)\n";
+    !nDay, !nCrew, !nUtil
 
 
 
 let main () =
-  let nDay, nCrew = get_args () in
-    Verb.with_level 3
-       (fun () ->
-	  if nDay > 50 or nCrew > 50 then
-	    failwith "Can only support up to 50 CrewMembers and 50 days\n";
-	  Output.generate nDay nCrew)
+  let nDay, nCrew, nUtil = get_args () in
+  if nDay > 50 || nCrew > 50 then
+    failwith "Can only support up to 50 CrewMembers and 50 days\n";
+  Output.generate nDay nCrew nUtil
 
 
 let _ = main ()
