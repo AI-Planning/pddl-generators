@@ -8,6 +8,9 @@ import textwrap
 import importlib
 import tempfile
 import hashlib
+import subprocess
+import json
+import datetime
 
 # list domains
 domains = []
@@ -165,6 +168,8 @@ def main(args):
 
     try:
         m.main(args, args2)
+        append_aux_info(args, args2)
+
     finally:
         if args.output_is_stdout:
             handle_output_to_stdout(args, m)
@@ -260,6 +265,26 @@ def handle_output_to_stdout(args, m):
         os.remove(args.output)
         os.remove(args.output_domain)
 
+
+
+def run (args, cmd, *rest, **kwargs):
+    """Same as subprocess.run, but performs additional bookkeeping."""
+
+    args.debug and print(f"running command: {' '.join(cmd)}",file=sys.stderr)
+    subprocess.run(cmd, *rest, **kwargs)
+    args.cmd = cmd
+
+
+def append_aux_info(args, args2):
+    args.debug and print(f"appending meta information to the output file",file=sys.stderr)
+    with open(args.output, mode="a") as f:
+        cmdline = " ".join(args.cmd)
+        dictionary = json.dumps(vars(args2))
+        print(f";; pddl-generators:", file=f)
+        print(f";; command: {cmdline}", file=f)
+        print(f";; dict: {dictionary}", file=f)
+        print(f";; date: {datetime.datetime.now().isoformat()}", file=f)
+        print(f";; end:", file=f)
 
 
 def helpall():
