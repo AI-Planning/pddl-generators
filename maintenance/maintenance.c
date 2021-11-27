@@ -127,39 +127,6 @@ int main(int argc,char **argv) {
 
   srand(seed);
 
-  sprintf(sd,"maintenance-domain.pddl",
-	    numberOfMechanics,numberOfCities,numberOfDays,numberOfVehicles,numberOfVisits);
-  fd = fopen(sd,"w");
-
-  fprintf(fd,"; There are mechanics who on any day may work at one\n");
-  fprintf(fd,"; of several cities where the airplane maintenance\n");
-  fprintf(fd,"; company has facilities. There are airplanes each of\n");
-  fprintf(fd,"; which has to be maintained during the given time period.\n");
-  fprintf(fd,"; The airplanes are guaranteed to visit some of the cities\n");
-  fprintf(fd,"; on given days. The problem is to schedule the presence\n");
-  fprintf(fd,"; of the mechanics so that each plane will get maintenance.\n\n");
-
-  fprintf(fd,"(define (domain %s)\n",DOMAIN);
-  fprintf(fd," (:requirements :adl :typing)\n");
-  fprintf(fd," (:types plane day airport)\n");
-  fprintf(fd," (:predicates");
-  fprintf(fd,"  (%s ?p - plane)\n",COMPLETED);
-  fprintf(fd,"  (%s ?d - day)\n",AVAILABLE);
-  fprintf(fd,"  (at ?p - plane ?d - day ?c - airport)\n");
-  fprintf(fd,"  (next ?d - day ?d2 - day)");
-  fprintf(fd," )\n\n");
-
-  fprintf(fd," (:action workat\n");
-  fprintf(fd,"  :parameters (?day - day ?airport - airport)\n");
-  fprintf(fd,"  :precondition (%s ?day)\n",AVAILABLE);
-  fprintf(fd,"  :effect (and\n");
-  fprintf(fd,"     (not (%s ?day))\n",AVAILABLE);
-  fprintf(fd,"     (forall (?plane - plane) (when (at ?plane ?day ?airport) (%s ?plane)))",COMPLETED);
-  fprintf(fd,"))\n\n");
-
-  fprintf(fd,")\n");
-  fclose(fd);
-
   for(inst=0;inst<numberOfInstances;inst++) {
 
   sprintf(si,"maintenance.%i.%i.%.3i.%.3i.%i-%.3i.pddl",
