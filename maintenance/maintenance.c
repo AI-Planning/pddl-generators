@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 
 /*  Whether all actions can be taken simultanously. If not defined,
 the problem will be completely sequential. */
@@ -73,7 +74,7 @@ int main(int argc,char **argv) {
 
   intlist visits[3][1000];
 
-  int seed;
+  long seed;
 
   if (argc < 7 || argc > 8) {
     fprintf(stderr,"maintenance <days> <planes> <mechanics> <cities> <visits> <instances> [<seed>]\n");
@@ -110,11 +111,14 @@ int main(int argc,char **argv) {
     exit(1);
   }
 
-  if (argc == 8 && !sscanf(argv[7], "%d", &seed)) {
+  if (argc == 8 && !sscanf(argv[7], "%ld", &seed)) {
       printf("seed was not an integer.\n", argv[7]);
       exit(1);
   } else if (argc == 7) {
-      seed = (int)time(NULL);
+      struct timeval tv;
+      struct timezone tz;
+      gettimeofday(&tv, &tz);
+      seed = tv.tv_usec;
   }
 
   if(numberOfMechanics >= numberOfCities) {
