@@ -107,6 +107,10 @@ parser.add_argument("--list","-l",
                     action="store_true",
                     help="List available domains.")
 
+parser.add_argument("--debug",
+                    action="store_true",
+                    help="Enable a more verbose debugging mode.")
+
 # parser.add_argument("--remove-trivial",
 #                     action="store_true",
 #                     help="Remove an instance whose initial state already satisfies its goal condition.\n"
