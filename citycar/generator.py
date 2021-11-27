@@ -7,38 +7,31 @@
 
 import sys
 import random
-
-
-def help():
-    print("usage: generator.py <rows> <columns> <n_cars> <n_garage> <sparse> [<seed>]")
-    print("\t row and columns indicate the grid size. They should be > 1 ")
-    print("\t n_cars indicates how many cars have to go through the network")
-    print("\t n_garage indicates the number of starting garages")
-    print(
-        "\t if sparse != 0, the network has 'holes', i.e. junctions that cannot be used"
-    )
-    print("\t seed is the (optional) random seed for the instance")
-    sys.exit(2)
+import argparse
 
 
 to_print_car_pos = ""
 
-if len(sys.argv) not in [6, 7]:
-    help()
-    sys.exit(2)
+parser = argparse.ArgumentParser()
 
-row = int(sys.argv[1])
-column = int(sys.argv[2])
-car = int(sys.argv[3])
-garage = int(sys.argv[4])
-sparse = float(sys.argv[5])
+parser.add_argument("rows",type=int,"the grid row.")
+parser.add_argument("columns",type=int,"the grid column.")
+parser.add_argument("cars",type=int,"how many cars have to go through the network")
+parser.add_argument("garages",type=int,"the number of starting garages")
+parser.add_argument("--sparse",type=float,default=1.0,"The ratio of the available roads.")
+parser.add_argument("--seed",type=int,"random seed")
+
+args = parser.parse_args()
+
+row    = args.rows
+column = args.columns
+car    = args.cars
+garage = args.garages
+sparse = args.sparse
+seed   = args.seed
+
 assert 0.0 <= sparse, "sparsity must be a probability (0.0 <= sparse <= 1.0)"
 assert sparse <= 1.0, "sparsity must be a probability (0.0 <= sparse <= 1.0)"
-
-if len(sys.argv) == 7:
-    seed = int(sys.argv[6])
-else:
-    seed = None
 
 random.seed(seed)
 
