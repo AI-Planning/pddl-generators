@@ -76,7 +76,7 @@ class DistributedComputing:
 
         numpy.random.seed(seed)
 
-        self.task_name = filename.split(".")[0]
+        self.task_name = f"prob-{num_data_items}-{num_layers}-{num_scripts}-{filename}-{seed}"
         self._parse_module(filename)
 
         self._check_input_values()
@@ -537,43 +537,17 @@ class DistributedComputing:
         return [self._atoi(c) for c in re.split(r"(\d+)", text)]
 
 
-if __name__ == "__main__":
+import argparse
 
-    if len(sys.argv) == 2:
-        print("Generate IPC instances")
-        filename = sys.argv[1]
-        seed = 0
-        for num_layers in range(2, 6):
-            for num_data_items in range(num_layers + 2, num_layers * 10, num_layers):
-                for num_scripts in range(
-                    num_data_items + 2, num_data_items * 3, num_data_items // 2
-                ):
+parser = argparse.ArgumentParser()
+parser.add_argument("data", type=int, help="the number of data items")
+parser.add_argument("layers", type=int, help="the number of layers, must be smaller than the number of data items")
+parser.add_argument("scripts", type=int, help="the number of scripts, must be larger or equal than [number of data items]-2")
+parser.add_argument("module", choices=["ring-network","small-network","tiny-network"],
+                    metavar="module",
+                    help='A module describing a network, one of %(choices)s. See example files in the source code directory.')
+parser.add_argument("--seed", type=int, help="random seed")
 
-                    sys.stdout = open(
-                        "instances/p{}-{}-{}-{}-{}.pddl".format(
-                            num_data_items, num_layers, num_scripts, filename, seed
-                        ),
-                        "w",
-                    )
-                    seed += 1
-                    generator = DistributedComputing(
-                        num_data_items, num_layers, num_scripts, filename, seed
-                    )
+args = parser.parse_args()
 
-        exit(0)
-
-    if len(sys.argv) < 5:
-        print(
-            "Call {} [number of data items] [number of layers] [number of scripts] network [seed]".format(
-                sys.argv[0]
-            )
-        )
-        sys.exit(0)
-    num_data_items = int(sys.argv[1])
-    num_layers = int(sys.argv[2])
-    num_scripts = int(sys.argv[3])
-    filename = sys.argv[4]
-    seed = int(sys.argv[5])
-    generator = DistributedComputing(
-        num_data_items, num_layers, num_scripts, filename, seed
-    )
+generator = DistributedComputing(args.data, args.layers, args.scripts, args.module, args.seed)
