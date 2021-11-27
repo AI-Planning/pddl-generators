@@ -78,7 +78,7 @@ int main(int argc,char **argv) {
     fprintf(stderr,"maintenance <days> <planes> <mechanics> <cities> <visits> [<seed>]\n");
     exit(1);
   }
-  
+
   if(!sscanf(argv[1],"%d",&numberOfDays)) {
     printf("# days not an integer.\n",argv[1]);
     exit(1);
@@ -139,27 +139,29 @@ int main(int argc,char **argv) {
   }
 
 
-  printf("(define (problem %s-%i-%i-%i-%i-%i)\n",PROBLEM,numberOfMechanics,numberOfCities,numberOfDays,numberOfVehicles,numberOfVisits);
-  printf(" (:domain %s)\n",DOMAIN);
+  printf("(define (problem %s-%i-%i-%i-%i-%i)",PROBLEM,numberOfMechanics,numberOfCities,numberOfDays,numberOfVehicles,numberOfVisits);
+  printf("\n (:domain %s)",DOMAIN);
 
-  printf(" (:objects");
+  printf("\n (:objects");
+  printf("\n  ");
   for(i=0;i<=numberOfDays;i++) {
     printf(" %s%i",DAYNAME,i+1);
   }
-  printf(" - day\n  ");
+  printf(" - day");
+  printf("\n  ");
   for(i=0;i<numberOfCities;i++) {
     printf(" %s",airport(i));
   }
-  printf(" - airport\n  ");
-
+  printf(" - airport");
+  printf("\n  ");
   for(i=0;i<numberOfVehicles;i++) {
     printf(" %s%i",PLANE,i+1);
   }
-  printf(" - plane)\n");
+  printf(" - plane)");
 
-  printf(" (:init\n");
+  printf("\n (:init");
   for(i=0;i<numberOfDays;i++) {
-    printf("  (%s %s%i)",AVAILABLE,DAYNAME,i+1);
+    printf("\n  (%s %s%i)",AVAILABLE,DAYNAME,i+1);
   }
   for(k=0;k<numberOfVehicles;k++) {
     for(j=0;j<numberOfCities;j++) {
@@ -167,17 +169,21 @@ int main(int argc,char **argv) {
 	l = visits[j][i];
 	while(l != EMPTYLIST) {
 	  if(k==hd(l))
-	  printf("  (at %s%i %s%i %s)\n",PLANE,hd(l)+1,DAYNAME,i+1,airport(j));
+	  printf("\n  (at %s%i %s%i %s)",PLANE,hd(l)+1,DAYNAME,i+1,airport(j));
 	  l = tl(l);
 	}
       }
     }
   }
-  printf(")\n");
+  printf(")");
 
-  printf("  (:goal (forall (?plane - plane) (%s ?plane)))\n",COMPLETED);
+  printf("\n  (:goal ",COMPLETED);
+  printf("\n    (and ");
+  for(i=0;i<numberOfVehicles;i++) {
+      printf("\n      (done %s%i)",PLANE,i+1);
+  }
+  printf(")))\n");
 
-  printf("  )\n");
 
   }
 
