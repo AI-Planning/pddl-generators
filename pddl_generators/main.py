@@ -103,6 +103,10 @@ parser.add_argument("--helpall",
                     action="store_true",
                     help="Generate help messages for all domains.")
 
+parser.add_argument("--list","-l",
+                    action="store_true",
+                    help="List available domains.")
+
 # parser.add_argument("--remove-trivial",
 #                     action="store_true",
 #                     help="Remove an instance whose initial state already satisfies its goal condition.\n"
