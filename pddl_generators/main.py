@@ -179,9 +179,12 @@ def handle_output_directory(args, args2, m):
     # handle STDOUT
     if args.output == "STDOUT":
         args.output_is_stdout = True
+        args.debug and print("creating tempfiles",file=sys.stderr)
         fd, args.output = tempfile.mkstemp()
+        args.debug and print(f"tempfile: fd:{fd}, name:{args.output}",file=sys.stderr)
         os.close(fd)
         fd, args.output_domain = tempfile.mkstemp()
+        args.debug and print(f"tempfile: fd:{fd}, name:{args.output_domain}",file=sys.stderr)
         os.close(fd)
         return
     else:
@@ -196,10 +199,14 @@ def handle_output_directory(args, args2, m):
         if not os.path.isabs(args.output):
             args.output = os.path.join(args.output_directory, args.output)
         # ensure the output directory exist
-        os.makedirs(os.path.dirname(args.output),exist_ok=True)
+        dir = os.path.dirname(args.output)
+        args.debug and print(f"ensuring directory: {dir}",file=sys.stderr)
+        os.makedirs(dir,exist_ok=True)
     else:
         # ensure the output directory exist
-        os.makedirs(args.output_directory,exist_ok=True)
+        dir = args.output_directory
+        args.debug and print(f"ensuring directory: {dir}",file=sys.stderr)
+        os.makedirs(dir,exist_ok=True)
 
         # assign the default pathname
         dict2 = vars(args2)
@@ -232,6 +239,10 @@ def handle_output_directory(args, args2, m):
             args.debug and print(f"copying a domain file {m.domain_file} to {args.output_domain}",file=sys.stderr)
             subprocess.run(["cp", m.domain_file, args.output_domain])
 
+    args.debug and print(f"problem output filename: {args.output}",file=sys.stderr)
+    args.debug and print(f"domain  output filename: {args.output_domain}",file=sys.stderr)
+
+
 
 def handle_output_to_stdout(args, m):
     try:
@@ -245,6 +256,7 @@ def handle_output_to_stdout(args, m):
                 print(s)
     finally:
         # remove temporary files
+        args.debug and print("removing tempfiles",file=sys.stderr)
         os.remove(args.output)
         os.remove(args.output_domain)
 
