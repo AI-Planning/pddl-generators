@@ -152,6 +152,9 @@ def main(args):
     if args.helpall:
         helpall()
         return
+    elif args.list:
+        list_domains()
+        return
     else:
         if args.domain is None:
             parser.error("Missing a required argument: domain")
@@ -270,6 +273,22 @@ def helpall():
             print(e)
             continue
 
+
+def list_domains():
+
+    for domain in domains:
+        try:
+            m = importlib.import_module("pddl_generators."+domain)
+            assert hasattr(m, "parser"),        f"the module {m.__name__} lacks a parser"
+            assert hasattr(m, "main"),          f"the module {m.__name__} lacks a main function"
+            assert hasattr(m, "domain_file"),   f"the module {m.__name__} lacks domain_file attribute"
+            print(domain)
+        except ModuleNotFoundError as e:
+            continue
+        except Exception as e:
+            continue
+        except AssertionError as e:
+            continue
 
 
 def dispatch(args):
