@@ -18,3 +18,14 @@ built for connecting two junctions and allowing a car to move between
 them. Roads can also be removed, and placed somewhere else, if needed.
 In order to place roads or to move cars, the destination junction must
 be clear, i.e., no cars should be in there.
+
+
+
+pddl-generator note:
+
+Sparsity was a 0 / 1 flag in the original version.
+When it is enabled, 20% of the roads become unavailable.
+
+In this version, we can specify the sparsity as a probability (default: 1.0).
+To achieve the same sparsity as the original, give 0.8 as a parameter.
+

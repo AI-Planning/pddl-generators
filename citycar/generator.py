@@ -31,7 +31,9 @@ row = int(sys.argv[1])
 column = int(sys.argv[2])
 car = int(sys.argv[3])
 garage = int(sys.argv[4])
-sparse = int(sys.argv[5])
+sparse = float(sys.argv[5])
+assert 0.0 <= sparse, "sparsity must be a probability (0.0 <= sparse <= 1.0)"
+assert sparse <= 1.0, "sparsity must be a probability (0.0 <= sparse <= 1.0)"
 
 if len(sys.argv) == 7:
     seed = int(sys.argv[6])
@@ -190,9 +192,8 @@ for i in range(row - 1):
 # free cells
 for i in range(row):
     for j in range(column):
-        if sparse != 0 and i != 0 and i < row - 1 and j != 0 and j < column - 1:
-            x = random.randint(0, 10)
-            if x < 8:
+        if sparse != 1.0 and i != 0 and i < row - 1 and j != 0 and j < column - 1:
+            if sparse < random.random():
                 print("(clear junction" + str(i) + "-" + str(j) + ")")
         else:
             print("(clear junction" + str(i) + "-" + str(j) + ")")
