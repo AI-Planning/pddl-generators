@@ -22,9 +22,12 @@ library."
 
 The original code was probably written for ruby 1.8.
 The code was fixed for ruby 2.x.
-
+This ruby code reproduces instances takes from the book.
 
 `ruby converter.rb` seems to generate a template for `instances.rb`.
 `ruby -I. generator.rb` will generate problem files.
 
 
+A new randomized implementation (generate.py) will generate a new board
+which is not guaranteed to be solvable.
+It generates a random board state and has a customizable board size and a corner drop off size.
