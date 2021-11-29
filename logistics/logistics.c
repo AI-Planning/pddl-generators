@@ -128,7 +128,7 @@ int main( int argc, char *argv[] )
     printf("c%d ", i);
   }
   printf("\n          ");
-  for ( i = 0; i < gcities; i++ ) {
+  for ( i = 0; i < gtrucks; i++ ) {
     printf("t%d ", i);
   }
   printf("\n          ");
@@ -150,7 +150,7 @@ int main( int argc, char *argv[] )
   for ( i = 0; i < gcities; i++ ) {
     printf("\n    (CITY c%d)", i);
   }
-  for ( i = 0; i < gcities; i++ ) {
+  for ( i = 0; i < gtrucks; i++ ) {
     printf("\n    (TRUCK t%d)", i);
   }
   for ( i = 0; i < gcities; i++ ) {
