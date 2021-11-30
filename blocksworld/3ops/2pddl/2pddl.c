@@ -89,12 +89,11 @@ int main( int argc, char *argv[] )
   }
 
   printf("\n\n(define (problem BW-rand-%d)", gn);
-  printf("\n(:domain blocksworld)");
+  printf("\n(:domain blocksworld-3ops)");
   printf("\n(:objects ");
   for ( i = 0; i < gn; i++ ) printf("b%d ", i+1);
-  printf(" - block)");
+  printf(")");
   printf("\n(:init");
-  printf("\n(handempty)");
   for ( i = 1; i < gn + 1; i++ ) {
     if ( initial[i] == 0 ) {
       printf("\n(on-table b%d)", i);
