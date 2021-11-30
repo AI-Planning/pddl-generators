@@ -1,4 +1,4 @@
-(define (domain blocksworld)
+(define (domain blocksworld-3ops)
 (:predicates (clear ?x)
              (on-table ?x)
              (on ?x ?y))
