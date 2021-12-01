@@ -10,7 +10,9 @@
     out of the briefcase. When a move is made between locations, then all
     objects inside the briefcase are also moved, which is encoded by a
     conditional effect.
-*   Parameters: -o number of objects
+*   Parameters:
+    * -o number of objects
+    * -s random seed
 *   Generation: randomly distribute the start locations of all objects and
     the briefcase over -o %2B 1 locations. Do the same for the goal
     locations.

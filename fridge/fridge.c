@@ -25,7 +25,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <sys/time.h>
 
 
 
@@ -58,6 +59,7 @@ Bool process_command_line( int argc, char *argv[] );
 /* command line params
  */
 int gscrews, gfridges;
+long grandom_seed;
 
 
 
@@ -71,10 +73,10 @@ int main( int argc, char *argv[] )
 
   /* seed the random() function
    */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv, &tz);
+  grandom_seed = tv.tv_usec;
 
   /* command line treatment, first preset values
    */
@@ -89,6 +91,8 @@ int main( int argc, char *argv[] )
     usage();
     exit( 1 );
   }
+
+  srandom( grandom_seed );
 
   /* now output problem in PDDL syntax
    */
@@ -186,7 +190,8 @@ void usage( void )
 
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
   printf("-s <num>    number of screws per plane (minimal 1)\n");
-  printf("-f <num>    number of fridges (minimal 1)\n\n");
+  printf("-f <num>    number of fridges (minimal 1)\n");
+  printf("-r <num>    random seed\n\n");
 
 }
 
@@ -212,6 +217,9 @@ Bool process_command_line( int argc, char *argv[] )
 	  break;
 	case 'f':
 	  sscanf( *argv, "%d", &gfridges );
+	  break;
+	case 'r':
+	  sscanf( *argv, "%ld", &grandom_seed);
 	  break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );

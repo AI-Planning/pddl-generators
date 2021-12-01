@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <sys/time.h>
 
 int num_goals;
 float uno, cinque, dieci, coeff;
@@ -905,9 +906,17 @@ int build_problem() {
     int simple[settings.num_of_simple_substances];
 
     if (settings.seed >= 0)
+    {
         srand(settings.seed);
+    }
     else
-        srand(time(0));
+    {
+        /* seed the random() function */
+        struct timeval tv;
+        struct timezone tz;
+        gettimeofday(&tv, &tz);
+        srand(tv.tv_usec);
+    }
 
     incremental = TRUE;
     rebuild = FALSE;

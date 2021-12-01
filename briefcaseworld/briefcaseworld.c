@@ -25,7 +25,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <sys/time.h>
 
 
 
@@ -62,6 +63,7 @@ Bool process_command_line( int argc, char *argv[] );
 /* command line params
  */
 int gobjects;
+long grandom_seed;
 
 /* random values
  */
@@ -79,9 +81,10 @@ int main( int argc, char *argv[] )
 
   /* seed the random() function
    */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv, &tz);
+  grandom_seed = tv.tv_usec;
 
 
   /* command line treatment, first preset values
@@ -96,6 +99,8 @@ int main( int argc, char *argv[] )
     usage();
     exit( 1 );
   }
+
+  srandom( grandom_seed );
 
   create_random_locations();
 
@@ -239,7 +244,8 @@ void usage( void )
   printf("\nusage:\n");
 
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
-  printf("-o <num>    number of objects (minimal 1)\n\n");
+  printf("-o <num>    number of objects (minimal 1)\n");
+  printf("-s <num>    random seed\n\n");
 
 }
 
@@ -262,6 +268,9 @@ Bool process_command_line( int argc, char *argv[] )
 	switch ( option ) {
 	case 'o':
 	  sscanf( *argv, "%d", &gobjects );
+	  break;
+	case 's':
+	  sscanf( *argv, "%ld", &grandom_seed);
 	  break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );

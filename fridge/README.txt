@@ -14,5 +14,6 @@
 *   Parameters:
     *   -f number of fridges
     *   -s number of screws per backplane
+    *   -r random seed
 *   Generation: No randomization. Simply specify all static relations as
     well as the initial and goal situations.
