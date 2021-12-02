@@ -18,7 +18,7 @@ parser.add_argument("rows",type=int,help="the number of grid rows.")
 parser.add_argument("columns",type=int,help="the number of grid columns.")
 parser.add_argument("cars",type=int,help="how many cars have to go through the network")
 parser.add_argument("garages",type=int,help="the number of starting garages")
-parser.add_argument("--density",type=float,default=1.0,help="The ratio of the available roads.")
+parser.add_argument("--density",type=float,default=1.0,help="The ratio of the available roads in the road network (0.0 <= density <= 1.0). Junctions are randomly set obstructed/unavailable for passage")
 parser.add_argument("--seed",type=int,help="random seed")
 
 args = parser.parse_args()
