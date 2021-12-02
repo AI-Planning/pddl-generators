@@ -14,24 +14,25 @@ to_print_car_pos = ""
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("rows",type=int,"the grid row.")
-parser.add_argument("columns",type=int,"the grid column.")
-parser.add_argument("cars",type=int,"how many cars have to go through the network")
-parser.add_argument("garages",type=int,"the number of starting garages")
-parser.add_argument("--sparse",type=float,default=1.0,"The ratio of the available roads.")
-parser.add_argument("--seed",type=int,"random seed")
+parser.add_argument("rows",type=int,help="the number of grid rows.")
+parser.add_argument("columns",type=int,help="the number of grid columns.")
+parser.add_argument("cars",type=int,help="how many cars have to go through the network")
+parser.add_argument("garages",type=int,help="the number of starting garages")
+parser.add_argument("--density",type=float,default=1.0,help="The ratio of the available roads.")
+parser.add_argument("--seed",type=int,help="random seed")
 
 args = parser.parse_args()
 
-row    = args.rows
-column = args.columns
-car    = args.cars
-garage = args.garages
-sparse = args.sparse
-seed   = args.seed
+row     = args.rows
+column  = args.columns
+car     = args.cars
+garage  = args.garages
+density = args.density
+seed    = args.seed
 
-assert 0.0 <= sparse, "sparsity must be a probability (0.0 <= sparse <= 1.0)"
-assert sparse <= 1.0, "sparsity must be a probability (0.0 <= sparse <= 1.0)"
+if density < 0.0 or 1.0 < density:
+    parser.error("density must be a probability (0.0 <= density <= 1.0)")
+
 
 random.seed(seed)
 
@@ -185,8 +186,8 @@ for i in range(row - 1):
 # free cells
 for i in range(row):
     for j in range(column):
-        if sparse != 1.0 and i != 0 and i < row - 1 and j != 0 and j < column - 1:
-            if sparse < random.random():
+        if density != 1.0 and i != 0 and i < row - 1 and j != 0 and j < column - 1:
+            if density < random.random():
                 print("(clear junction" + str(i) + "-" + str(j) + ")")
         else:
             print("(clear junction" + str(i) + "-" + str(j) + ")")
