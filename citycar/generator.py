@@ -7,36 +7,32 @@
 
 import sys
 import random
-
-
-def help():
-    print("usage: generator.py <rows> <columns> <n_cars> <n_garage> <sparse> [<seed>]")
-    print("\t row and columns indicate the grid size. They should be > 1 ")
-    print("\t n_cars indicates how many cars have to go through the network")
-    print("\t n_garage indicates the number of starting garages")
-    print(
-        "\t if sparse != 0, the network has 'holes', i.e. junctions that cannot be used"
-    )
-    print("\t seed is the (optional) random seed for the instance")
-    sys.exit(2)
+import argparse
 
 
 to_print_car_pos = ""
 
-if len(sys.argv) not in [6, 7]:
-    help()
-    sys.exit(2)
+parser = argparse.ArgumentParser()
 
-row = int(sys.argv[1])
-column = int(sys.argv[2])
-car = int(sys.argv[3])
-garage = int(sys.argv[4])
-sparse = int(sys.argv[5])
+parser.add_argument("rows",type=int,help="the number of grid rows.")
+parser.add_argument("columns",type=int,help="the number of grid columns.")
+parser.add_argument("cars",type=int,help="how many cars have to go through the network")
+parser.add_argument("garages",type=int,help="the number of starting garages")
+parser.add_argument("--density",type=float,default=1.0,help="The ratio of the available roads in the road network (0.0 <= density <= 1.0). Junctions are randomly set obstructed/unavailable for passage")
+parser.add_argument("--seed",type=int,help="random seed")
 
-if len(sys.argv) == 7:
-    seed = int(sys.argv[6])
-else:
-    seed = None
+args = parser.parse_args()
+
+row     = args.rows
+column  = args.columns
+car     = args.cars
+garage  = args.garages
+density = args.density
+seed    = args.seed
+
+if not (0.0 <= density <= 1.0):
+    parser.error("density must be a probability (0.0 <= density <= 1.0)")
+
 
 random.seed(seed)
 
@@ -190,9 +186,8 @@ for i in range(row - 1):
 # free cells
 for i in range(row):
     for j in range(column):
-        if sparse != 0 and i != 0 and i < row - 1 and j != 0 and j < column - 1:
-            x = random.randint(0, 10)
-            if x < 8:
+        if density != 1.0 and i != 0 and i < row - 1 and j != 0 and j < column - 1:
+            if density > random.random():
                 print("(clear junction" + str(i) + "-" + str(j) + ")")
         else:
             print("(clear junction" + str(i) + "-" + str(j) + ")")
