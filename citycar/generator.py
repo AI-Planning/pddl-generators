@@ -30,7 +30,7 @@ garage  = args.garages
 density = args.density
 seed    = args.seed
 
-if density < 0.0 or 1.0 < density:
+if not (0.0 <= density <= 1.0):
     parser.error("density must be a probability (0.0 <= density <= 1.0)")
 
 
@@ -187,7 +187,7 @@ for i in range(row - 1):
 for i in range(row):
     for j in range(column):
         if density != 1.0 and i != 0 and i < row - 1 and j != 0 and j < column - 1:
-            if density < random.random():
+            if density > random.random():
                 print("(clear junction" + str(i) + "-" + str(j) + ")")
         else:
             print("(clear junction" + str(i) + "-" + str(j) + ")")
