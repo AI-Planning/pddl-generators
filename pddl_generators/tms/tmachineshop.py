@@ -79,19 +79,25 @@ def get_goals():
 # MAIN
 # *****************#
 # Reading the command line arguments
-try:
-    name = sys.argv[1]
-    NUM_P1 = int(sys.argv[2])
-    NUM_P2 = int(sys.argv[3])
-    NUM_P3 = int(sys.argv[4])
-except BaseException:
-    print("Usage: " + sys.argv[0] + " <name> <num_p1> <num_p2> <num_p3>")
-    sys.exit(1)
 
-random.seed()
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("name", help="problem name")
+parser.add_argument("p1", type=int, help="number of pieces of type 1")
+parser.add_argument("p2", type=int, help="number of pieces of type 2")
+parser.add_argument("p3", type=int, help="number of pieces of type 3")
+parser.add_argument("--seed", type=int)
+
+args = parser.parse_args()
+
+random.seed(args.seed)
+
+NUM_P1 = args.p1
+NUM_P2 = args.p2
+NUM_P3 = args.p3
 
 
-print("(define (problem " + name + ")")
+print("(define (problem " + args.name + ")")
 print(" (:domain domain-tms-2-3-light)")
 print(" (:objects " + get_objects() + ")")
 print(" (:init " + get_init() + ")")
