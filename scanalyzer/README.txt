@@ -23,23 +23,18 @@ being considerably more flexible.
 
 ---
 
-usage: generator.py [-h] [--seed SEED] [--output OUTPUT] size half_segment_ids inout
+usage: generator.py [-h] [--use-half-segments] [--seed SEED] [--output OUTPUT] size insize outsize
 
-The environment contains N conveyers and an imaging chamber.
-`size` argument specifies N, the number of conveyers.
+positional arguments:
+  size                 the number of the conveyer belt segments
+  insize               How many conveyers are connected to the inlet of the imaging chamber.
+  outsize              How many conveyers are connected to the outlet of the imaging chamber.
 
-When half_segment_ids == "ab" is given, each conveyer belt is split into 2 segments,
-which can move individually.
-
-`inout` specifies how many conveyers are connected to the imaging chamber.
-If none, only one converyer goes into the chamber, and only one converyer is connected to the outlet of the chamber.
-If in, all converyers goes into the chamber, but only one converyer is connected to the exit of the chamber.
-If both, all converyers can go into the chamber, and come out of the chamber.
-Internally, they are stored in `problem_type` variable.
-
-`problem_type` can be a string "simple", in which case there is an additional conveyer named "segback"
-(segbacka , segbackb in the case of half segments)
-that can be seen as an extra storage space that is empty initially.
+optional arguments:
+  -h, --help           show this help message and exit
+  --use-half-segments  If present, each segment is split in half and moves independently.
+  --seed SEED          random seed
+  --output OUTPUT      output file name. If not provided, it writes to the stdout.
 
 ---
 
