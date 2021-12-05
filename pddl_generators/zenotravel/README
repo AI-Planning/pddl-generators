@@ -1,5 +1,12 @@
 Usage: ztravel [-n|-s|-t|-c|-u] <seed> <#cities> <#planes> <#people> [distance]
 
+It is a domain which transport people between cities with airplanes while refueling them to keep them flying.
+
+If distance is a positive value then the distances between
+locations is set randomly using this value as the bound.
+However, this feature does not affect the output in STRIPS mode.
+
+Distance also sets the initial fuel level of the planes.
 
 IPC instances:
 
