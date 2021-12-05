@@ -133,11 +133,23 @@ def create_pddl(half_segment_ids, problem_type, size, prob_no):
 def parse():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("size", type=int, help="")
-    parser.add_argument("segment_type", type=str, help="")
-    parser.add_argument("inout", type=str, help="")
-    parser.add_argument("--seed", type=int, default=1)
-    parser.add_argument("--output", default=None)
+    parser.add_argument("size",
+                        type=int,
+                        help="the number of the conveyer belt segments")
+    parser.add_argument("segment_type",
+                        type=str,
+                        choices=["ab"],
+                        help="either a string ab or not probided. If present, each segment is split in half and moves independently.")
+    parser.add_argument("inout",
+                        type=str,
+                        choices=["in","both","none"],
+                        help="Defines which conveyers are connected to the imaging chamber. "
+                        "If none, only one converyers goes into / out of the chamber."
+                        "If in, all converyers goes into the chamber, but only one converyer is connected to the exit of the chamber."
+                        "If both, all converyers can go into the chamber, and come out of the chamber."
+                        )
+    parser.add_argument("--seed", type=int, default=1, help="random seed")
+    parser.add_argument("--output", default=None, help="output file name. If not provided, it writes to the stdout.")
 
     return parser.parse_args()
 
