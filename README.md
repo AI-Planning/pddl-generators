@@ -17,7 +17,7 @@ If you use the generators for a publication, please use the following citation:
 
     @Misc{seipp-et-al-zenodo2022,
       author =       "Jendrik Seipp and {\'A}lvaro Torralba and J{\"o}rg Hoffmann",
-      title =        "PDDL Generators",
+      title =        "{PDDL} Generators",
       publisher =    "Zenodo",
       year =         "2022",
       howpublished = "\url{https://doi.org/10.5281/zenodo.6382173}"
