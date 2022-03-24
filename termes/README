@@ -9,7 +9,8 @@ blocks but also climb on them so that they can build complex structures. This do
 its full generality, is a multi-agent planning benchmark, but here we model only a single
 robot.
 
-Domain submitted by Sven Koenig and Satish Kumar
-Publication: S. Koenig and S. Kumar. A Case for Collaborative Construction as Testbed for Cooperative
+Domain submitted by Sven Koenig and Satish Kumar:
+
+S. Koenig and S. Kumar. A Case for Collaborative Construction as Testbed for Cooperative
 Multi-Agent Planning. In Proceedings of the ICAPS-17 Scheduling and Planning Applications
 Workshop (SPARK), 2017.

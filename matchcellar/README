@@ -2,8 +2,9 @@
 
 ## Domain Description
 
-Domain is inspired by [a paper by Long and Fox](https://www.aaai.org/Papers/ICAPS/2003/ICAPS03-006.pdf).
-The main feature of this domain is that a lighted match is concurrently required to fix a fuse.
+Domain is inspired by [a paper by Long and
+Fox](https://www.aaai.org/Papers/ICAPS/2003/ICAPS03-006.pdf). The main feature
+of this domain is that a lighted match is concurrently required to fix a fuse.
 
 ## Authors
 

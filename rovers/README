@@ -1,5 +1,8 @@
-2021 June fix: visible_from output was not using the correct data, so all objectives were visible from waypoint0 to waypoingN.
-   Apart from heavily impacting the diversity of the generated instances, this could cause some instances to be unsolvable (e.g. when waypoint0 and 1 are not reachable by the rover).
+2021 June fix:
+   visible_from output was not using the correct data, so all objectives were
+   visible from waypoint0 to waypoingN. Apart from heavily impacting the
+   diversity of the generated instances, this could cause some instances to be
+   unsolvable (e.g. when waypoint0 and 1 are not reachable by the rover).
 
 
 ------------------------------

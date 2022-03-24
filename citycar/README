@@ -13,7 +13,8 @@ positional arguments:
 
 optional arguments:
   -h, --help         show this help message and exit
-  --density DENSITY  The ratio of the available roads in the road network (0.0 <= density <= 1.0). Junctions are randomly set
+  --density DENSITY  The ratio of the available roads in the road network
+                     (0.0 <= density <= 1.0). Junctions are randomly set
                      obstructed/unavailable for passage
   --seed SEED        random seed
 

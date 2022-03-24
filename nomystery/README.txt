@@ -7,7 +7,7 @@ domain-specific optimal solver allowing to control the constrainedness of the
 resources. The generator first creates a random connected undirected graph with n nodes,
 and it adds k packages with random origins and destinations. The edge weights are
 uniformly drawn between 1 and an integer W. The optimal solver computes the minimum
-required amount of fuel M, and the initial fuel supply is set to [C ×M], where C ≥1 is a
+required amount of fuel M, and the initial fuel supply is set to [C×M], where C >= 1 is a
 (float) input parameter of the generator. The parameter C denotes the ratio between the
 available fuel vs. the minimum amount required. The problem becomes more constrained when
 C approaches 1.

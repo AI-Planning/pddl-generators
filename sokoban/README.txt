@@ -12,8 +12,8 @@ The IPC 2011 organizers
 `choose-suite.py` analyzes instances in `rolling_stone_data.py` and
 select problem instances for satisficing and optimal track.
 
-From the message above, it seems these problem generators (which are based on existing microban benchmarks etc.)
-are not used for IPC2011.
+From the message above, it seems these problem generators (which are based on
+existing microban benchmarks etc.) are not used for IPC2011.
 
 
 
