@@ -1,6 +1,5 @@
-This repository is an unofficial collection of PDDL generators, some of
-which have been used to generate benchmarks for the International
-Planning Competitions (IPC).
+This repository is a collection of PDDL generators, some of which have been used
+to generate benchmarks for the International Planning Competition (IPC).
 
 # Instructions
 * Build all generators: ``./build_all``
@@ -13,24 +12,15 @@ Planning Competitions (IPC).
 * Bug reports and pull requests are appreciated.
 
 # Citation
-We revised and extended the set of generators significantly when working on creating
-the Autoscale benchmarks. If you use the generators for a publication, please use the
-following citation:
 
-    @InProceedings{torralba-et-al-icaps2021,
-      author =       "{\'A}lvaro Torralba and Jendrik Seipp and Silvan Sievers",
-      title =        "Automatic Instance Generation for Classical Planning",
-      crossref =     "icaps2021",
-      pages =        "376--384"
-    }
-    @Proceedings{icaps2021,
-      editor =       "Robert P. Goldman and Susanne Biundo and Michael Katz",
-      title =        "Proceedings of the Thirty-First International Conference on
-                      Automated Planning and Scheduling (ICAPS 2021)",
-      booktitle =    "Proceedings of the Thirty-First International Conference on
-                      Automated Planning and Scheduling (ICAPS 2021)",
-      year =         "2021",
-      publisher =    "AAAI Press"
+If you use the generators for a publication, please use the following citation:
+
+    @Misc{seipp-et-al-zenodo2022,
+      author =       "Jendrik Seipp and {\'A}lvaro Torralba and J{\"o}rg Hoffmann",
+      title =        "PDDL Generators",
+      publisher =    "Zenodo",
+      year =         "2022",
+      howpublished = "\url{https://doi.org/10.5281/zenodo.6382173}"
     }
 
 
