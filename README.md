@@ -6,7 +6,7 @@ to generate benchmarks for the International Planning Competition (IPC).
 * Build in parallel: ``./build_all -j4``
 * Delete (some) intermediate files: ``./build_all clean``
 * Build single generator: ``cd assembly; make``
-* Test generators: ``sudo apt install python-tox && tox``
+* Test generators: ``sudo apt install tox && tox``
 
 # Feedback
 * Bug reports and pull requests are appreciated.
