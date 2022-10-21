@@ -1,13 +1,23 @@
 ## CITYCAR DOMAIN GENERATOR.
 ## IPC 2014
 ## author: Mauro Vallati -- University of Huddersfield
+## modifed-by: Masataro Asai
 
-usage: generator.py <rows> <columns> <n_cars> <n_garage> <sparse> <random_seed>
-     row and columns indicate the grid size. They should be > 1
-     n_cars indicates how many cars have to go through the network
-     n_garage indicates the number of starting garages
-     sparse is used for designing networks with 'holes', i.e. junctions that cannot be used
-     random_seed allows for control of the generator randomization. Optional, and should be >= 1.
+usage: generator.py [-h] [--density DENSITY] [--seed SEED] rows columns cars garages
+
+positional arguments:
+  rows               the number of grid rows.
+  columns            the number of grid columns.
+  cars               how many cars have to go through the network
+  garages            the number of starting garages
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --density DENSITY  The ratio of the available roads in the road network
+                     (0.0 <= density <= 1.0). Junctions are randomly set
+                     obstructed/unavailable for passage
+  --seed SEED        random seed
+
 
 This model aims to simulate the impact of road building / demolition on
 traffic flows. A city is represented as an acyclic graph, in which each
@@ -18,3 +28,16 @@ built for connecting two junctions and allowing a car to move between
 them. Roads can also be removed, and placed somewhere else, if needed.
 In order to place roads or to move cars, the destination junction must
 be clear, i.e., no cars should be in there.
+
+
+
+pddl-generator note:
+
+See README.old for the usage of the original code by Mauro.
+
+In the original version, sparsity was a 0 / 1 flag which,
+when enabled, 20% of the roads become unavailable.
+
+In this version, we can specify the sparsity as a probability (default: 1.0).
+To achieve the same sparsity as the original, give 0.8 as a --density parameter.
+

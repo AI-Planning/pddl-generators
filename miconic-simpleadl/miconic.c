@@ -26,7 +26,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <sys/time.h>
 
 
 
@@ -81,6 +82,7 @@ int gfloors, gpassengers;
 int gp_up_down, gp_vip, gp_going_nonstop;
 int gp_attendant, gp_never_alone, gp_con_A, gp_con_B;
 int gp_no_access, gp_no_access_floors;
+long grandom_seed;
 
 /* lists of types; passengers are those that have not been assigned any
  * special type.
@@ -108,9 +110,10 @@ int main( int argc, char *argv[] )
 
   /* seed the random() function
    */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv, &tz);
+  grandom_seed = tv.tv_usec;
 
 
   /* command line treatment, first preset all values
@@ -138,6 +141,9 @@ int main( int argc, char *argv[] )
     exit( 1 );
   }
 
+  /* seed the random() function
+   */
+  srandom(grandom_seed);
 
   /* create randomized problem;
    *
@@ -891,7 +897,8 @@ void usage( void )
 
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
   printf("-f <num>    number of floors (minimal 2)\n");
-  printf("-p <num>    number of passengers (minimal 1)\n\n");
+  printf("-p <num>    number of passengers (minimal 1)\n");
+  printf("-r <num>    random seed (optional)\n\n");
 
 }
 
@@ -918,6 +925,9 @@ Bool process_command_line( int argc, char *argv[] )
 	case 'p':
 	  sscanf( *argv, "%d", &gpassengers );
 	  break;
+        case 'r':
+            sscanf( *argv, "%ld", &grandom_seed );
+            break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );
 	  return FALSE;

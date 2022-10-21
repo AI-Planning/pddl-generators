@@ -25,7 +25,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <sys/time.h>
 
 
 
@@ -65,7 +66,8 @@ Bool process_command_line( int argc, char *argv[] );
 
 /* command line params
  */
-int glocations, gmax_fuel, gmax_space, gvehicles, gcargos, grandom_seed;
+int glocations, gmax_fuel, gmax_space, gvehicles, gcargos;
+long grandom_seed;
 
 /* random values
  */
@@ -81,13 +83,19 @@ int main( int argc, char *argv[] )
 
   int i;
 
+  /* seed the random() function
+   */
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv, &tz);
+  grandom_seed = tv.tv_usec;
+
   /* command line treatment, first preset values
    */
   glocations = -1;
   gmax_fuel = -1;
   gvehicles = -1;
   gcargos = -1;
-  grandom_seed = -1;
 
   if ( argc == 1 || ( argc == 2 && *++argv[0] == '?' ) ) {
     usage();
@@ -96,10 +104,6 @@ int main( int argc, char *argv[] )
   if ( !process_command_line( argc, argv ) ) {
     usage();
     exit( 1 );
-  }
-
-  if (grandom_seed == -1) {
-    grandom_seed = (int)time(NULL);
   }
 
   srandom(grandom_seed);
@@ -341,7 +345,7 @@ void usage( void )
   printf("-s <num>    max amount of space (minimal 1)\n\n");
   printf("-v <num>    number of vehicles (minimal 1)\n");
   printf("-c <num>    number of cargos (minimal 1)\n");
-  printf("-r <num>    random seed (minimal 1, optional)\n\n");
+  printf("-r <num>    random seed (optional)\n\n");
 }
 
 
@@ -377,7 +381,7 @@ Bool process_command_line( int argc, char *argv[] )
           sscanf( *argv, "%d", &gcargos );
           break;
         case 'r':
-          sscanf( *argv, "%d", &grandom_seed );
+          sscanf( *argv, "%ld", &grandom_seed );
           break;
         default:
           printf( "\n\nunknown option: %c entered\n\n", option );

@@ -23,6 +23,7 @@
     *   -B percentage of passengers in group B, which must not meet the above group
     *   -N percentage of people with no access to some floors
     *   -F percentage of of floors not to be accessed by those
+    *   -r random seed
 *   Generation: Original generator used in the AIPS-2000 competition. Make
     sure that the specified percentage values are all met by randomly
     assigning types to the passengers (a passenger can have several

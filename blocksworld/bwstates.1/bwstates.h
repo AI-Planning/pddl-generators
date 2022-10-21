@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <math.h>
-#include <sys/timeb.h>
-
+#include <sys/time.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /*
 * The constant SZ is the maximum number of blocks allowed in a state.
@@ -20,7 +22,9 @@
 * problems you desire but no larger.
 */
 
+#ifndef SZ
 #define SZ 1000
+#endif
 #define SZZ (((SZ+2)*(SZ+2)+3)/4)
 
 typedef float bigarray[SZZ];

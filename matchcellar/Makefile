@@ -1,2 +1,3 @@
 test:
-	./matchcellar.py myname 3
+	./matchcellar.py 3
+	./matchcellar.py --seed 5 3

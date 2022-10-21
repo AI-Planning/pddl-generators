@@ -46,10 +46,9 @@
 
 #include "bwstates.h"
 
-#include <unistd.h>
 
 
-main(argc,argv)
+int main(argc,argv)
 int argc;
 char *argv[];
 {
@@ -58,14 +57,15 @@ char *argv[];
     float *ratio;         /* Array of ratios. See note in BW.h */
     long seed;            /* Seed for drand48() */
     int x;
-    struct timeb tp;
-    ftime( &tp );
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday(&tv, &tz);
 
     ratio = (float*)malloc(sizeof(bigarray));
     sigma = (state)malloc(sizeof(STATE));
     sigma->N = 0;                                   /* Default */
     S = 1;                                          /* Default */
-    seed = (long)tp.millitm;                        /* Default */
+    seed = tv.tv_usec;                              /* Default */
     get_options(argc,argv,&(sigma->N),&S,&seed);    /* Read command line */
     make_ratio(sigma->N,ratio);                     /* Get probabilities */
     srand48(seed);                                  /* Initialise drand48() */

@@ -27,7 +27,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <sys/time.h>
 #include <string.h>
 #include <vector>
 #include <deque>
@@ -58,6 +58,7 @@ int **wall_mask;
 
 //command line params
 int num_rows, num_cols, num_walls, num_boxes;
+long grandom_seed;
 
 void usage();
 bool process_command_line( int argc, char *argv[] );
@@ -108,6 +109,11 @@ void clear_memory(){
 
 int main(int argc, char *argv[])
 {
+  /* seed the random() function */
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv, &tz);
+  grandom_seed = tv.tv_usec;
 
   /* command line treatment, first preset values
    */
@@ -131,11 +137,6 @@ int main(int argc, char *argv[])
   //keep generating problem until you can successfully 
   //generate one and halt.
   while(!success){
-     /* seed the random() function
-    */
-   struct timeb tp;
-   ftime( &tp );
-   srandom( tp.millitm );
   
    //allocate space
    goal_paths = new deque<pair<int,int> >[num_boxes];
@@ -663,7 +664,8 @@ void usage()
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
   printf("-n <num>    grid size (minimal 5)\n");
   printf("-b <num>    number of boxes (minimal 1)\n");
-  printf("-w <num>    number of walls (minimal 0)\n\n");
+  printf("-w <num>    number of walls (minimal 0)\n");
+  printf("-s <num>    random seed\n\n");
 
 }
 
@@ -692,6 +694,9 @@ bool process_command_line( int argc, char *argv[] )
 	  break;
 	case 'w':
 	  sscanf( *argv, "%d", &num_walls);
+	  break;
+	case 's':
+	  sscanf( *argv, "%ld", &grandom_seed);
 	  break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );

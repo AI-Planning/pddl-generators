@@ -3,7 +3,7 @@
 TYPE =
 ADDONS =
 CC = gcc
-CFLAGS = -O3 -Wall -g -ansi $(TYPE) $(ADDONS)
+CFLAGS = -O3 -Wall -g $(TYPE) $(ADDONS)
 LIBS = -lm
 SOURCES = assembly.c
 OBJECTS = $(SOURCES:.c=.o)

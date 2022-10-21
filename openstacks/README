@@ -16,10 +16,11 @@ Python script (below) should be preferred.
 
 Notes on attribute selection:
   - A very high-density seems to simplify the problem with blind search.
-  - For OPT in IPC'08 they scaled both products and orders at the same time, with a linear
-    scaling of +1
-  - For SAT, in IPC'14 they started at 170 for both. The scaling factor was +20 in both cases.
-  
+  - For OPT in IPC'08 they scaled both products and orders at the same time,
+    with a linear scaling of +1
+  - For SAT, in IPC'14 they started at 170 for both. The scaling factor was +20
+    in both cases.
+
 
 generate_problems.py:
 
@@ -69,19 +70,54 @@ script only generates a single task per call.
 From IPC'11:
 
 Openstacks
-From the original domain description (click here): This domain was first used at IPC-2006. The openstacks domain is based on the "minimum maximum simultaneous open stacks" combinatorial optimization problem, which can be stated as follows: A manufacturer has a number of orders, each for a combination of different products, and can only make one product at a time.
 
-The total required quantity of each product is made at the same time (because changing from making one product to making another requires a production stop). From the time that the first product included in an order is made to the time that all products included in the order have been made, the order is said to be "open" and during this time it requires a "stack" (a temporary storage space). The problem is to order the making of the different products so that the maximum number of stacks that are in use simultaneously, or equivalently the number of orders that are in simultaneous production, is minimized (because each stack takes up space in the production area).
+From the original domain description: This domain was first used at IPC-2006.
+The openstacks domain is based on the "minimum maximum simultaneous open stacks"
+combinatorial optimization problem, which can be stated as follows: A
+manufacturer has a number of orders, each for a combination of different
+products, and can only make one product at a time.
 
-The problem is NP-hard and known to be equivalent to several other problems. It was recently posed as a challenge problem for the constraint programming community (see http://www.dcs.st-and.ac.uk/~ipg/challenge/).
+The total required quantity of each product is made at the same time (because
+changing from making one product to making another requires a production stop).
+From the time that the first product included in an order is made to the time
+that all products included in the order have been made, the order is said to be
+"open" and during this time it requires a "stack" (a temporary storage space).
+The problem is to order the making of the different products so that the maximum
+number of stacks that are in use simultaneously, or equivalently the number of
+orders that are in simultaneous production, is minimized (because each stack
+takes up space in the production area).
 
-Note that this is an optimization problem: for any instance of the problem every ordering of the making of products is a solution, which at worst uses as many simultaneously open stacks as there are orders. Thus, finding a plan is quite trivial (in the sense that there exists a domain-specific linear-time algorithm that solves the problem), but finding a plan of high quality is hard (even for a domain-specific algorithm).
+The problem is NP-hard and known to be equivalent to several other problems. It
+was recently posed as a challenge problem for the constraint programming
+community (see http://www.dcs.st-and.ac.uk/~ipg/challenge/).
 
-There are two versions of this domain, STRIPS and ADL. As there are few ADL compliant planners and in the last IPC there were not too much differences in results between both versions, we have not generated ADL problems for this IPC. In the STRIPS version the goal is to minimize the total number of stacks. The number of stacks is represented using symbols and universally quantified preconditions have been replaced by multiple semi-ground actions. Note that this requires a different domain file for each problem.
+Note that this is an optimization problem: for any instance of the problem every
+ordering of the making of products is a solution, which at worst uses as many
+simultaneously open stacks as there are orders. Thus, finding a plan is quite
+trivial (in the sense that there exists a domain-specific linear-time algorithm
+that solves the problem), but finding a plan of high quality is hard (even for a
+domain-specific algorithm).
 
-For the satisficing track, in the 2008 competition, objects ranged from 5 to 100. For the first 12 problems, three versions with the same difficulty were created and objects were increased by 5 from one triplet to the next (i.e. problems 1, 2 and 3 were similar, with 5 objects; problems 4, 5 and 6 had 10 objects...). From 13 to 24 objects were increased by 10, while for the last 6, objects were increased by 20. The density parameter has been lost. For IPC 2011, as in the other reused domains, we reused the 10 first problems. From 11 to 20, objects are increased starting from 130 by 30, and 2 problems of the same size have been created, one with density = 20 and the other with density = 80.
+There are two versions of this domain, STRIPS and ADL. As there are few ADL
+compliant planners and in the last IPC there were not too much differences in
+results between both versions, we have not generated ADL problems for this IPC.
+In the STRIPS version the goal is to minimize the total number of stacks. The
+number of stacks is represented using symbols and universally quantified
+preconditions have been replaced by multiple semi-ground actions. Note that this
+requires a different domain file for each problem.
 
-The selected problems are (numbers in parenthesis are number of objects of each new problem):
+For the satisficing track, in the 2008 competition, objects ranged from 5 to
+100. For the first 12 problems, three versions with the same difficulty were
+created and objects were increased by 5 from one triplet to the next (i.e.
+problems 1, 2 and 3 were similar, with 5 objects; problems 4, 5 and 6 had 10
+objects...). From 13 to 24 objects were increased by 10, while for the last 6,
+objects were increased by 20. The density parameter has been lost. For IPC 2011,
+as in the other reused domains, we reused the 10 first problems. From 11 to 20,
+objects are increased starting from 130 by 30, and 2 problems of the same size
+have been created, one with density = 20 and the other with density = 80.
+
+The selected problems are (numbers in parenthesis are number of objects of each
+new problem):
 
 problem	old	best	problem	old	best
 p01	p21	6	p11	(130)
@@ -95,9 +131,15 @@ p08	p28	33	p18	(220)
 p09	p29	31	p19	(250)
 p10	p30	35	p20	(250)
 
-For the optimal track, in the IPC 2008 a total of 9 problems were not solved by any planner (problem 20 and from 23 to 30). As in the satisficing version, there is no record of the density used to generate the problems. The first problem in IPC 2008 started with 5 objects and each problem had 1 object more than the previous one. So problem 30 had 34 objects.
+For the optimal track, in the IPC 2008 a total of 9 problems were not solved by
+any planner (problem 20 and from 23 to 30). As in the satisficing version, there
+is no record of the density used to generate the problems. The first problem in
+IPC 2008 started with 5 objects and each problem had 1 object more than the
+previous one. So problem 30 had 34 objects.
 
-Five first problems were quite simple so they have been removed from the selection. This results in 16 problems previously solved and 4 non solved for this edition. The selected problems are:
+Five first problems were quite simple so they have been removed from the
+selection. This results in 16 problems previously solved and 4 non solved for
+this edition. The selected problems are:
 
 problem	old	optimal		problem	old	optimal
 p01	p6	2		p11	p15	4

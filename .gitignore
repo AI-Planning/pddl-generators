@@ -1,3 +1,9 @@
+doc.tex
+*.aux
+*.log
+*.out
+*.pdf
+*.toc
 *.o
 Makefile.depend
 .tox/

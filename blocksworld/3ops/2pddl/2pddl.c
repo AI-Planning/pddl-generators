@@ -17,11 +17,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <strings.h>
-#include <sys/timeb.h>
 #include <math.h>
+#include <string.h>
 
 
-#define MAX_LENGTH 256
 #define MAX_SAMPLE 50
 
 /* data structures ... (ha ha)
@@ -90,12 +89,11 @@ int main( int argc, char *argv[] )
   }
 
   printf("\n\n(define (problem BW-rand-%d)", gn);
-  printf("\n(:domain blocksworld)");
+  printf("\n(:domain blocksworld-3ops)");
   printf("\n(:objects ");
   for ( i = 0; i < gn; i++ ) printf("b%d ", i+1);
-  printf(" - block)");
+  printf(")");
   printf("\n(:init");
-  printf("\n(handempty)");
   for ( i = 1; i < gn + 1; i++ ) {
     if ( initial[i] == 0 ) {
       printf("\n(on-table b%d)", i);
@@ -160,8 +158,8 @@ Bool process_command_line( int argc, char *argv[] )
       if ( --argc && ++argv ) {
 	switch ( option ) {
 	case 'd':
-	  gdata = ( char * ) calloc( MAX_LENGTH, sizeof( char ) );
-	  strncpy( gdata, *argv, MAX_LENGTH );
+          gdata = ( char * ) calloc( strlen(*argv), sizeof( char ) );
+	  strcpy( gdata, *argv );
 	  break;
 	case 'n':
 	  sscanf( *argv, "%d", &gn );

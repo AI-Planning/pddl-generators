@@ -78,6 +78,11 @@ int *flag;      /* indica i nodi gia` estratti */
 int used_pref[MAX_PREFERENCES];
 
 
+void print_ds();
+int generate_number(int number);
+int generate_boolean();
+
+
 int ceil_div(int x, int y) {
     assert(x >= 0 && y >= 0);
     return (x + y - 1) / y;
@@ -278,7 +283,7 @@ void make_map(int num_markets, int num_depots){
 //*********** MAP GENERATION ENDS ************************\\
 
 //prints usage options to video
-usage()
+void usage()
 {
   printf("\nUsage: gen-TPP [options] file");
 
@@ -513,7 +518,7 @@ int dijkstra( int s )
   return (max_cost);
 }
 
-make_money()
+void make_money()
 {
 
   int money_prod=0;
@@ -548,7 +553,7 @@ make_money()
   if (verbose>=3) printf("\tThe upper bound evaluation of transporting product is:  %d\n",money_travel);
 }
 //modify the data structure generating incompatibilities
-make_incomp()
+void make_incomp()
 {
   //incompatibilities among products
   for (i=0; i<product; i++)
@@ -579,7 +584,7 @@ make_incomp()
 }
 
 //modify the data structure positioning truck in depot and setting fuel level
-make_truck_pos()
+void make_truck_pos()
 {
   for(i=1; i<=truck; i++)
     {
@@ -598,7 +603,7 @@ make_truck_pos()
 
 
 //generate the goal for the problem (and modify the money!)
-make_goal()
+void make_goal()
 {
   for(i=0; i<product; i++)
     {
@@ -622,7 +627,7 @@ make_goal()
     }
 
 }
-print_ds()
+void print_ds()
 {
   printf("\n\tmap (row: market - column: market)\n");
   for (i=0;i<market;i++)
@@ -1297,7 +1302,7 @@ void generate_pddl(char *nomefile)
 
 
 //main method
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 
   static struct option long_options[] = {};

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 
 /*  Whether all actions can be taken simultanously. If not defined,
 the problem will be completely sequential. */
@@ -35,7 +36,6 @@ int numberOfVehicles;
 int numberOfMechanics;
 int numberOfCities;
 int numberOfVisits;
-int numberOfInstances;
 
 #define TAG_NEG 0x08000000
 #define NEG(l) ((l)^TAG_NEG)
@@ -66,20 +66,19 @@ intlist cons(int i,intlist l) {
 
 int main(int argc,char **argv) {
   int i,j,k;
-  int inst;
   intlist l;
   FILE *fd,*fi;
   char sd[100],si[100];
 
   intlist visits[3][1000];
 
-  int seed;
+  long seed;
 
   if (argc < 7 || argc > 8) {
-    fprintf(stderr,"maintenance <days> <planes> <mechanics> <cities> <visits> <instances> [<seed>]\n");
+    fprintf(stderr,"maintenance <days> <planes> <mechanics> <cities> <visits> [<seed>]\n");
     exit(1);
   }
-  
+
   if(!sscanf(argv[1],"%d",&numberOfDays)) {
     printf("# days not an integer.\n",argv[1]);
     exit(1);
@@ -105,16 +104,14 @@ int main(int argc,char **argv) {
     exit(1);
   }
 
-  if(!sscanf(argv[6],"%d",&numberOfInstances)) {
-    printf("# instances not an integer.\n",argv[6]);
-    exit(1);
-  }
-
-  if (argc == 8 && !sscanf(argv[7], "%d", &seed)) {
+  if (argc == 8 && !sscanf(argv[7], "%ld", &seed)) {
       printf("seed was not an integer.\n", argv[7]);
       exit(1);
   } else if (argc == 7) {
-      seed = (int)time(NULL);
+      struct timeval tv;
+      struct timezone tz;
+      gettimeofday(&tv, &tz);
+      seed = tv.tv_usec;
   }
 
   if(numberOfMechanics >= numberOfCities) {
@@ -123,45 +120,7 @@ int main(int argc,char **argv) {
 
   srand(seed);
 
-  sprintf(sd,"maintenance-domain.pddl",
-	    numberOfMechanics,numberOfCities,numberOfDays,numberOfVehicles,numberOfVisits);
-  fd = fopen(sd,"w");
-
-  fprintf(fd,"; There are mechanics who on any day may work at one\n");
-  fprintf(fd,"; of several cities where the airplane maintenance\n");
-  fprintf(fd,"; company has facilities. There are airplanes each of\n");
-  fprintf(fd,"; which has to be maintained during the given time period.\n");
-  fprintf(fd,"; The airplanes are guaranteed to visit some of the cities\n");
-  fprintf(fd,"; on given days. The problem is to schedule the presence\n");
-  fprintf(fd,"; of the mechanics so that each plane will get maintenance.\n\n");
-
-  fprintf(fd,"(define (domain %s)\n",DOMAIN);
-  fprintf(fd," (:requirements :adl :typing)\n");
-  fprintf(fd," (:types plane day airport)\n");
-  fprintf(fd," (:predicates");
-  fprintf(fd,"  (%s ?p - plane)\n",COMPLETED);
-  fprintf(fd,"  (%s ?d - day)\n",AVAILABLE);
-  fprintf(fd,"  (at ?p - plane ?d - day ?c - airport)\n");
-  fprintf(fd,"  (next ?d - day ?d2 - day)");
-  fprintf(fd," )\n\n");
-
-  fprintf(fd," (:action workat\n");
-  fprintf(fd,"  :parameters (?day - day ?airport - airport)\n");
-  fprintf(fd,"  :precondition (%s ?day)\n",AVAILABLE);
-  fprintf(fd,"  :effect (and\n");
-  fprintf(fd,"     (not (%s ?day))\n",AVAILABLE);
-  fprintf(fd,"     (forall (?plane - plane) (when (at ?plane ?day ?airport) (%s ?plane)))",COMPLETED);
-  fprintf(fd,"))\n\n");
-
-  fprintf(fd,")\n");
-  fclose(fd);
-
-  for(inst=0;inst<numberOfInstances;inst++) {
-
-  sprintf(si,"maintenance.%i.%i.%.3i.%.3i.%i-%.3i.pddl",
-	    numberOfMechanics,numberOfCities,numberOfDays,numberOfVehicles,numberOfVisits,inst);
-
-  fi = fopen(si,"w");
+  {
 
   for(i=0;i<numberOfDays;i++) {
     for(j=0;j<numberOfCities;j++) {
@@ -180,27 +139,29 @@ int main(int argc,char **argv) {
   }
 
 
-  fprintf(fi,"(define (problem %s-%i-%i-%i-%i-%i-%i)\n",PROBLEM,numberOfMechanics,numberOfCities,numberOfDays,numberOfVehicles,numberOfVisits,inst);
-  fprintf(fi," (:domain %s)\n",DOMAIN);
+  printf("(define (problem %s-%i-%i-%i-%i-%i)",PROBLEM,numberOfMechanics,numberOfCities,numberOfDays,numberOfVehicles,numberOfVisits);
+  printf("\n (:domain %s)",DOMAIN);
 
-  fprintf(fi," (:objects");
+  printf("\n (:objects");
+  printf("\n  ");
   for(i=0;i<=numberOfDays;i++) {
-    fprintf(fi," %s%i",DAYNAME,i+1);
+    printf(" %s%i",DAYNAME,i+1);
   }
-  fprintf(fi," - day\n  ");
+  printf(" - day");
+  printf("\n  ");
   for(i=0;i<numberOfCities;i++) {
-    fprintf(fi," %s",airport(i));
+    printf(" %s",airport(i));
   }
-  fprintf(fi," - airport\n  ");
-
+  printf(" - airport");
+  printf("\n  ");
   for(i=0;i<numberOfVehicles;i++) {
-    fprintf(fi," %s%i",PLANE,i+1);
+    printf(" %s%i",PLANE,i+1);
   }
-  fprintf(fi," - plane)\n");
+  printf(" - plane)");
 
-  fprintf(fi," (:init\n");
+  printf("\n (:init");
   for(i=0;i<numberOfDays;i++) {
-    fprintf(fi,"  (%s %s%i)",AVAILABLE,DAYNAME,i+1);
+    printf("\n  (%s %s%i)",AVAILABLE,DAYNAME,i+1);
   }
   for(k=0;k<numberOfVehicles;k++) {
     for(j=0;j<numberOfCities;j++) {
@@ -208,19 +169,22 @@ int main(int argc,char **argv) {
 	l = visits[j][i];
 	while(l != EMPTYLIST) {
 	  if(k==hd(l))
-	  fprintf(fi,"  (at %s%i %s%i %s)\n",PLANE,hd(l)+1,DAYNAME,i+1,airport(j));
+	  printf("\n  (at %s%i %s%i %s)",PLANE,hd(l)+1,DAYNAME,i+1,airport(j));
 	  l = tl(l);
 	}
       }
     }
   }
-  fprintf(fi,")\n");
+  printf(")");
 
-  fprintf(fi,"  (:goal (forall (?plane - plane) (%s ?plane)))\n",COMPLETED);
+  printf("\n  (:goal ",COMPLETED);
+  printf("\n    (and ");
+  for(i=0;i<numberOfVehicles;i++) {
+      printf("\n      (done %s%i)",PLANE,i+1);
+  }
+  printf(")))\n");
 
-  fprintf(fi,"  )\n");
 
-  fclose(fi);
   }
 
   return 0;

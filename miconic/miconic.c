@@ -6,16 +6,16 @@
  * (C) Copyright 2001 Albert Ludwigs University Freiburg
  *     Institute of Computer Science
  *
- * All rights reserved. Use of this software is permitted for 
- * non-commercial research purposes, and it may be copied only 
+ * All rights reserved. Use of this software is permitted for
+ * non-commercial research purposes, and it may be copied only
  * for that use.  All copies must include this copyright message.
  * This software is made available AS IS, and neither the authors
  * nor the  Albert Ludwigs University Freiburg make any warranty
- * about the software or its performance. 
+ * about the software or its performance.
  *********************************************************************/
 
 
-/* 
+/*
  * C code for generating random  #floors   #passengers   miconic problems.
  *
  * mixed   mode:   user specifies probabilities for passengers being of any type
@@ -28,7 +28,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <sys/time.h>
 
 
 
@@ -83,6 +84,7 @@ int gfloors, gpassengers;
 int gp_up_down, gp_vip, gp_going_nonstop;
 int gp_attendant, gp_never_alone, gp_con_A, gp_con_B;
 int gp_no_access, gp_no_access_floors;
+long grandom_seed;
 
 /* lists of types; passengers are those that have not been assigned any
  * special type.
@@ -110,10 +112,10 @@ int main( int argc, char *argv[] )
 
   /* seed the random() function
    */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv, &tz);
+  grandom_seed = tv.tv_usec;
 
   /* command line treatment, first preset all values
    */
@@ -123,7 +125,7 @@ int main( int argc, char *argv[] )
   gp_up_down = 0;
   gp_vip = 0;
   gp_going_nonstop = 0;
-  gp_attendant = 0; 
+  gp_attendant = 0;
   gp_never_alone = 0;
   gp_con_A = 0;
   gp_con_B = 0;
@@ -140,6 +142,10 @@ int main( int argc, char *argv[] )
     exit( 1 );
   }
 
+  /* seed the random() function
+   */
+  srandom(grandom_seed);
+
 
   /* create randomized problem;
    *
@@ -147,7 +153,7 @@ int main( int argc, char *argv[] )
    * defined percentage values.
    */
   create_random_types();
-  
+
   /* now design random journeys, respecting restrictions to
    * help problem becoming solvable
    */
@@ -165,9 +171,9 @@ int main( int argc, char *argv[] )
 
   /* header
    */
-  printf("(define (problem mixed-f%d-p%d-u%d-v%d-d%d-a%d-n%d-A%d-B%d-N%d-F%d)", 
+  printf("(define (problem mixed-f%d-p%d-u%d-v%d-d%d-a%d-n%d-A%d-B%d-N%d-F%d)",
 	 gfloors, gpassengers,
-	 gp_up_down, gp_vip, gp_going_nonstop, 
+	 gp_up_down, gp_vip, gp_going_nonstop,
 	 gp_attendant, gp_never_alone, gp_con_A, gp_con_B,
 	 gp_no_access, gp_no_access_floors);
   printf("\n   (:domain miconic)");
@@ -229,8 +235,8 @@ int main( int argc, char *argv[] )
   exit( 0 );
 
 }
-  
-  
+
+
 
 
 
@@ -262,11 +268,11 @@ void create_random_types( void )
 
   int i, j, n, p;
 
-  gnum_passenger = 0;  
+  gnum_passenger = 0;
   gnum_up_down = 0;
   gnum_vip = 0;
   gnum_going_nonstop = 0;
-  gnum_attendant = 0; 
+  gnum_attendant = 0;
   gnum_never_alone = 0;
   gnum_con_A = 0;
   gnum_con_B = 0;
@@ -352,7 +358,7 @@ void create_random_types( void )
       do {
 	p = random() % gpassengers;
 	/* no member of both groups */
-      } while ( is_con_B( p ) || 
+      } while ( is_con_B( p ) ||
 		is_con_A( p ) );
       gcon_B[gnum_con_B++] = p;
     }
@@ -897,7 +903,8 @@ void usage( void )
 
   printf("\nOPTIONS   DESCRIPTIONS\n\n");
   printf("-f <num>    number of floors (minimal 2)\n");
-  printf("-p <num>    number of passengers (minimal 1)\n\n");
+  printf("-p <num>    number of passengers (minimal 1)\n");
+  printf("-r <num>    random seed (optional)\n\n");
 
 }
 
@@ -924,6 +931,9 @@ Bool process_command_line( int argc, char *argv[] )
 	case 'p':
 	  sscanf( *argv, "%d", &gpassengers );
 	  break;
+        case 'r':
+            sscanf( *argv, "%ld", &grandom_seed );
+            break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );
 	  return FALSE;

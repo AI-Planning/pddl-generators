@@ -25,7 +25,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/timeb.h>
+#include <string.h>
+#include <sys/time.h>
+
 
 
 
@@ -107,7 +109,7 @@ Bool process_command_line( int argc, char *argv[] );
  */
 int gdepth, gmax_sons, gresources, gp_has_sons;
 int gp_assemble_order, gp_requires, gp_transient_part, gp_remove_order;
-
+long grandom_seed;
 
 /* problem structure
  */
@@ -123,10 +125,10 @@ int main( int argc, char *argv[] )
 
   /* seed the random() function
    */
-  struct timeb tp;
-  ftime( &tp );
-  srandom( tp.millitm );
-
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv, &tz);
+  grandom_seed = tv.tv_usec;
 
   /* command line treatment, first preset all values
    */
@@ -148,6 +150,7 @@ int main( int argc, char *argv[] )
     exit( 1 );
   }
 
+  srandom( grandom_seed );
 
   /* create randomized problem;
    *
@@ -590,8 +593,9 @@ void usage( void )
   printf("-r <num>    p of requires any resource (preset: %d)\n", gp_requires);
   printf("-t <num>    p of transient part to any node in father rows (preset: %d)\n",
 	 gp_transient_part);
-  printf("-o <num>    p of remove order to transient part (preset: %d)\n\n",
+  printf("-o <num>    p of remove order to transient part (preset: %d)\n",
 	 gp_remove_order);
+  printf("-s <num>    random seed\n\n");
 
 }
 
@@ -635,6 +639,9 @@ Bool process_command_line( int argc, char *argv[] )
 	  break;	
 	case 'o':
 	  sscanf( *argv, "%d", &gp_remove_order);
+	  break;
+	case 's':
+	  sscanf( *argv, "%ld", &grandom_seed);
 	  break;
 	default:
 	  printf( "\n\nunknown option: %c entered\n\n", option );

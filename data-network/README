@@ -1,1 +1,23 @@
 Author: Manuel Heusner
+
+
+
+usage: generator.py [-h] [--seed SEED] data layers scripts module
+
+positional arguments:
+  data         the number of data items
+  layers       the number of layers, must be smaller than the number of data items
+  scripts      the number of scripts, must be larger or equal than [number of data items]-2
+  module       A module describing a network, one of ring-network, small-network, tiny-network.
+               See example files in the source code directory.
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --seed SEED  random seed
+
+
+IPC instances are:
+
+* num_layers in range(2, 6)
+* num_data_items in range(num_layers + 2, num_layers * 10, num_layers)
+* num_scripts in range(num_data_items + 2, num_data_items * 3, num_data_items // 2)
