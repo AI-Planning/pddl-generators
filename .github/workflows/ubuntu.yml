@@ -11,19 +11,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-18.04
-            python-version: 3.6
           - os: ubuntu-20.04
             python-version: 3.8
+          - os: ubuntu-22.04
+            python-version: 3.11
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    # for crewplanning
-    - run: sudo apt install ocaml ocamlbuild
+    # ocaml is needed for crewplanning
+    - run: sudo apt install ocaml ocamlbuild tox
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -31,10 +31,6 @@ jobs:
       run: |
         python --version
         python3 -c "import multiprocessing as m; print('CPUs:', m.cpu_count())"
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip tox
 
     - name: Run tests
       run: |
