@@ -20,7 +20,7 @@ jobs:
     - uses: actions/checkout@v2
 
     # for crewplanning
-    - run: sudo apt install ocaml-nox ocamlbuild
+    - run: sudo apt install ocaml ocamlbuild
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
