@@ -1,3 +1,6 @@
+build:
+	echo Skipping tidybot: installation complicated, fails to reliably generate solvable tasks
+
 tidybot.jar:
 	./lein compile
 	./lein uberjar
