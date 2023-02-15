@@ -23,3 +23,5 @@ in the modern ocaml standard modules.
 
 The original generator produces several files from the same command line argument.
 This is rewritten so that each run produces a single pddl file.
+
+Install requirements: `sudo apt install ocaml ocamlbuild`

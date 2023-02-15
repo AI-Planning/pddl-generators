@@ -1,8 +1,7 @@
-
 all: main.native
 
 main.native:
-	ocamlbuild main.native
+	ocamlbuild main.native || echo "Warning: skipping crewplanning because ocamlbuild is missing"
 
 clean:
 	ocamlbuild -clean
