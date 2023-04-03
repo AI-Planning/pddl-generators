@@ -1,11 +1,14 @@
-import sys, argparse
-from termcolor import colored
-from pathlib import Path
-from typing import Set, List, Optional
-import logging
-import random
-from copy import deepcopy
+#! /usr/bin/env python
+
+import argparse
 from collections import deque
+from copy import deepcopy
+import logging
+from pathlib import Path
+import random
+import sys
+from typing import Set, List, Optional
+
 
 class Map:
     def __init__(self, nodes: int):
@@ -295,7 +298,7 @@ def main(args: argparse.Namespace):
     log_file = Path('./log.txt')
     log_level = logging.INFO if args.debug_level == 0 else logging.DEBUG
     logger = get_logger('mini_grid.py', log_file, log_level)
-    logger.info(colored(f"Using log file '{log_file}'", 'green'))
+    logger.info(f"Using log file '{log_file}'")
     logger.info(f'call=|{" ".join(sys.argv)}|')
 
     # set random seed
@@ -312,7 +315,7 @@ def main(args: argparse.Namespace):
         pddl_name = args.results / Path(name).with_suffix('.pddl')
         instance = Instance(name, floorplan, args.nshapes, logger)
         instance.write(pddl_name)
-        logger.info(colored(f'{pddl_name} written!', 'blue'))
+        logger.info(f'{pddl_name} written!')
 
 
 if __name__ == '__main__':
