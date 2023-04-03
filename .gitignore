@@ -31,6 +31,8 @@ maintenance/maintenance
 miconic/miconic
 miconic-fulladl/miconic
 miconic-simpleadl/miconic
+minigrid/log.txt
+minigrid/grid_4room2_fpl_s3_seed0_n0.pddl
 movie/movie
 mprime/mprime
 mystery/mystery
