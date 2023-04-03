@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 import random
 import sys
-from typing import Set, List, Optional
+from typing import Optional, Set
 
 
 class Map:
@@ -21,7 +21,6 @@ class Map:
             self.edges[dst].append(src)
 
     def remove_edges_at(self, node: int):
-        #print(f'remove_edges_at: node={node}')
         assert 0 <= node and node <= self.nodes
         for i, edges in enumerate(self.edges):
             self.edges[i] = [dst for dst in edges if dst != node]
@@ -104,10 +103,8 @@ class Floorplan:
         logger.info(f'Floorplan: ncells={len(self.cells)}, locks={self.locks}')
 
     def get_map(self, locks: Optional[Set] = None):
-        #print(f'get_map: locks={self.locks}')
         map = self.map.clone()
         if locks != None:
-            #self.logger.info(f'get_map: locks={locks}')
             for lock in locks:
                 map.remove_edges_at(self.cmap[lock])
         return map
