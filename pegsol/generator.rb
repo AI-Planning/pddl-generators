@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-require 'ftools'
+require 'fileutils'
 require 'instances.rb'
 
 class PegSolitaire
@@ -483,19 +483,19 @@ end
 def processConfig(configName, configNum, maxNum)
   pegSolitaire = PegSolitaire.new(configName, $config_names[configNum-1])
 
-  File.makedirs("tempo-sat")
+  FileUtils.mkdir_p("tempo-sat")
   domainFile = File.new("tempo-sat/domain.pddl", "w")
   pegSolitaire.printDomainTemporal(domainFile)
   problemFile = File.new("tempo-sat/p#{pad(configNum,maxNum)}.pddl", "w")
   pegSolitaire.printProblemTemporal(problemFile, pad(configNum,maxNum), pegSolitaire)
   
-  File.makedirs("seq-sat")
+  FileUtils.mkdir_p("seq-sat")
   domainFile = File.new("seq-sat/domain.pddl", "w")
   pegSolitaire.printDomainSequential(domainFile)
   problemFile = File.new("seq-sat/p#{pad(configNum,maxNum)}.pddl", "w")
   pegSolitaire.printProblemSequential(problemFile, pad(configNum,maxNum), pegSolitaire)
   
-  File.makedirs("netben-opt")
+  FileUtils.mkdir_p("netben-opt")
   domainFile = File.new("netben-opt/domain.pddl", "w")
   pegSolitaire.printDomainNetBenefit(domainFile)
   problemFile1 = File.new("netben-opt/p#{pad(configNum,maxNum)}-1.pddl", "w")
