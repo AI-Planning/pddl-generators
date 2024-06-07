@@ -1,3 +1,5 @@
+;; Created by Nir Lipovetzky 
+
 (define (domain grid-visit-all)
 (:requirements :typing)
 (:types        place - object)

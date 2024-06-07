@@ -1,4 +1,6 @@
 ;; Gold Miner domain
+;; Created by Alan Fern
+
 
 (define (domain gold-miner-typed)
 (:requirements :typing)
