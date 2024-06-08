@@ -877,7 +877,7 @@ ostream & operator<<(ostream& o,const RoverDom & d)
 void usage(int u)
 {
   cout << u;
-	cout << "Useage: rovergen [-s|-t|-n|-u|-f <filename>]\n\t\t<seed> <#rovers> <#waypoints> <#objectives> <#cameras> <#n-goals> \n\n\tOptions:\n\tu: untyped version\n\ts: simple-time\n\tt: time\n\tn: numeric\n\tf: optional file for output\n\n\tAll numbers are integers.\n\n";
+	cout << "Usage: rovgen [-s|-t|-n|-u|-f <filename>]\n\t\t<seed> <#rovers> <#waypoints> <#objectives> <#cameras> <#n-goals> \n\n\tOptions:\n\tu: untyped version\n\ts: simple-time\n\tt: time\n\tn: numeric\n\tf: optional file for output\n\n\tAll numbers are integers.\n\n";
 
 	exit(0);
 };
