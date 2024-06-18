@@ -1,5 +1,6 @@
 ;;Created by Tomas de la Rosa
 ;;Domain for painting floor tiles with two colors
+;;See MIT License attached
 
 (define (domain floor-tile)
 (:requirements :typing :action-costs)

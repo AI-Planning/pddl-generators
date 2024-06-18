@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+#
+# Author: Tomas de la Rosa
+# See MIT License attached
+#
 import sys
 import random
 
