@@ -2,6 +2,7 @@
 # Generator for the child-snack domain
 #
 # Authors: Raquel Fuentetaja and Tomas de la Rosa
+# See MIT License attached
 #
 # See domain file for description.
 # The ratio parameter is the proportion of needed symbols
