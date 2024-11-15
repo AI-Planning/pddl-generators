@@ -13,7 +13,8 @@
 ;; state. Goals consist of having all kids served with a sandwich to which they
 ;; are not allergic.
 ;;
-;; Author: Raquel Fuentetaja and Tomás de la Rosa
+;; Created by Raquel Fuentetaja and Tomas de la Rosa
+;; See MIT License attached
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
