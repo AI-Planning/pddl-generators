@@ -1,4 +1,5 @@
 (define (domain blocksworld-3ops)
+(:requirements :strips :equality :negative-preconditions)
 (:predicates (clear ?x)
              (on-table ?x)
              (on ?x ?y))
