@@ -19,8 +19,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4.2.2
 
-    # ocaml is needed for crewplanning
-    - run: sudo apt install ocaml ocamlbuild tox
+    - name: Install dependencies
+      run: |
+        # ocaml is needed for crewplanning
+        sudo apt install ocaml ocamlbuild tox
+        curl -LsSf https://astral.sh/uv/install.sh | sh
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5.6.0
