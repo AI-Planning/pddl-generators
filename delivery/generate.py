@@ -1,10 +1,10 @@
 import argparse
 import os
-import shutil
-import tarski
-import random
-
 from pathlib import Path
+import random
+import shutil
+
+import tarski
 from tarski.io import PDDLReader, FstripsWriter
 from tarski.model import Model
 from tarski.syntax import Constant, land
@@ -34,12 +34,12 @@ os.makedirs(output_folder)
 def _generate_instances(split: str, grid_size_interval: tuple[int, int], max_nr_packages: int, nr_instances_per_setup: int, domain_file: Path = None) -> None:
     split_folder = os.path.join(output_folder, split)
     os.makedirs(split_folder)
-    
+
     if domain_file:
         # Copy the domain file to the split folder
         shutil.copy(domain_file, split_folder)
         print(f"Copied domain file to {split_folder}")
-    
+
     for size in range(grid_size_interval[0], grid_size_interval[1] + 1):
         for nr_packages in range(1, max_nr_packages + 1):
             for index in range(nr_instances_per_setup):
@@ -48,7 +48,7 @@ def _generate_instances(split: str, grid_size_interval: tuple[int, int], max_nr_
                 problem = pddl_reader.problem
                 language = problem.language
                 init: Model = tarski.model.create(language)
-                
+
                 # Create the cells
                 # All instances are square grids
                 cells: list[Constant] = []
@@ -56,16 +56,16 @@ def _generate_instances(split: str, grid_size_interval: tuple[int, int], max_nr_
                     for y in range(size):
                         cell = language.constant(f"c_{x}_{y}", "cell")
                         cells.append(cell)
-                
+
                 # Create the packages
                 packages: list[Constant] = []
                 for i in range(1, nr_packages + 1):
                     package = language.constant(f"p{i}", "package")
                     packages.append(package)
-                
+
                 # Create the truck
                 truck = language.constant("t1", "truck")
-                
+
                 # Add the "adjacent" atoms
                 adjacent_predicate = language.get_predicate("adjacent")
                 for x in range(size):
@@ -83,7 +83,7 @@ def _generate_instances(split: str, grid_size_interval: tuple[int, int], max_nr_
                         if y > 0:
                             top_neighbor = language.get_constant(f"c_{x}_{y - 1}")
                             init.add(adjacent_predicate, current_cell, top_neighbor)
-                            
+
                 # Randomly sample cells for the packages
                 at_predicate = language.get_predicate("at")
                 package_cell_names = []
@@ -91,14 +91,14 @@ def _generate_instances(split: str, grid_size_interval: tuple[int, int], max_nr_
                     cell = random.choice(cells)
                     package_cell_names.append(cell.name)
                     init.add(at_predicate, package, cell)
-                
+
                 # Randomly sample a cell for the truck
                 cell = random.choice(cells)
                 init.add(at_predicate, truck, cell)
-                
+
                 # The truck always starts out empty
                 init.add(language.get_predicate("empty"), truck)
-                
+
                 # Create the goal
                 # If all packages are in the same cell, make sure that this is not the goal cell
                 if len(set(package_cell_names)) == 1:
@@ -108,7 +108,7 @@ def _generate_instances(split: str, grid_size_interval: tuple[int, int], max_nr_
                 else:
                     goal_cell = random.choice(cells)
                 goal_atoms = [at_predicate(package, goal_cell) for package in packages]
-                
+
                 problem.name = f"delivery-{size}x{size}-{nr_packages}"
                 problem.init = init
                 problem.goal = land(*goal_atoms)
@@ -117,11 +117,10 @@ def _generate_instances(split: str, grid_size_interval: tuple[int, int], max_nr_
                 writer = FstripsWriter(problem)
                 output_file_name = f"instance_s-{size}_p-{nr_packages}_v-{index}.pddl"
                 output_file_path = os.path.join(split_folder, output_file_name)
-                writer.write_instance(output_file_path)
+                writer.write_instance(output_file_path, constant_objects=[])
                 print(f"Generated {output_file_path}")
 
 for split, grid_size_interval in zip(splits, grid_size_intervals):
     _generate_instances(split, grid_size_interval, max_nr_packages, nr_instances_per_setup, domain_file=domain_file)
 
 print(f"Generated Delivery instances in {output_folder}")
-
