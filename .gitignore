@@ -5,8 +5,12 @@ doc.tex
 *.pdf
 *.toc
 *.o
+**/__pycache__/
 Makefile.depend
 .tox/
+*~
+#*
+*.egg-info
 assembly/assembly
 blocksworld/3ops/2pddl/2pddl
 blocksworld/4ops/2pddl/2pddl
