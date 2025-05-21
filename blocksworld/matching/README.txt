@@ -15,10 +15,10 @@ You also need to make sure that the shell script is executable via:
 
   chmod +x matching-bw-generator.sh
 
-Then to generate a matching-bw problem with base name "bname" and size
-"n" you can call:
+Then to generate a matching-bw problem with base name "bname", size
+"n", and random seed "s" you can call:
 
-  ./matching-bw-generator.sh bname n
+  ./matching-bw-generator.sh bname n s
 
 This will create two files: bname-typed.pddl and bname-untyped.pddl
 
