@@ -8,6 +8,9 @@
 #include <string.h>
 #include <sys/time.h>
 
+#include <unistd.h>
+#include <libgen.h>
+
 int num_goals;
 float uno, cinque, dieci, coeff;
 
