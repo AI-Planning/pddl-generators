@@ -12,7 +12,7 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BS=${SCRIPT_DIR}/bwstates.1/bwstates
 TR=${SCRIPT_DIR}/${OPS}ops/2pddl/2pddl
 
-${BS} -s 2 -n ${BLOCKS} -r ${SEED}> STATES
+${BS} -s 2 -n ${BLOCKS} -r ${SEED} > STATES
 ${TR} -d STATES -n ${BLOCKS}
 
 rm STATES
