@@ -133,11 +133,20 @@ def create_pddl(half_segment_ids, problem_type, size, prob_no):
 def parse():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("size", type=int, help="")
-    parser.add_argument("segment_type", type=str, help="")
-    parser.add_argument("inout", type=str, help="")
-    parser.add_argument("--seed", type=int, default=1)
-    parser.add_argument("--output", default=None)
+    parser.add_argument("size",
+                        type=int,
+                        help="the number of the conveyer belt segments")
+    parser.add_argument("insize",
+                        type=int,
+                        help="How many conveyers are connected to the inlet of the imaging chamber. ")
+    parser.add_argument("outsize",
+                        type=int,
+                        help="How many conveyers are connected to the outlet of the imaging chamber. ")
+    parser.add_argument("--use-half-segments",
+                        action="store_true",
+                        help="If present, each segment is split in half and moves independently.")
+    parser.add_argument("--seed", type=int, default=1, help="random seed")
+    parser.add_argument("--output", default=None, help="output file name. If not provided, it writes to the stdout.")
 
     return parser.parse_args()
 
@@ -149,23 +158,15 @@ def main():
     if args.output:
         sys.stdout = open(args.output, "w")
 
-    prob_id = f"{args.size}-{args.segment_type}-{args.inout}"
+    prob_id = f"{args.size}-{args.use_half_segments}-{args.insize}-{args.outsize}"
 
     size = args.size
-    if args.segment_type == "ab":
+    if args.use_half_segments:
         half_segment_ids = ["a", "b"]
     else:
         half_segment_ids = [""]
 
-    if args.inout == "in":
-        (insize, outsize) = (size, 1)
-    elif args.inout == "both":
-        (insize, outsize) = (size, size)
-    else:
-        assert args.inout == "none"
-        (insize, outsize) = (1, 1)
-
-    create_pddl(half_segment_ids, (insize, outsize), size, prob_id)
+    create_pddl(half_segment_ids, (args.insize, args.outsize), size, prob_id)
 
 
 if __name__ == "__main__":
