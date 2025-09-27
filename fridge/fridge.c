@@ -129,8 +129,8 @@ int main( int argc, char *argv[] )
   }
   for ( i = 0; i < gfridges; i++ ) {
     for ( j = 0; j < gscrews; j++ ) {
-      printf("\n(fits s%d-%d, c%d-0)", i, j, i);
-      printf("\n(fits s%d-%d, c%d-1)", i, j, i);
+      printf("\n(fits s%d-%d c%d-0)", i, j, i);
+      printf("\n(fits s%d-%d c%d-1)", i, j, i);
       printf("\n(screwed s%d-%d)", i, j);
     }
   }

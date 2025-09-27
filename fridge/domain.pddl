@@ -12,7 +12,7 @@
 
 
 (define (domain fridge-domain)
-  (:requirements :strips :typing :quantified-preconditions)
+  (:requirements :strips :typing :quantified-preconditions :negative-preconditions :disjunctive-preconditions)
   (:types screw backplane compressor fridge)
   (:predicates (screwed ?s - screw)
 	       (attached ?c - compressor ?f - fridge)
@@ -26,7 +26,7 @@
 	     :effect (screwed ?x))
 
 (:action unfasten
-	     :parameters (?x - screw ?c - compressor)
+	     :parameters (?x - screw)
 	     :precondition (and (exists (?f - fridge)
                                   (exists (?c - compressor)
                                      (and (attached ?c ?f)
@@ -36,7 +36,7 @@
 	     :effect (not (screwed ?x)))
 
 (:action start-fridge
-	     :parameters (?f - fridge ?c - compressor)
+	     :parameters (?f - fridge)
 	     :precondition
               (and (exists (?c - compressor)
                    (and (attached ?c ?f)
@@ -69,9 +69,3 @@
                   (forall (?a - screw)
                   (imply (fits ?a ?x) (not (screwed ?a)))))
              :effect (attached ?x ?f)))
-
-
-
-
-
-
