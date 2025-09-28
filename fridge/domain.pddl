@@ -16,7 +16,7 @@
   (:types screw backplane compressor fridge)
   (:predicates (screwed ?s - screw)
 	       (attached ?c - compressor ?f - fridge)
-               (fits ?s - screw ?c -compressor)
+               (fits ?s - screw ?c - compressor)
 	       (fridge-on ?f - fridge))
 
 
