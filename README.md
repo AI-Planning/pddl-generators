@@ -2,7 +2,7 @@ This repository is a collection of PDDL generators, some of which have been used
 to generate benchmarks for the International Planning Competition (IPC).
 
 # Instructions
-* Install dependencies: ``sudo apt install g++ make python3``
+* Install dependencies: ``sudo apt install g++ make cmake python3``
 * Build all generators: ``./build_all``
 * Build in parallel: ``./build_all -j4``
 * Delete (some) intermediate files: ``./build_all clean``

@@ -4,6 +4,7 @@ import argparse
 from collections import deque
 from copy import deepcopy
 import logging
+import os
 from pathlib import Path
 import random
 import sys
@@ -305,14 +306,29 @@ def main(args: argparse.Namespace):
     floorplan = Floorplan(args.floorplans_path / args.floorplan, logger)
 
     # generate random instances
-    name = args.floorplan.name
     args.results.mkdir(parents=True, exist_ok=True)
+    nr_generated = 0
     for i in range(args.num_instances):
-        name = f'grid_{name}_s{args.nshapes}_seed{args.seed}_n{i}'.replace('.', '_')
+        name = f'grid_{args.floorplan.name}_s{args.nshapes}_seed{args.seed}_n{i}'.replace('.', '_')
         pddl_name = args.results / Path(name).with_suffix('.pddl')
-        instance = Instance(name, floorplan, args.nshapes, logger)
+        try:
+            instance = Instance(name, floorplan, args.nshapes, logger)
+        except AssertionError as e:
+            logger.error(f'Could not generate instance {name}: {e}')
+            continue
         instance.write(pddl_name)
         logger.info(f'{pddl_name} written!')
+        nr_generated += 1
+
+    logger.info(f'Generated {nr_generated} instances, out of {args.num_instances} requested')
+
+    # Copy the domain file to the results folder
+    domain_src = Path(__file__).parent / 'domain.pddl'
+    domain_dst = args.results / 'domain.pddl'
+    if domain_src != domain_dst and not os.path.exists(domain_dst):
+        import shutil
+        shutil.copy(domain_src, domain_dst)
+        logger.info(f'Copied domain file to {domain_dst}')
 
 
 if __name__ == '__main__':
