@@ -4,24 +4,38 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
+build_dir ()
+{
+  if [ -e CMakeLists.txt ]; then
+      cmake .
+  fi
+  if [ -e Makefile ]; then
+      # Handle "./build_all test" and "./build_all clean" separately:
+      # don't try to run the command if it doesn't exist.
+      if [ "$#" -eq 1 ] && [ "$@" == "test" ]; then
+          make --dry-run test > /dev/null && (make test > /dev/null && echo "Tests passed." || exit 1)
+      elif [ "$#" -eq 1 ] && [ "$@" == "clean" ]; then
+          make --dry-run clean > /dev/null && (make clean > /dev/null && echo "Cleaned up." || exit 1)
+      else
+          make "$@"
+      fi
+  fi
+}
+
+SAVE_LOGS="n"
+if [ "$#" -eq 1 ] && [ "$@" == "save-logs" ]; then
+  SAVE_LOGS="y"
+  shift
+fi
 for DIR in * ; do
     if [ -d $DIR ]; then
         echo
         echo "Domain: $DIR"
         cd $DIR
-        if [ -e CMakeLists.txt ]; then
-            cmake .
-        fi
-        if [ -e Makefile ]; then
-            # Handle "./build_all test" and "./build_all clean" separately:
-            # don't try to run the command if it doesn't exist.
-            if [ "$#" -eq 1 ] && [ "$@" == "test" ]; then
-                make --dry-run test > /dev/null && (make test > /dev/null && echo "Tests passed." || exit 1)
-            elif [ "$#" -eq 1 ] && [ "$@" == "clean" ]; then
-                make --dry-run clean > /dev/null && (make clean > /dev/null && echo "Cleaned up." || exit 1)
-            else
-                make "$@"
-            fi
+        if [ "$SAVE_LOGS" == "y" ]; then
+          build_dir > make-out.log 2> make-err.log
+        else
+          build_dir
         fi
         cd ..
     fi
