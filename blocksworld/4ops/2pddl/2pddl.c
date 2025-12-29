@@ -159,7 +159,7 @@ Bool process_command_line( int argc, char *argv[] )
       if ( --argc && ++argv ) {
 	switch ( option ) {
 	case 'd':
-          gdata = ( char * ) calloc( strlen(*argv), sizeof( char ) );
+          gdata = ( char * ) calloc( strlen(*argv) + 1, sizeof( char ) );
 	  strcpy( gdata, *argv );
 	  break;
 	case 'n':
