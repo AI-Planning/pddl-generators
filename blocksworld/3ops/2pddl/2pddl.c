@@ -5,12 +5,12 @@
  * (C) Copyright 2001 Albert Ludwigs University Freiburg
  *     Institute of Computer Science
  *
- * All rights reserved. Use of this software is permitted for 
- * non-commercial research purposes, and it may be copied only 
+ * All rights reserved. Use of this software is permitted for
+ * non-commercial research purposes, and it may be copied only
  * for that use.  All copies must include this copyright message.
  * This software is made available AS IS, and neither the authors
  * nor the  Albert Ludwigs University Freiburg make any warranty
- * about the software or its performance. 
+ * about the software or its performance.
  *********************************************************************/
 
 
@@ -34,7 +34,7 @@ typedef unsigned char Bool;
 /* commands
  */
 char *gdata;
-int gn; 
+int gn;
 
 
 
@@ -73,12 +73,18 @@ int main( int argc, char *argv[] )
   }
   while ( (c = fgetc( data )) != '\n' );
   for ( i = 0; i < gn; i++ ) {
-    fscanf( data, " %d", &(initial[i + 1]) );
+    if (fscanf( data, " %d", &(initial[i + 1]) ) != 1) {
+      printf("Error reading initial state\n");
+      exit(1);
+    }
   }
   while ( (c = fgetc( data )) != '\n' );
   while ( (c = fgetc( data )) != '\n' );
   for ( i = 0; i < gn; i++ ) {
-    fscanf( data, " %d", &(goal[i + 1]) );
+    if (fscanf( data, " %d", &(goal[i + 1]) ) != 1) {
+      printf("Error reading goal state\n");
+      exit(1);
+    }
   }
 
   if ( 0 ) {
@@ -119,8 +125,8 @@ int main( int argc, char *argv[] )
     }
   }
   printf(")\n)\n)\n\n\n");
-  
-  
+
+
 
   exit( 0 );
 

@@ -6,16 +6,16 @@
  * (C) Copyright 2001 Albert Ludwigs University Freiburg
  *     Institute of Computer Science
  *
- * All rights reserved. Use of this software is permitted for 
- * non-commercial research purposes, and it may be copied only 
+ * All rights reserved. Use of this software is permitted for
+ * non-commercial research purposes, and it may be copied only
  * for that use.  All copies must include this copyright message.
  * This software is made available AS IS, and neither the authors
  * nor the  Albert Ludwigs University Freiburg make any warranty
- * about the software or its performance. 
+ * about the software or its performance.
  *********************************************************************/
 
 
-/* 
+/*
  * C code for generating tyreworld problems...
  */
 
@@ -92,9 +92,7 @@ int main( int argc, char *argv[] )
   printf("(define (problem tireworld-%d)", gobjects);
   printf("\n(:domain tyreworld)");
 
-  printf("\n(:objects ");
-  printf("\nwrench jack pump - tool");
-  printf("\n");
+  printf("\n(:objects\n");
   for ( i = 0; i < gobjects; i++ ) {
     printf("the-hub%d ", i+1);
   }
@@ -112,21 +110,21 @@ int main( int argc, char *argv[] )
   }
   printf("\n- wheel");
   printf("\n)");
- 
+
   printf("\n(:init");
-  printf("\n(in jack boot)"); 
-  printf("\n(in pump boot)"); 
+  printf("\n(in jack boot)");
+  printf("\n(in pump boot)");
   printf("\n(in wrench boot)");
   printf("\n(unlocked boot)");
   printf("\n(closed boot)");
   for ( i = 0; i < gobjects; i++ ) {
-    printf("\n(intact r%d)", i+1); 
-    printf("\n(in r%d boot)", i+1); 
+    printf("\n(intact r%d)", i+1);
+    printf("\n(in r%d boot)", i+1);
     printf("\n(not-inflated r%d)", i+1);
-  } 
+  }
   for ( i = 0; i < gobjects; i++ ) {
-    printf("\n(on w%d the-hub%d)", i+1, i+1); 
-    printf("\n(on-ground the-hub%d)", i+1); 
+    printf("\n(on w%d the-hub%d)", i+1, i+1);
+    printf("\n(on-ground the-hub%d)", i+1);
     printf("\n(tight nuts%d the-hub%d)", i+1, i+1);
     printf("\n(fastened the-hub%d)", i+1);
   }
@@ -137,12 +135,12 @@ int main( int argc, char *argv[] )
   for ( i = 0; i < gobjects; i++ ) {
     printf("\n(on r%d the-hub%d)", i+1, i+1);
     printf("\n(inflated r%d)", i+1);
-    printf("\n(tight nuts%d the-hub%d)", i+1, i+1); 
+    printf("\n(tight nuts%d the-hub%d)", i+1, i+1);
     printf("\n(in w%d boot)", i+1);
   }
-  printf("\n(in wrench boot)"); 
-  printf("\n(in jack boot)"); 
-  printf("\n(in pump boot)"); 
+  printf("\n(in wrench boot)");
+  printf("\n(in jack boot)");
+  printf("\n(in pump boot)");
   printf("\n(closed boot)");
   printf("\n)");
   printf("\n)");
@@ -154,8 +152,8 @@ int main( int argc, char *argv[] )
   exit( 0 );
 
 }
-  
-  
+
+
 
 
 

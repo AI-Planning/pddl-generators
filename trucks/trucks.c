@@ -54,7 +54,7 @@ char *pref_symb(int p, int num) {
     int r, q, l;
 
     res = (char *)calloc(10, sizeof(char));
-    sprintf(res, "p%d\0", p);
+    sprintf(res, "p%d", p);
 
     l = strlen(res);
 

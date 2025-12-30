@@ -164,14 +164,14 @@ void create_random_locations( void )
   go_destin = ( int * ) calloc( gcars, sizeof( int ) );
 
   for ( i = 0; i < gcars; i++ ) {
-    r = random() % glocs;
+    r = rand() % glocs;
     go_origin[i] = r;
   }
   for ( i = 0; i < gcars; i++ ) {
-    r = random() % glocs;
+    r = rand() % glocs;
     go_destin[i] = r;
   }
-  gorigin = random() % glocs;
+  gorigin = rand() % glocs;
 
 }
 
@@ -275,7 +275,7 @@ Bool process_command_line( int argc, char *argv[] ) {
         seed = (int)time(NULL);
     }
 
-    srandom(seed);
+    srand(seed);
 
     return TRUE;
 }

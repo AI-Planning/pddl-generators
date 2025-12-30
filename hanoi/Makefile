@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Makefile for basic miconic examples
+# Makefile for basic examples
 #
 
 
@@ -32,8 +32,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+hanoi: $(OBJECTS)
 	$(CC) -o hanoi $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: hanoi
+	./hanoi -n 3 > $${PDDL_TEST_DIR}/p01.pddl
 
 # misc
 clean:

@@ -1,4 +1,5 @@
 (define (domain tyreworld)
+(:requirements :strips :typing)
   (:types obj - object
 	  tool wheel nut - obj
 	  container hub - object)
@@ -18,11 +19,11 @@
              (free ?x)
              (on ?x ?y)
              (intact ?x))
-
+(:constants wrench jack pump - tool)
 
 (:action open
 :parameters (?x - container)
-:precondition (and (unlocked ?x) 
+:precondition (and (unlocked ?x)
                    (closed ?x))
 :effect (and (open ?x)
    (not (closed ?x))))
@@ -42,25 +43,25 @@
 (:action put-away
 :parameters (?x - obj ?y - container)
 :precondition (and (have ?x) (open ?y))
-:effect (and (in ?x ?y)  
+:effect (and (in ?x ?y)
    (not (have ?x))))
 
-(:action loosen 
+(:action loosen
 :parameters (?x - nut ?y - hub)
 :precondition (and (have wrench) (tight ?x ?y) (on-ground ?y))
-:effect (and (loose ?x ?y) 
+:effect (and (loose ?x ?y)
    (not (tight ?x ?y))))
 
 (:action tighten
 :parameters (?x - nut ?y - hub)
 :precondition (and (have wrench) (loose ?x ?y) (on-ground ?y))
-:effect (and (tight ?x ?y) 
+:effect (and (tight ?x ?y)
    (not (loose ?x ?y))))
 
 (:action jack-up
 :parameters (?y - hub)
 :precondition (and (on-ground ?y) (have jack))
-:effect (and (not-on-ground ?y) 
+:effect (and (not-on-ground ?y)
    (not (on-ground ?y))  (not (have jack))))
 
 (:action jack-down
@@ -72,25 +73,25 @@
 (:action undo
 :parameters (?x - nut ?y - hub)
 :precondition (and (not-on-ground ?y) (fastened ?y) (have wrench) (loose ?x ?y))
-:effect (and (have ?x) (unfastened ?y) 
+:effect (and (have ?x) (unfastened ?y)
    (not (fastened ?y)) (not (loose ?x ?y))))
 
 (:action do-up
 :parameters (?x - nut ?y - hub)
 :precondition (and (have wrench) (unfastened ?y) (not-on-ground ?y) (have ?x))
-:effect (and (loose ?x ?y) (fastened ?y) 
+:effect (and (loose ?x ?y) (fastened ?y)
    (not (unfastened ?y)) (not (have ?x))))
 
 (:action remove-wheel
 :parameters (?x - wheel ?y - hub)
 :precondition (and (not-on-ground ?y) (on ?x ?y) (unfastened ?y))
-:effect (and (have ?x) (free ?y) 
+:effect (and (have ?x) (free ?y)
    (not (on ?x ?y))))
 
 (:action put-on-wheel
 :parameters (?x - wheel ?y - hub)
 :precondition (and (have ?x) (free ?y) (unfastened ?y) (not-on-ground ?y))
-:effect (and (on ?x ?y) 
+:effect (and (on ?x ?y)
    (not (free ?y)) (not (have ?x))))
 
 (:action inflate

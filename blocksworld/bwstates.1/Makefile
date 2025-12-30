@@ -11,7 +11,7 @@
 # Using the form "install object directory" will do something quite
 # different from what you are used to!!!
 #
-INSTALL		= /usr/sbin/install 
+INSTALL		= /usr/sbin/install
 # where the binaries go
 BIN		= ./
 # the root of man directories
@@ -61,6 +61,9 @@ all: bwstates
 bwstates: bwstates.o
 	$(CC) $(CFLAGS) bwstates.o -o bwstates $(MATHLIB)
 
+test: bwstates
+	./bwstates -s 2 -n 5 -r 1 > $${PDDL_TEST_DIR}/problem.pddl
+
 README: README.ms
 	nroff -ms README.ms > README
 
@@ -71,7 +74,7 @@ install_man:
 	$(INSTALL) -d $(MANDIR)
 	cp bwstates.man $(MANDIR)/bwstates.$(MANSECT)
 	chmod 644 $(MANDIR)/bwstates.$(MANSECT)
-	
+
 install:
 	make install_bwstates
 	make install_man

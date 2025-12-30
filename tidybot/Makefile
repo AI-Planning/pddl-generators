@@ -8,8 +8,8 @@ tidybot.jar:
 	mv ./target/tidybot-1.0.1-snapshot-standalone.jar tidybot.jar
 	rm -r ./target
 
-#test: tidybot.jar
-#	./gentidy.py 10 2 3 1 2 3 0
+test:
+	@echo "[SKIP] skipping tidybot test: installation complicated, fails to reliably generate solvable tasks"
 
 clean:
 	rm -f tidybot.jar

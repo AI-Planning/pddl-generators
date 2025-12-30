@@ -149,7 +149,7 @@ int maxGlobalX;
 int gridDone=0;
 int saNumber=0;
 int hoistNumber=0;
-char* filename="";
+const char* filename="";
 int compatibilities=1;
 int randomDepot=0;
 int derived=0;

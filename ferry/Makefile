@@ -29,8 +29,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+ferry: $(OBJECTS)
 	$(CC) -o ferry $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: ferry
+	./ferry -l 2 -c 2 > $${PDDL_TEST_DIR}/p01.pddl
 
 # misc
 clean:

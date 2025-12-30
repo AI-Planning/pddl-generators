@@ -4,12 +4,12 @@
 
 ####### FLAGS
 
-TYPE	= 
-ADDONS	= 
+TYPE	=
+ADDONS	=
 
 CC      = gcc
 
-CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS) 
+CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS)
 # -g -pg
 
 LIBS    = -lm
@@ -30,8 +30,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+2pddl: $(OBJECTS)
 	$(CC) -o 2pddl $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: 2pddl
+	../../bwstates.1/bwstates -s 2 -n 5 -r 1 > $${PDDL_TEST_DIR}/problem.pddl
 
 # misc
 clean:

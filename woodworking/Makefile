@@ -3,6 +3,4 @@ build:
 	echo nothing to build
 
 test:
-	./create_woodworking_instance.py 1 2 3
-	./temporal/create_woodworking_instance.py
-	rm p*.pddl
+	./create_woodworking_instance.py 1 2 3 > $${PDDL_TEST_DIR}/problem.pddl

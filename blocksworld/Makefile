@@ -12,6 +12,10 @@ bwstates:
 matching: bwstates
 	$(MAKE) -C matching
 
+test: 3ops
+	cp 3ops/domain.pddl $${PDDL_TEST_DIR}/domain.pddl
+	./blocksworld 3 5 1 > $${PDDL_TEST_DIR}/p01.pddl
+
 clean:
 	cd bwstates.1 && make clean
 	cd 3ops/2pddl && make clean

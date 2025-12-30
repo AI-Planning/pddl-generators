@@ -80,32 +80,32 @@ int main(int argc,char **argv) {
   }
 
   if(!sscanf(argv[1],"%d",&numberOfDays)) {
-    printf("# days not an integer.\n",argv[1]);
+    printf("# days not an integer: %s\n",argv[1]);
     exit(1);
   }
 
   if(!sscanf(argv[2],"%d",&numberOfVehicles)) {
-    printf("# planes not an integer.\n",argv[2]);
+    printf("# planes not an integer: %s\n",argv[2]);
     exit(1);
   }
 
   if(!sscanf(argv[3],"%d",&numberOfMechanics)) {
-    printf("# mechanics not an integer.\n",argv[3]);
+    printf("# mechanics not an integer: %s\n",argv[3]);
     exit(1);
   }
 
   if(!sscanf(argv[4],"%d",&numberOfCities)) {
-    printf("# cities not an integer.\n",argv[4]);
+    printf("# cities not an integer: %s\n",argv[4]);
     exit(1);
   }
 
   if(!sscanf(argv[5],"%d",&numberOfVisits)) {
-    printf("# visits not an integer.\n",argv[5]);
+    printf("# visits not an integer: %s\n",argv[5]);
     exit(1);
   }
 
   if (argc == 8 && !sscanf(argv[7], "%ld", &seed)) {
-      printf("seed was not an integer.\n", argv[7]);
+      printf("seed was not an integer: %s\n", argv[7]);
       exit(1);
   } else if (argc == 7) {
       struct timeval tv;
@@ -177,7 +177,7 @@ int main(int argc,char **argv) {
   }
   printf(")");
 
-  printf("\n  (:goal ",COMPLETED);
+  printf("\n  (:goal ");
   printf("\n    (and ");
   for(i=0;i<numberOfVehicles;i++) {
       printf("\n      (done %s%i)",PLANE,i+1);

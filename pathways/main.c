@@ -41,7 +41,7 @@ void usage() {
     printf("Pathways-Propositional Problem file generator");
     printf("\nUsage: pathways [options]");
     printf("\n\nCommand line options:");
-    printf("\n %s <file>\tSet the problem file name", OUT_OPT, DEFAULT_PROBLEM_FILE);
+    printf("\n %s <file>\tSet the problem file name (default %s)", OUT_OPT, DEFAULT_PROBLEM_FILE);
     printf("\n %s <string>\tSet the problem name (default %s)", PROBLEM_OPT, DEFAULT_PROBLEM_NAME);
     printf("\n %s <num>\tSet the min number of reactions used in the reach. analysis", NUM_ACT_OPT);
     printf("\n %s <num>\tSet the number of goals", NUM_GOAL_OPT);
@@ -2027,7 +2027,7 @@ void print_pddl_problem(FILE *output, Bool dw_style) {
         fprintf(output, AND);
 
         for (i = 0; i < num_goals; i++) {
-            fprintf(output, String[i]);
+            fprintf(output, "%s", String[i]);
         }
 
         fprintf(output, "))\n");

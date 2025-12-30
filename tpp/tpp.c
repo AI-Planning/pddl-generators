@@ -1023,26 +1023,26 @@ void generate_pddl(char *nomefile)
   fprintf(file, "(:objects\n\t");
   for(i=1; i<=product; i++)
     fprintf(file, "goods%d ", i );
-  fprintf(file, "- goods\n\t", i );
+  fprintf(file, "- goods\n\t");
 
   for(i=1; i<=truck; i++)
     fprintf(file, "truck%d ", i );
-  fprintf(file, "- truck\n\t", i );
+  fprintf(file, "- truck\n\t");
 
   for(i=1; i<=market; i++)
     fprintf(file, "market%d ", i );
-  fprintf(file, "- market\n\t", i );
+  fprintf(file, "- market\n\t");
 
   for(i=1; i<=depot; i++)
     fprintf(file, "depot%d ", i );
-  fprintf(file, "- depot", i );
+  fprintf(file, "- depot");
 
   if (use_money)
     {
       fprintf(file, "\n\t");
       for(i=0; i<=money_level; i++)
     fprintf(file, "m%d ", i );
-      fprintf(file, "- money-level", i );
+      fprintf(file, "- money-level" );
     }
 
   if (use_fuel)
@@ -1050,7 +1050,7 @@ void generate_pddl(char *nomefile)
       fprintf(file, "\n\t");
       for(i=0; i<=fuel_level; i++)
     fprintf(file, "f%d ", i );
-      fprintf(file, "- fuel-level", i );
+      fprintf(file, "- fuel-level" );
     }
 
   if (use_fuel || use_money)
@@ -1060,7 +1060,7 @@ void generate_pddl(char *nomefile)
     {
       if ((i > 0) || !(constraints_pref))
         fprintf(file, "level%d ", i );
-      fprintf(file, "- purchased-level", i );
+      fprintf(file, "- purchased-level" );
     }
     }
   else
@@ -1071,7 +1071,7 @@ void generate_pddl(char *nomefile)
       if ((i > 0) || (!constraints_pref && !simple_pref))
         fprintf(file, "level%d ", i );
     }
-      fprintf(file, "- level", i );
+      fprintf(file, "- level" );
     }
 
   if (use_fuel || use_money)
@@ -1079,7 +1079,7 @@ void generate_pddl(char *nomefile)
       fprintf(file, "\n\t");
       for(i=0; i<=truck_capacity; i++)
     fprintf(file, "t%d ", i );
-      fprintf(file, "- truck-level", i );
+      fprintf(file, "- truck-level" );
     }
 
   fprintf(file, ")\n\n");

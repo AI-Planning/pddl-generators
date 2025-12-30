@@ -1,7 +1,7 @@
 (define (domain assembly)
    (:requirements :adl)
-   (:types assembly resource)   ; Individual parts are atomic assemblies
-   (:predicates (available ?x - (either resource assembly))
+   (:types assembly resource - object)   ; Individual parts are atomic assemblies
+   (:predicates (available ?x - object)
 		(complete ?a - assembly)
 		(requires ?a - assembly ?r - resource)
 		(committed ?r - resource ?a - assembly)
@@ -53,7 +53,7 @@
    ; end.
    (:action remove
       :parameters (?part ?whole - assembly)
-      :vars (?res - resource)
+   ;  :vars (?res - resource)
       :precondition (and (forall (?res - resource)
 			    (imply (requires ?whole ?res)
 				   (committed ?res ?whole)))
@@ -79,4 +79,5 @@
                                            (not (= ?tp ?part))
 					   (incorporated ?tp ?whole)))))
 			 (and (complete ?whole)
-			      (available ?whole))))))
+			      (available ?whole)))))
+)

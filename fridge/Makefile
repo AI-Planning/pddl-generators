@@ -29,8 +29,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+fridge: $(OBJECTS)
 	$(CC) -o fridge $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: fridge
+	./fridge -f 1 -s 1 -r 1 > $${PDDL_TEST_DIR}/problem.pddl
 
 # misc
 clean:

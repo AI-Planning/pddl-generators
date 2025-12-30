@@ -29,8 +29,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+tsp: $(OBJECTS)
 	$(CC) -o tsp $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: tsp
+	./tsp -n 3 > $${PDDL_TEST_DIR}/problem.pddl
 
 # misc
 clean:
