@@ -6,12 +6,12 @@
 
 ####### FLAGS
 
-TYPE	= 
-ADDONS	= 
+TYPE	=
+ADDONS	=
 
 CC      = gcc
 
-CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS) 
+CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS)
 # -g -pg -Bstatic -static
 
 LIBS    = -lm
@@ -23,10 +23,10 @@ PDDL_PARSER_SRC	= scan-fct_pddl.tab.c \
 	scan-ops_pddl.tab.c \
 	scan-probname.tab.c \
 	lex.fct_pddl.c \
-	lex.ops_pddl.c 
+	lex.ops_pddl.c
 
 PDDL_PARSER_OBJ = scan-fct_pddl.tab.o \
-	scan-ops_pddl.tab.o 
+	scan-ops_pddl.tab.o
 
 
 SOURCES 	= main.c \
@@ -53,6 +53,9 @@ OBJECTS 	= $(SOURCES:.c=.o)
 
 ff: $(OBJECTS) $(PDDL_PARSER_OBJ)
 	$(CC) -o ff $(OBJECTS) $(PDDL_PARSER_OBJ) $(CFLAGS) $(LIBS)
+
+test: ff
+	@echo "adl2strips is a utility tool, not a generator. Run 'make ff' to build."
 
 # pddl syntax
 scan-fct_pddl.tab.c: scan-fct_pddl.y lex.fct_pddl.c

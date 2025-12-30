@@ -30,8 +30,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+mprime: $(OBJECTS)
 	$(CC) -o mprime $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: mprime
+	./mprime -l 2 -f 2 -s 2 -v 1 -c 1 -r 1 > $${PDDL_TEST_DIR}/problem.pddl
 
 # misc
 clean:

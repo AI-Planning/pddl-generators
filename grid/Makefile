@@ -34,4 +34,4 @@ lint:
 	lclint -booltype Bool $(SOURCES) 2> output.lint
 
 test:
-	./generate.py 4 5
+	./generate.py 4 5 > $${PDDL_TEST_DIR}/problem.pddl

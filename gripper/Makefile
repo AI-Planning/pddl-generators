@@ -30,8 +30,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+gripper: $(OBJECTS)
 	$(CC) -o gripper $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: gripper
+	./gripper -n 3 > $${PDDL_TEST_DIR}/p01.pddl
 
 # misc
 clean:

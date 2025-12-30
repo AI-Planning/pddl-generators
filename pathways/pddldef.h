@@ -43,7 +43,7 @@
 #define STR_NEED_PCCAT    "\n\t(= (need-for-catalyzed-association %s %s %s) %d)"
 #define DUR_PCCAT         "\n\t(= (duration-catalyzed-association-reaction %s %s %s) %.1f)"
 
-#define STR_NUM_AVAIL     "\n\t(= (available %s) %d)"
+#define STR_NUM_AVAIL     "\n\t(= (available %s) %f)"
 #define STR_NUM_GOAL      "\n\t(>= (available %s) %d)"
 
 #define STR_NUM_DJ_GOAL      "\n\t(>= (+ (available %s) (available %s)) %d)"

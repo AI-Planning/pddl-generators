@@ -48,6 +48,6 @@ lint:
 	lclint -booltype Bool $(SOURCES) 2> output.lint
 
 test: generator
-	./schedule -p 1 -s 0 -c 2 -w 2 -o 2 -Q 80 -W 50 -E 80 -R 50 -T 80 -Y 50 -r 5
+	./schedule -p 1 -s 0 -c 1 -w 1 -o 1 -Q 50 -W 30 -E 50 -R 30 -T 50 -Y 30 -r 3 > $${PDDL_TEST_DIR}/problem.pddl
 
 # DO NOT DELETE

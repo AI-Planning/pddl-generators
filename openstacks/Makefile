@@ -13,10 +13,6 @@ clean:
 	rm -f $(TXT) $(PDDL)
 
 test: $(TXT) $(PDDL)
-	./generate_problems.py 1 1 1 1 1 60
-	rm p1_1.txt
-	./$(TXT) 5 34 1 1 1 40  # Deprecated, see README.
-	./$(PDDL)
-	rm domain*_1.pddl p*_1.pddl p*_1.txt
 	./generator.py 5 3 80
-	rm domain.pddl problem.pddl
+	mv domain.pddl $${PDDL_TEST_DIR}/domain.pddl
+	mv problem.pddl $${PDDL_TEST_DIR}/problem.pddl

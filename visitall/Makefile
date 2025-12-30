@@ -30,8 +30,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+grid: $(OBJECTS)
 	$(CC) -o grid $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: grid
+	./grid -n 3 -s 1 > $${PDDL_TEST_DIR}/problem.pddl
 
 # misc
 clean:

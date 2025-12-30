@@ -141,7 +141,7 @@ int gmax_search_depth = 0;
 
 /* used for pddl parsing, flex only allows global variables
  */
-int gbracket_count;
+extern int gbracket_count;
 char *gproblem_name;
 
 /* The current input line number

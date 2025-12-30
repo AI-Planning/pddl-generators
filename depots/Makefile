@@ -5,4 +5,4 @@ clean:
 	rm -f depots
 
 test: depots
-	./depots -e 1 -i 2 -t 3 -p 4 -h 5 -c 6
+	./depots -e 1 -i 2 -t 3 -p 4 -h 5 -c 6 > $${PDDL_TEST_DIR}/problem.pddl

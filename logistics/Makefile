@@ -30,8 +30,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+logistics: $(OBJECTS)
 	$(CC) -o logistics $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: logistics
+	./logistics -a 1 -c 2 -s 2 -p 2 -r 1 > $${PDDL_TEST_DIR}/problem.pddl
 
 # misc
 clean:

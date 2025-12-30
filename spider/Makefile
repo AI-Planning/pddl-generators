@@ -3,4 +3,4 @@ build:
 	echo nothing to build
 
 test:
-	./generate.py 5 3 4 5 6 7 pddl
+	./generate.py 1 2 3 3 1 1 pddl > $${PDDL_TEST_DIR}/problem.pddl

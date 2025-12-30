@@ -29,8 +29,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+briefcaseworld: $(OBJECTS)
 	$(CC) -o briefcaseworld $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: briefcaseworld
+	./briefcaseworld -o 2 -s 1 > $${PDDL_TEST_DIR}/problem.pddl
 
 # misc
 clean:

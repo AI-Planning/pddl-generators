@@ -29,8 +29,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+tyreworld: $(OBJECTS)
 	$(CC) -o tyreworld $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: tyreworld
+	./tyreworld -n 2 > $${PDDL_TEST_DIR}/problem.pddl
 
 # misc
 clean:

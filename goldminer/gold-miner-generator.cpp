@@ -230,7 +230,7 @@ void output_typed_strips(){
   //what is the goal
     printf("\n(:goal");
   printf("\n(holds-gold)");
-  printf("\n)\n");
+  printf("\n)\n)\n");
 }
 
 void output_untyped_strips(){

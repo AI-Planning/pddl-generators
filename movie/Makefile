@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Makefile for basic miconic examples
+# Makefile for basic examples
 #
 
 
@@ -32,8 +32,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 ####### Build rules
 
 
-miconic: $(OBJECTS)
+movie: $(OBJECTS)
 	$(CC) -o movie $(OBJECTS) $(CFLAGS) $(LIBS)
+
+test: movie
+	./movie -n 2 > $${PDDL_TEST_DIR}/problem.pddl
 
 # misc
 clean:

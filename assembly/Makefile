@@ -27,7 +27,7 @@ distclean: clean
 	rm -f assembly
 
 test: build
-	./assembly -d 5 -m 5 -h 90 -n 1 -r 5 -t 5 -a 25 -o 50
+	./assembly -d 5 -m 5 -h 90 -n 1 -r 5 -t 5 -a 25 -o 50 > $${PDDL_TEST_DIR}/problem.pddl
 
 lint:
 	lclint -booltype Bool $(SOURCES)

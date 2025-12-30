@@ -5,24 +5,92 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 for DIR in * ; do
-    if [ -d $DIR ]; then
+    if [ -d $DIR ] && [ "$DIR" != "__pycache__" ]; then
         echo
         echo "Domain: $DIR"
+        DOMAIN_START=$(date +%s.%N)
         cd $DIR
-        if [ -e CMakeLists.txt ]; then
-            cmake .
-        fi
-        if [ -e Makefile ]; then
-            # Handle "./build_all test" and "./build_all clean" separately:
-            # don't try to run the command if it doesn't exist.
-            if [ "$#" -eq 1 ] && [ "$@" == "test" ]; then
-                make --dry-run test > /dev/null && (make test > /dev/null && echo "Tests passed." || exit 1)
-            elif [ "$#" -eq 1 ] && [ "$@" == "clean" ]; then
-                make --dry-run clean > /dev/null && (make clean > /dev/null && echo "Cleaned up." || exit 1)
-            else
-                make "$@"
+
+        # Always set PDDL_TEST_DIR and ensure it exists
+        export PDDL_TEST_DIR="/tmp/pddl-generators/$DIR"
+        mkdir -p "$PDDL_TEST_DIR"
+
+        # Handle "./build_all test" and "./build_all clean" separately:
+        # don't try to run the command if it doesn't exist.
+        if [ "$#" -eq 1 ] && [ "$@" == "test" ]; then
+            # Set up output directory for PDDL files
+            rm -rf "$PDDL_TEST_DIR"
+            mkdir -p "$PDDL_TEST_DIR"
+
+            # Copy domain file if it exists
+            if [ -f "domain.pddl" ]; then
+                cp "domain.pddl" "$PDDL_TEST_DIR/"
             fi
+
+            # Run the test (should generate problem files in PDDL_TEST_DIR)
+            set +e
+            TEST_OUTPUT=$(make test 2>&1 | tee "$PDDL_TEST_DIR/test.log")
+            MAKE_EXIT=$?
+            set -e
+
+            # Check if test was skipped
+            if echo "$TEST_OUTPUT" | grep -q "^\[SKIP\]"; then
+                echo "Tests skipped."
+                cd ..
+                continue
+            fi
+
+            if [ $MAKE_EXIT -ne 0 ]; then
+                echo "ERROR: Test failed (exit code $MAKE_EXIT)"
+                exit 1
+            fi
+
+            # Verify PDDL files were created and validate syntax
+            if [ ! -f "$PDDL_TEST_DIR/domain.pddl" ]; then
+                echo "ERROR: Missing required domain.pddl"
+                exit 1
+            fi
+
+            # Determine which validator to use based on domain type
+            if grep -q "durative-action" "$PDDL_TEST_DIR/domain.pddl"; then
+                VALIDATOR="validate"
+            else
+                VALIDATOR="scorpion.sif --translate"
+            fi
+
+            # Find all problem files (p01.pddl, p02.pddl, etc. or problem.pddl)
+            PROBLEM_FILES=$(find "$PDDL_TEST_DIR" -name "p[0-9][0-9].pddl" -o -name "problem.pddl" | sort)
+            if [ -z "$PROBLEM_FILES" ]; then
+                echo "ERROR: No problem files found (expected p01.pddl, p02.pddl, etc. or problem.pddl)"
+                exit 1
+            fi
+
+            PROBLEM_COUNT=$(echo "$PROBLEM_FILES" | wc -l)
+            VALIDATED=0
+            for PROBLEM_FILE in $PROBLEM_FILES; do
+                set +e
+                VALIDATE_OUTPUT=$($VALIDATOR "$PDDL_TEST_DIR/domain.pddl" "$PROBLEM_FILE" 2>&1)
+                VALIDATE_EXIT=$?
+                set -e
+                echo "$VALIDATE_OUTPUT" >> "$PDDL_TEST_DIR/test.log"
+                # Remove output.sas file if it exists (created by scorpion.sif)
+                rm -f output.sas
+                if [ $VALIDATE_EXIT -ne 0 ]; then
+                    echo "ERROR: PDDL validation failed for $(basename $PROBLEM_FILE)"
+                    echo "$VALIDATE_OUTPUT" | head -10
+                    exit 1
+                fi
+                VALIDATED=$((VALIDATED + 1))
+            done
+            echo "Tests passed: $VALIDATED of $PROBLEM_COUNT problem(s) validated."
+        elif [ "$#" -eq 1 ] && [ "$@" == "clean" ]; then
+            make --dry-run clean > /dev/null && (make clean > /dev/null && echo "Cleaned up." || exit 1)
+        else
+            make "$@"
         fi
+        DOMAIN_END=$(date +%s.%N)
+        DOMAIN_TIME=$(echo "$DOMAIN_END - $DOMAIN_START" | bc)
+        printf "Time: %.2fs\n" "$DOMAIN_TIME"
         cd ..
     fi
 done

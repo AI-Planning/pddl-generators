@@ -1,2 +1,2 @@
 test:
-	./generator.py 6 4
+	./generator.py 4 3 > $${PDDL_TEST_DIR}/problem.pddl

@@ -9,5 +9,8 @@ $(TYPED): $(TYPED).cpp
 $(UNTYPED): $(UNTYPED).cpp
 	$(CXX) $(UNTYPED).cpp -o $(UNTYPED)
 
+test: $(TYPED)
+	./$(TYPED) -n 5 -b 1 -w 0 -s 1 > $${PDDL_TEST_DIR}/problem.pddl
+
 clean:
 	rm -f $(TYPED) $(UNTYPED)
