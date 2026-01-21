@@ -1,4 +1,6 @@
 test:
+	ruby converter.rb
+# ruby -I. generator.rb
 	./pegsol-instances.py  # Only analyzes instances, doesn't generate them.
 	echo "(define (problem pegsol-test)" > $${PDDL_TEST_DIR}/problem.pddl && \
 	echo "  (:domain pegsolitaire-sequential)" >> $${PDDL_TEST_DIR}/problem.pddl && \
