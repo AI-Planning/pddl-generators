@@ -1,0 +1,20 @@
+
+# Grippers (python)
+
+usage: gripper.py [-h] [--seed SEED] balls robots grippers rooms
+
+positional arguments:
+  balls                 the number of balls
+  robots                the number of robots
+  grippers              the number of grippers per robot
+  rooms                 the number of rooms
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --seed SEED, -s SEED  random seed
+
+
+# Grippers (C language)
+
+
+This version is equivalent to the python version with 2 grippers per robot.
