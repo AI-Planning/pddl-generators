@@ -25,17 +25,22 @@ def symmetric_road(f, t, length):
 def shortest_route(ca, cb, ox, oy):
     # connect the two cities
     min_connect_distance = -1.0
+    shifted_city_b = [
+        (
+            u,
+            euclidean_graph.Point(u.name, u.x + ox, u.y + oy),
+            euclidean_graph.Point(u.name, u.x + 2 * size, u.y),
+        )
+        for u in city_b.vertices
+    ]
     for v in city_a.vertices:
-        for u in city_b.vertices:
+        for u, shifted_u, shifted_u_ab in shifted_city_b:
             if (
-                v.distance(euclidean_graph.Point(u.name, u.x + ox, u.y + oy))
-                < min_connect_distance
+                v.distance(shifted_u) < min_connect_distance
                 or min_connect_distance == -1.0
             ):
                 min_tuple = (v, u)
-                min_connect_distance = v.distance(
-                    euclidean_graph.Point(u.name, u.x + 2 * size, u.y)
-                )
+                min_connect_distance = v.distance(shifted_u_ab)
 
     return min_tuple, min_connect_distance
 

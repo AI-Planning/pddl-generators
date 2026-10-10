@@ -3,6 +3,7 @@
 
 from collections import defaultdict
 import itertools
+import math
 import random
 import sys
 
@@ -87,7 +88,34 @@ class Graph:
         print(r"\end{document}", file=out)
 
 
-def find_suitable_point(graph, width, height, epsilon):
+class PointGrid:
+    """Spatial hash of points to find nearby points without looking at all."""
+
+    def __init__(self, radius):
+        self.radius = radius
+        self.cell_size = max(1, int(radius))
+        self.cells = defaultdict(list)
+        self.num_points = 0
+
+    def add(self, p):
+        cell = (p.x // self.cell_size, p.y // self.cell_size)
+        self.cells[cell].append((self.num_points, p))
+        self.num_points += 1
+
+    def near(self, p):
+        """Return (in insertion order) all added points whose x and y
+        coordinates differ from those of p by at most the radius, and maybe
+        some more."""
+        size, r = self.cell_size, self.radius
+        result = []
+        for cx in range(int((p.x - r) // size), int((p.x + r) // size) + 1):
+            for cy in range(int((p.y - r) // size), int((p.y + r) // size) + 1):
+                result.extend(self.cells.get((cx, cy), ()))
+        result.sort()
+        return [pp for _, pp in result]
+
+
+def find_suitable_point(graph, width, height, epsilon, grid=None):
     for attempts in itertools.count():
         if attempts == MAX_EPSILON_ATTEMPTS:
             raise ValueError("failed to place vertex: reduce EPSILON")
@@ -95,16 +123,24 @@ def find_suitable_point(graph, width, height, epsilon):
         x = random.randrange(width)
         y = random.randrange(height)
         p = Point(name, x, y)
-        if all(p.round_distance(pp) >= epsilon for pp in graph.vertices):
+        others = graph.vertices if grid is None else grid.near(p)
+        if all(p.round_distance(pp) >= epsilon for pp in others):
             return p
 
 
 def generate(num_vert, width, height, connect_distance, epsilon):
     graph = Graph()
+    # Points whose x or y coordinates differ by more than this radius have a
+    # rounded distance above epsilon and connect_distance, so we only need to
+    # compare points that are close to each other.
+    radius = max(epsilon, connect_distance, 0) + 2
+    grid = PointGrid(radius) if math.isfinite(radius) else None
     for _ in range(num_vert):
-        p = find_suitable_point(graph, width, height, epsilon)
+        p = find_suitable_point(graph, width, height, epsilon, grid)
         graph.add_vertex(p)
-        for pp in graph.vertices:
+        if grid is not None:
+            grid.add(p)
+        for pp in graph.vertices if grid is None else grid.near(p):
             if 0 < p.round_distance(pp) <= connect_distance:
                 graph.add_edge(p, pp)
     return graph
