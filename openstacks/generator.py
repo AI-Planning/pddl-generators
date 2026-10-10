@@ -43,7 +43,7 @@ def parse_args():
     return args
 
 
-def include_product_for_order(product, order, num_products, density):
+def inclusion_chance(d, num_products, density):
     # This is based on Ioannis's code. It is designed so that products
     # are more likely to be included in orders if the distance between
     # the product and order id (before the reshuffling that happens at
@@ -54,8 +54,9 @@ def include_product_for_order(product, order, num_products, density):
     # with small (= few stacks) solutions since it adds some locality
     # to the problem: the matrix entries (before shuffling) will tend
     # to cluster around the diagonal.
+    #
+    # d is the distance between the product and order id.
 
-    d = abs(product - order)
     s = num_products / 6.0
     # The next line is the density function of the normal distribution
     # with mu = 0 and sigma = s for x = d.
@@ -63,16 +64,20 @@ def include_product_for_order(product, order, num_products, density):
     # The next line is rather magical to me. If there is an
     # explanation for what this formula signifies, I don't know it.
     chance = p * density * num_products / (2.7 * (num_products / 5.0) ** 0.5)
-    return random.randrange(100) <= chance
+    return chance
 
 
 def generate_task(num_products, num_orders, density):
     products = list(range(num_products))
     orders = list(range(num_orders))
     matrix = [[0 for product in products] for order in orders]
+    # The inclusion chance only depends on the distance, so compute it
+    # once per distance instead of once per product/order pair.
+    distances = range(max(num_products, num_orders)) if products and orders else []
+    chances = [inclusion_chance(d, num_products, density) for d in distances]
     for order in orders:
         for product in products:
-            if include_product_for_order(product, order, num_products, density):
+            if random.randrange(100) <= chances[abs(product - order)]:
                 matrix[order][product] = 1
     for order in orders:
         if all(matrix[order][product] == 0 for product in products):
