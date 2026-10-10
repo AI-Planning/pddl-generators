@@ -19,7 +19,7 @@ def get_objects():
     str_tiles = ""
     for row in range(num_rows + 1):
         for column in range(num_columns):
-            str_tiles = str_tiles + get_tile(row, column + 1) + " "
+            str_tiles += get_tile(row, column + 1) + " "
         if row != num_rows:
             str_tiles += "\n           "
     str_tiles += "- tile\n"
