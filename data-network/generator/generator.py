@@ -172,6 +172,9 @@ class DistributedComputing:
 
     def _generate_scripts(self):
         layers = self._distribute_data_items_to_layers()
+        # Convert each layer to an array only once instead of letting
+        # numpy.random.choice convert the list again in every call.
+        layer_arrays = [numpy.array(layer) for layer in layers]
         self.initial_data_items = layers[0][:]
         items_used_in_scripts = set()
         script_nr = 1
@@ -180,12 +183,12 @@ class DistributedComputing:
             for data_item in layers[layer_nr]:
                 script = f"script{script_nr}"
                 properties = {}
-                input1 = numpy.random.choice(layers[layer_nr - 1])
+                input1 = numpy.random.choice(layer_arrays[layer_nr - 1])
                 # Enforce different data inputs
                 input2 = input1
                 while input2 == input1:
                     random_layer = numpy.random.choice(layer_nr)
-                    input2 = numpy.random.choice(layers[random_layer])
+                    input2 = numpy.random.choice(layer_arrays[random_layer])
                 items_used_in_scripts.add(input1)
                 items_used_in_scripts.add(input2)
 
@@ -197,15 +200,15 @@ class DistributedComputing:
         # Distribute remaining scripts among layers
         while script_nr <= self.num_scripts:
             layer_nr = numpy.random.choice(range(1, self.num_layers))
-            output = numpy.random.choice(layers[layer_nr])
+            output = numpy.random.choice(layer_arrays[layer_nr])
             script = f"script{script_nr}"
             properties = {}
-            input1 = numpy.random.choice(layers[layer_nr - 1])
+            input1 = numpy.random.choice(layer_arrays[layer_nr - 1])
             # Enforce different data inputs
             input2 = input1
             while input2 == input1:
                 random_layer = numpy.random.choice(layer_nr)
-                input2 = numpy.random.choice(layers[random_layer])
+                input2 = numpy.random.choice(layer_arrays[random_layer])
             items_used_in_scripts.add(input1)
             items_used_in_scripts.add(input2)
             properties["input1"] = input1
@@ -403,14 +406,6 @@ class DistributedComputing:
                     properties["output"],
                 )
             )
-        script_server_pairs = sorted(
-            (
-                (pair[1], pair[0])
-                for pair in self.server_script_pairs
-                if self.server_script_pairs[pair]["base_processing_cost"] >= 0
-            ),
-            key=lambda x: self._natural_keys(x[0] + x[1]),
-        )
         connections = sorted(connection for connection in self.connections)
         for connection in connections:
             print(

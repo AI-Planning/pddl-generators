@@ -42,29 +42,32 @@ def _generate_instances(split: str, grid_size_interval: tuple[int, int], max_nr_
 
     for size in range(grid_size_interval[0], grid_size_interval[1] + 1):
         for nr_packages in range(1, max_nr_packages + 1):
+            # All instances of this setup have the same objects, so we parse
+            # the domain and create the objects only once per setup.
+            pddl_reader = PDDLReader(raise_on_error=True)
+            pddl_reader.parse_domain(domain_file)
+            problem = pddl_reader.problem
+            language = problem.language
+
+            # Create the cells
+            # All instances are square grids
+            cells: list[Constant] = []
+            for x in range(size):
+                for y in range(size):
+                    cell = language.constant(f"c_{x}_{y}", "cell")
+                    cells.append(cell)
+
+            # Create the packages
+            packages: list[Constant] = []
+            for i in range(1, nr_packages + 1):
+                package = language.constant(f"p{i}", "package")
+                packages.append(package)
+
+            # Create the truck
+            truck = language.constant("t1", "truck")
+
             for index in range(nr_instances_per_setup):
-                pddl_reader = PDDLReader(raise_on_error=True)
-                pddl_reader.parse_domain(domain_file)
-                problem = pddl_reader.problem
-                language = problem.language
                 init: Model = tarski.model.create(language)
-
-                # Create the cells
-                # All instances are square grids
-                cells: list[Constant] = []
-                for x in range(size):
-                    for y in range(size):
-                        cell = language.constant(f"c_{x}_{y}", "cell")
-                        cells.append(cell)
-
-                # Create the packages
-                packages: list[Constant] = []
-                for i in range(1, nr_packages + 1):
-                    package = language.constant(f"p{i}", "package")
-                    packages.append(package)
-
-                # Create the truck
-                truck = language.constant("t1", "truck")
 
                 # Add the "adjacent" atoms
                 adjacent_predicate = language.get_predicate("adjacent")
