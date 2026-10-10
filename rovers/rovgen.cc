@@ -113,9 +113,7 @@ struct Objective{
 
     void make_visible_from(const set<int> & locations){
         for(int loc1: vis_from){
-            for(int loc2: locations){
-                if(loc1 == loc2) return;
-            }
+            if(locations.find(loc1) != locations.end()) return;
         }
 
 
@@ -138,6 +136,8 @@ struct Map {
 
 	int waypoints;
 	graph path;
+	// neighbours[l]: sorted locations i with an edge l->i or i->l in path
+	vector<vector<int> > neighbours;
 
 
 	void explore(graph & g,int start,set<int> & reached)
@@ -153,7 +153,7 @@ struct Map {
 
 			for(set<int>::const_iterator i = g[loc].begin();i != g[loc].end();++i)
 			{
-				if(find(reached.begin(),reached.end(),*i)==reached.end())
+				if(reached.find(*i)==reached.end())
 				{
 					togo.push(*i);
 					reached.insert(*i);
@@ -167,12 +167,14 @@ struct Map {
 		set<int> reached;
 		int start = rnd(waypoints);
 		explore(g,start,reached);
+		// reached only grows, so the search for the first unreached location
+		// can continue from the previous one.
+		int next = 0;
 		while(reached.size()!=waypoints)
 		{
-			int next;
-			for(int i = 0;i < waypoints;++i)
+			for(int i = next;i < waypoints;++i)
 			{
-				if(find(reached.begin(),reached.end(),i)==reached.end())
+				if(reached.find(i)==reached.end())
 				{
 					next = i;
 					break;
@@ -202,6 +204,22 @@ struct Map {
 		};
 		connect(path);
 
+		neighbours.resize(s);
+		for(graph::const_iterator i = path.begin();i != path.end();++i)
+		{
+			for(set<int>::const_iterator j = i->second.begin();
+							j != i->second.end();++j)
+			{
+				neighbours[i->first].push_back(*j);
+				neighbours[*j].push_back(i->first);
+			};
+		};
+		for(int i = 0;i < s;++i)
+		{
+			sort(neighbours[i].begin(),neighbours[i].end());
+			neighbours[i].erase(unique(neighbours[i].begin(),neighbours[i].end()),
+						neighbours[i].end());
+		};
 	};
 	Map(){};
 
@@ -256,29 +274,23 @@ struct Rover{
 		// Use a positive radius, so that each rover can traverse at least one edge.
 		int radius = max(1, locs/3 + rnd(locs));
 		vector<int> reachables;
+		// in_travs[i]: some pair in travs has i as second element
+		vector<bool> in_travs(locs,false);
+		size_t front = 0;
                 reachable_locs.insert(location);
 		reachables.push_back(location);
-		while(radius && !reachables.empty()){
-				int l = reachables.front();
+		while(radius && front < reachables.size()){
+				int l = reachables[front++];
 
-				reachables.erase(reachables.begin());
-
-				for(int i = 0;i<locs;i++){
-					if(m.path[l].find(i)!=m.path[l].end() || m.path[i].find(l)!=m.path[i].end()){
-						int j = 0;
-						for(;j<travs.size();++j){
-							if(travs[j].second == i){
-								break;
-							}
-						}
-						if(j == travs.size()){
-							int y = rnd(10);
-							if(y>2 || travs.empty()){
-								travs.push_back(make_pair(l,i));
-								travs.push_back(make_pair(i,l));
-								reachables.push_back(i);
-                                                                reachable_locs.insert(i);
-							}
+				for(int i : m.neighbours[l]){
+					if(!in_travs[i]){
+						int y = rnd(10);
+						if(y>2 || travs.empty()){
+							travs.push_back(make_pair(l,i));
+							travs.push_back(make_pair(i,l));
+							in_travs[i] = in_travs[l] = true;
+							reachables.push_back(i);
+                                                        reachable_locs.insert(i);
 						}
 					}
 				}
@@ -290,14 +302,15 @@ struct Rover{
 
 	};
 
-	void makeVisible(int gp,Map mp){
+	void makeVisible(int gp,const Map & mp){
 
 		vector<pair<int,int> >::const_iterator vi = travs.begin();
 		for(;(vi != travs.end());++vi){
-			int l1 = vi->first;
-			int l2 = vi->second;
+			graph::const_iterator l1 = mp.path.find(vi->first);
+			graph::const_iterator l2 = mp.path.find(vi->second);
 
-			if(mp.path[l1].find(gp)!=mp.path[l1].end() || mp.path[l2].find(gp)!=mp.path[l2].end()){
+			if((l1 != mp.path.end() && l1->second.find(gp)!=l1->second.end()) ||
+			   (l2 != mp.path.end() && l2->second.find(gp)!=l2->second.end())){
 
 					break;
 
@@ -305,10 +318,10 @@ struct Rover{
 
 		}
 		if(vi==travs.end()){
-			int w = rnd(travs.size());
-			vector<pair<int,int> >::pointer it = &travs[w];
-			mp.path[gp].insert(it->first);
-			mp.path[it->first].insert(gp);
+			// This used to add an edge to a copy of the map (passed by
+			// value), which had no effect on the problem. Avoid the copy and
+			// only draw the random number to keep the random sequence.
+			rnd(travs.size());
 		}
 	}
 
@@ -368,44 +381,68 @@ struct RoverDescriptor {
 };
 
 
-vector<pair<int,int> > getsuitable(vector<Rover> rovers,vector<Objective> objectives){
-	vector<pair<int,int> > ps;
+// Sequence of (objective,rover) pairs where each pair occurs once for every
+// traversal of the rover from or to a location the objective is visible from.
+// There can be very many, so equal pairs are stored once with the accumulated
+// count.
+struct SuitablePairs {
+	vector<pair<int,int> > pairs;
+	vector<size_t> ends; // ends[r]: number of elements in pairs[0..r]
+
+	size_t size() const {return ends.empty() ? 0 : ends.back();};
+
+	const pair<int,int> & operator[](size_t i) const
+	{
+		return pairs[upper_bound(ends.begin(),ends.end(),i) - ends.begin()];
+	};
+};
+
+SuitablePairs getsuitable(const vector<Rover> & rovers,const vector<Objective> & objectives,int locs){
+	SuitablePairs ps;
+	size_t total = 0;
 	for(int k = 0;k<rovers.size();++k){
+		if(rovers[k].cams.empty()) continue;
 
+		// touching[l]: number of traversals of rover k that start or end at l
+		vector<int> touching(locs,0);
+		vector<pair<int,int> >::const_iterator vi = rovers[k].travs.begin();
+		for(;(vi != rovers[k].travs.end());++vi){
+			++touching[vi->first];
+			if(vi->second != vi->first) ++touching[vi->second];
+		}
 		for(int v =0;v<objectives.size();++v){
+			size_t count = 0;
                     for(auto loc_vis_from :  objectives[v].vis_from){
-				vector<pair<int,int> >::const_iterator vi = rovers[k].travs.begin();
-				for(;(vi != rovers[k].travs.end());++vi){
-
-                                    if(vi->second == loc_vis_from || vi->first == loc_vis_from){
-
-						if(!rovers[k].cams.empty()){
-							ps.push_back(make_pair(v,k));
-						}
-					}
-				}
+				count += touching[loc_vis_from];
+			}
+			if(count){
+				total += count;
+				ps.pairs.push_back(make_pair(v,k));
+				ps.ends.push_back(total);
 			}
 		}
 	}
 	return ps;
 }
 
-vector<int> rock_sites(vector<Rover> rovers,vector<Waypoint> waypoints){
+vector<int> rock_sites(const vector<Rover> & rovers,const vector<Waypoint> & waypoints){
 	set<pair<int,int> > ps;
 	for(int k = 0;k<rovers.size();++k){
 
+		// touched[v]: some traversal of rover k starts or ends at v
+		vector<bool> touched(waypoints.size(),false);
+		vector<pair<int,int> >::const_iterator vi = rovers[k].travs.begin();
+		for(;(vi != rovers[k].travs.end());++vi){
+			touched[vi->first] = touched[vi->second] = true;
+		}
 		for(int v =0;v<waypoints.size();++v){
 
-				vector<pair<int,int> >::const_iterator vi = rovers[k].travs.begin();
-				for(;(vi != rovers[k].travs.end());++vi){
-
-					if(vi->second == v || vi->first == v){
+					if(touched[v]){
 
 						if(rovers[k].rock && waypoints[v].rock){
 						  ps.insert(make_pair(k,v));
 						}
 					}
-				}
 
 		}
 	}
@@ -416,22 +453,24 @@ vector<int> rock_sites(vector<Rover> rovers,vector<Waypoint> waypoints){
 	return vps;
 }
 
-vector<int> soil_sites(vector<Rover> rovers,vector<Waypoint> waypoints){
+vector<int> soil_sites(const vector<Rover> & rovers,const vector<Waypoint> & waypoints){
 	set<pair<int,int> > ps;
 	for(int k = 0;k<rovers.size();++k){
 
+		// touched[v]: some traversal of rover k starts or ends at v
+		vector<bool> touched(waypoints.size(),false);
+		vector<pair<int,int> >::const_iterator vi = rovers[k].travs.begin();
+		for(;(vi != rovers[k].travs.end());++vi){
+			touched[vi->first] = touched[vi->second] = true;
+		}
 		for(int v =0;v<waypoints.size();++v){
 
-				vector<pair<int,int> >::const_iterator vi = rovers[k].travs.begin();
-				for(;(vi != rovers[k].travs.end());++vi){
-
-					if(vi->second == v || vi->first == v){
+					if(touched[v]){
 
 						if(rovers[k].soil && waypoints[v].soil){
 						  ps.insert(make_pair(k,v));
 						}
 					}
-				}
 
 		}
 	}
@@ -561,13 +600,6 @@ public:
 		{
 			Waypoint w(numWaypoints);
 			waypoints.push_back(w);
-			for(int j = 0;j<rovers.size();++j){
-				for(vector<pair<int,int> >::iterator k = rovers[j].travs.begin();k!=rovers[j].travs.end();++k){
-					if((*k).first == waypoints.size() || (*k).second == waypoints.size()){
-						w.can_visit.insert(j);
-					}
-				}
-			}
 		};
 
 		for(int i = 0;i < numRovers;++i)
@@ -632,11 +664,11 @@ public:
                     objectives[c.cal_targ].make_visible_from(rovers[c.onboard].reachable_locs);
                 }
 
-		vector<pair<int,int> > image_suitable_rovers = getsuitable(rovers,objectives);
+		SuitablePairs image_suitable_rovers = getsuitable(rovers,objectives,numWaypoints);
 		numimagegoals = min((int)image_suitable_rovers.size(),numimagegoals);
 		for(int i = 0;i<numimagegoals;++i){
 				int fi = rnd(image_suitable_rovers.size());
-				vector<pair<int,int> >::pointer f = &image_suitable_rovers[fi];
+				const pair<int,int> * f = &image_suitable_rovers[fi];
 				int x = rnd(rovers[(*f).second].cams.size());
 				int w = (*f).first;
 
