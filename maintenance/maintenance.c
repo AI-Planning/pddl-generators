@@ -70,7 +70,9 @@ int main(int argc,char **argv) {
   FILE *fd,*fi;
   char sd[100],si[100];
 
-  intlist visits[3][1000];
+  intlist **visits;
+  intlist *byplane;
+  int rows;
 
   long seed;
 
@@ -122,6 +124,14 @@ int main(int argc,char **argv) {
 
   {
 
+  /* visits[airport][day]: airports are chosen among the first 3,
+     rand() % numberOfDays is in 0..|numberOfDays|-1 */
+  rows = numberOfCities > 3 ? numberOfCities : 3;
+  visits = (intlist **)malloc(rows*sizeof(intlist *));
+  for(j=0;j<rows;j++) {
+    visits[j] = (intlist *)calloc(abs(numberOfDays),sizeof(intlist));
+  }
+
   for(i=0;i<numberOfDays;i++) {
     for(j=0;j<numberOfCities;j++) {
       visits[j][i] = EMPTYLIST;
@@ -163,16 +173,25 @@ int main(int argc,char **argv) {
   for(i=0;i<numberOfDays;i++) {
     printf("\n  (%s %s%i)",AVAILABLE,DAYNAME,i+1);
   }
-  for(k=0;k<numberOfVehicles;k++) {
-    for(j=0;j<numberOfCities;j++) {
-      for(i=0;i<numberOfDays;i++) {
+  /* Regroup the visits by plane (head becomes airport*numberOfDays+day),
+     instead of scanning all visits for every plane. Going backwards and
+     prepending keeps each plane's visits ordered by airport and day. */
+  byplane = (intlist *)calloc(numberOfVehicles,sizeof(intlist));
+  for(j=numberOfCities-1;j>=0;j--) {
+    for(i=numberOfDays-1;i>=0;i--) {
+      while(visits[j][i] != EMPTYLIST) {
 	l = visits[j][i];
-	while(l != EMPTYLIST) {
-	  if(k==hd(l))
-	  printf("\n  (at %s%i %s%i %s)",PLANE,hd(l)+1,DAYNAME,i+1,airport(j));
-	  l = tl(l);
-	}
+	visits[j][i] = tl(l);
+	k = hd(l);
+	hd(l) = j*numberOfDays+i;
+	tl(l) = byplane[k];
+	byplane[k] = l;
       }
+    }
+  }
+  for(k=0;k<numberOfVehicles;k++) {
+    for(l=byplane[k];l != EMPTYLIST;l = tl(l)) {
+      printf("\n  (at %s%i %s%i %s)",PLANE,k+1,DAYNAME,hd(l)%numberOfDays+1,airport(hd(l)/numberOfDays));
     }
   }
   printf(")");

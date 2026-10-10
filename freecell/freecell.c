@@ -30,7 +30,6 @@
 
 
 
-#define MAX_STACK 20
 
 
 
@@ -74,7 +73,7 @@ int gcells, gcols, gsuits, *gsuit_size, gstacks;
 /* random configuration
  */
 int **gstack_suit, **gstack_member;
-int *gnum_stack;
+int *gnum_stack, *gmax_stack;
 
 
 
@@ -169,13 +168,15 @@ void create_random_stacks( void )
   int *num_processed;
   Bool **processed;
 
+  /* the stacks are allocated on demand and grown when full
+   * (gmax_stack is their capacity), so they can hold any number of cards
+   */
   gnum_stack = ( int * ) calloc( gstacks, sizeof( int ) );
+  gmax_stack = ( int * ) calloc( gstacks, sizeof( int ) );
   gstack_suit = ( int ** ) calloc( gstacks, sizeof( int * ) );
   gstack_member = ( int ** ) calloc( gstacks, sizeof( int * ) );
   for ( i = 0; i < gstacks; i++ ) {
     gnum_stack[i] = 0;
-    gstack_suit[i] = ( int * ) calloc( MAX_STACK, sizeof( int ) );
-    gstack_member[i] = ( int * ) calloc( MAX_STACK, sizeof( int ) );
   }
   num_processed = ( int * ) calloc( gsuits, sizeof( int ) );
   processed = ( Bool ** ) calloc( gsuits, sizeof( Bool * ) );
@@ -203,6 +204,15 @@ void create_random_stacks( void )
       if ( !processed[r1][r2] ) break;
     }
     r3 = random() % gstacks;
+    if ( gnum_stack[r3] == gmax_stack[r3] ) {
+      gmax_stack[r3] = ( gmax_stack[r3] == 0 ) ? 4 : gmax_stack[r3] + gmax_stack[r3] / 2;
+      gstack_suit[r3] = ( int * ) realloc( gstack_suit[r3], gmax_stack[r3] * sizeof( int ) );
+      gstack_member[r3] = ( int * ) realloc( gstack_member[r3], gmax_stack[r3] * sizeof( int ) );
+      if ( gstack_suit[r3] == NULL || gstack_member[r3] == NULL ) {
+        fprintf( stderr, "\nout of memory\n\n" );
+        exit( 1 );
+      }
+    }
     gstack_suit[r3][gnum_stack[r3]] = r1;
     gstack_member[r3][gnum_stack[r3]] = r2;
     gnum_stack[r3]++;

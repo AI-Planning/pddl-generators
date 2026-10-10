@@ -43,7 +43,6 @@ typedef unsigned char Bool;
 
 #define MAX_DEPTH 20
 #define MAX_SONS 50
-#define MAX_ORDERINGS 1000
 
 
 
@@ -58,15 +57,20 @@ typedef struct Assembly {
   int num_sons, start_son, end_son;
 
   int part_of_row, part_of_col;
-  int num_ao;
-  int aop_row[MAX_ORDERINGS], aop_col[MAX_ORDERINGS];
-  int aof_row[MAX_ORDERINGS], aof_col[MAX_ORDERINGS];
 
-  int num_tp, tp_row[MAX_ORDERINGS], tp_col[MAX_ORDERINGS];
+  /* the ordering arrays are allocated on demand and grown when full
+   * (max_* is their capacity), instead of reserving a fixed number
+   * of entries in every node
+   */
+  int num_ao, max_ao;
+  int *aop_row, *aop_col;
+  int *aof_row, *aof_col;
+
+  int num_tp, max_tp, *tp_row, *tp_col;
   
-  int num_ro;
-  int rop_row[MAX_ORDERINGS], rop_col[MAX_ORDERINGS];
-  int rof_row[MAX_ORDERINGS], rof_col[MAX_ORDERINGS];
+  int num_ro, max_ro;
+  int *rop_row, *rop_col;
+  int *rof_row, *rof_col;
 
 } Assembly, *Assembly_pointer;
 
@@ -74,7 +78,10 @@ typedef struct Assembly {
 
 /* helpers
  */
-
+int *resize( int *array, int size );
+void grow_ao( Assembly_pointer a );
+void grow_tp( Assembly_pointer a );
+void grow_ro( Assembly_pointer a );
 
 /* random problem generation
  */
@@ -286,6 +293,9 @@ void create_tree( void )
 	for ( k = j + 1; k <= gtree[frow][fcol].end_son; k++ ) {
 	  r = random() % 100;
 	  if ( r < gp_assemble_order ) {
+	    if ( gtree[i][j].num_ao == gtree[i][j].max_ao ) {
+	      grow_ao( &(gtree[i][j]) );
+	    }
 	    gtree[i][j].aop_row[gtree[i][j].num_ao] = i; 
 	    gtree[i][j].aop_col[gtree[i][j].num_ao] = k; 
 	    gtree[i][j].aof_row[gtree[i][j].num_ao] = frow; 
@@ -336,6 +346,9 @@ void setup_transient_parts( void )
 	  }
 	  r = random() % 100;
 	  if ( r < gp_transient_part ) {
+	    if ( gtree[i][j].num_tp == gtree[i][j].max_tp ) {
+	      grow_tp( &(gtree[i][j]) );
+	    }
 	    gtree[i][j].tp_row[gtree[i][j].num_tp] = k;
 	    gtree[i][j].tp_col[gtree[i][j].num_tp] = l;
 	    gtree[i][j].num_tp++;
@@ -345,6 +358,9 @@ void setup_transient_parts( void )
 	    r = random() % gtree[k][l].num_sons;
 	    aerow = k + 1;
 	    aecol = gtree[k][l].start_son + r;
+	    if ( gtree[i][j].num_ao == gtree[i][j].max_ao ) {
+	      grow_ao( &(gtree[i][j]) );
+	    }
 	    gtree[i][j].aop_row[gtree[i][j].num_ao] = aerow;
 	    gtree[i][j].aop_col[gtree[i][j].num_ao] = aecol;
 	    gtree[i][j].aof_row[gtree[i][j].num_ao] = k;
@@ -358,6 +374,9 @@ void setup_transient_parts( void )
 		while ( (r2 = random() % gtree[k][l].num_sons) == r );
 		rerow = k + 1;
 		recol = gtree[k][l].start_son + r;
+		if ( gtree[rerow][recol].num_ro == gtree[rerow][recol].max_ro ) {
+		  grow_ro( &(gtree[rerow][recol]) );
+		}
 		gtree[rerow][recol].rop_row[gtree[rerow][recol].num_ro] = i;
 		gtree[rerow][recol].rop_col[gtree[rerow][recol].num_ro] = j;
 		gtree[rerow][recol].rof_row[gtree[rerow][recol].num_ro] = k;
@@ -370,6 +389,72 @@ void setup_transient_parts( void )
       }
     }
   }
+
+}
+
+
+
+
+
+
+
+
+
+/* helper functions
+ */
+
+
+
+int *resize( int *array, int size )
+
+{
+
+  array = ( int * ) realloc( array, size * sizeof( int ) );
+  if ( array == NULL ) {
+    fprintf( stderr, "\n\nout of memory\n\n" );
+    exit( 1 );
+  }
+  return array;
+
+}
+
+
+
+void grow_ao( Assembly_pointer a )
+
+{
+
+  a->max_ao = ( a->max_ao == 0 ) ? 4 : a->max_ao + a->max_ao / 2;
+  a->aop_row = resize( a->aop_row, a->max_ao );
+  a->aop_col = resize( a->aop_col, a->max_ao );
+  a->aof_row = resize( a->aof_row, a->max_ao );
+  a->aof_col = resize( a->aof_col, a->max_ao );
+
+}
+
+
+
+void grow_tp( Assembly_pointer a )
+
+{
+
+  a->max_tp = ( a->max_tp == 0 ) ? 4 : a->max_tp + a->max_tp / 2;
+  a->tp_row = resize( a->tp_row, a->max_tp );
+  a->tp_col = resize( a->tp_col, a->max_tp );
+
+}
+
+
+
+void grow_ro( Assembly_pointer a )
+
+{
+
+  a->max_ro = ( a->max_ro == 0 ) ? 4 : a->max_ro + a->max_ro / 2;
+  a->rop_row = resize( a->rop_row, a->max_ro );
+  a->rop_col = resize( a->rop_col, a->max_ro );
+  a->rof_row = resize( a->rof_row, a->max_ro );
+  a->rof_col = resize( a->rof_col, a->max_ro );
 
 }
 
