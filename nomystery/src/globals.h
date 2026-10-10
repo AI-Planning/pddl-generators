@@ -42,6 +42,7 @@ extern float g_n; /* number of edges will be (int) (g_n * g_num_locations) */
 extern int g_m; /* random edge weights will be drawn from {1..g_m} */
 extern float g_c;
 extern int g_seed;
+extern long long g_max_expansions; /* 0: limit the fuel search by time instead */
 extern vector< vector<int> > g_graph;
 extern vector< vector<int> > g_distances;
 extern vector<LocationInfo> g_loc_info;

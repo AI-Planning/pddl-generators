@@ -23,6 +23,9 @@ void usage() {
 			g_c);
 	printf("-s <int>    random seed (>= 0; preset: %d)\n", g_seed);
 	printf("-e < 0 | 1 > type of encoding (0 = hard; 1 = hard_cost; preset: %d)\n", g_encoding);
+	printf("-x <int>    maximum number of expansions for improving the fuel bound; 0 limits this search\n"
+	       "            to 60 seconds instead, which makes the output depend on the machine (preset: %lld)\n",
+	       g_max_expansions);
 }
 
 bool process_command_line(int argc, char *argv[]) {
@@ -60,6 +63,9 @@ bool process_command_line(int argc, char *argv[]) {
 				case 's':
 					sscanf(*argv, "%d", &g_seed);
 					break;
+				case 'x':
+					sscanf(*argv, "%lld", &g_max_expansions);
+					break;
 				default:
 					cerr << endl << endl << "unknown option: " << option << " entered" << endl << endl;
 					return false;
@@ -69,7 +75,7 @@ bool process_command_line(int argc, char *argv[]) {
 			}
 		}
 	}
-	if (g_num_locations < 2 || g_num_trucks < 1 || g_num_packages < 1 || g_n < 1 || g_m < 1 || g_seed < 0) {
+	if (g_num_locations < 2 || g_num_trucks < 1 || g_num_packages < 1 || g_n < 1 || g_m < 1 || g_seed < 0 || g_max_expansions < 0) {
 		return false;
 	}
 	return true;
@@ -383,6 +389,7 @@ int g_m;
 float g_n;
 float g_c;
 int g_seed;
+long long g_max_expansions;
 
 vector<int> g_p_initials;
 vector<int> g_p_goals;

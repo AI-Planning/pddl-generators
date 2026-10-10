@@ -25,6 +25,7 @@ int main(int argc, char * argv[]) {
 	g_c = 1;
 	g_seed = 1;
 	g_encoding = 0;
+	g_max_expansions = 0;
 
 	if ( !process_command_line( argc, argv ) ) {
 		usage();
@@ -40,17 +41,21 @@ int main(int argc, char * argv[]) {
 
         vector<double> w_list = {1000, 100, 10, 5, 2, 1.5, 1.2, 1.0};
         int initial_fuel = std::numeric_limits<int>::max();
+        long long expansions = 0;
         for (double w : w_list) {
             time_t elapsed_time = time(NULL) - current_time;
-            if (elapsed_time > 60) {
+            if (g_max_expansions ? expansions >= g_max_expansions : elapsed_time > 60) {
                 break;
             }
             SearchEngine<OpenList, AdmissibleHeuristic> engine;
             if (initial_fuel == std::numeric_limits<int>::max()) {
                 initial_fuel = engine.search(initial_fuel, w);
+            } else if (g_max_expansions) {
+                initial_fuel = engine.search(initial_fuel-1, w, 0, g_max_expansions - expansions);
             } else {
                 initial_fuel = engine.search(initial_fuel-1, w, 60 - elapsed_time);
             }
+            expansions += engine.get_num_expansions();
             //cout << elapsed_time << " "<<  w << " " << initial_fuel << endl;
         }
         //cout << initial_fuel << endl;
