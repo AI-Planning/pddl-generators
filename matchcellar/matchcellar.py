@@ -10,44 +10,44 @@ NUM_MATCHES = 1
 
 
 def get_objects(fuses):
-    str_objects = "\n   "
+    str_objects = ["\n   "]
     for i in range(0, NUM_MATCHES):
-        str_objects = str_objects + " match" + str(i)
-    str_objects = str_objects + " - match"
+        str_objects.append(" match" + str(i))
+    str_objects.append(" - match")
 
-    str_objects = str_objects + "\n   "
+    str_objects.append("\n   ")
 
     for i in range(0, fuses):
-        str_objects = str_objects + " fuse" + str(i)
-    str_objects = str_objects + " - fuse\n"
+        str_objects.append(" fuse" + str(i))
+    str_objects.append(" - fuse\n")
 
-    return str_objects
+    return "".join(str_objects)
 
 
 # *****************#
 
 
 def get_init():
-    str_init = "\n"
-    str_init = str_init + "  (handfree)\n"
+    str_init = ["\n"]
+    str_init.append("  (handfree)\n")
 
     for i in range(0, NUM_MATCHES):
-        str_init = str_init + "  (unused match" + str(i) + ")\n"
+        str_init.append("  (unused match" + str(i) + ")\n")
 
-    return str_init
+    return "".join(str_init)
 
 
 # *****************#
 
 
 def get_goals():
-    str_goal = ""
-    str_goal = str_goal + "\n  (and\n"
+    str_goal = []
+    str_goal.append("\n  (and\n")
     for i in range(0, NUM_FUSES):
-        str_goal = str_goal + "     (mended fuse" + str(i) + ")\n"
+        str_goal.append("     (mended fuse" + str(i) + ")\n")
 
-    str_goal = str_goal + ")"
-    return str_goal
+    str_goal.append(")")
+    return "".join(str_goal)
 
 
 # *****************#

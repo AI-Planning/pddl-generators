@@ -10,7 +10,7 @@ import random
 import argparse
 
 
-to_print_car_pos = ""
+to_print_car_pos = []
 
 parser = argparse.ArgumentParser()
 
@@ -43,9 +43,8 @@ matrix = [["free" for i in range(column)] for j in range(row)]
 
 for posizionate in range(car):
     x = random.randint(0, garage - 1)
-    to_print_car_pos = (
-        to_print_car_pos
-        + "(starting car"
+    to_print_car_pos.append(
+        "(starting car"
         + str(posizionate)
         + " garage"
         + str(x)
@@ -197,7 +196,7 @@ for i in range(garage):
     print("(at_garage garage" + str(i) + " junction0" + "-" + str(x) + ")")
 
 # occupied cells
-print(to_print_car_pos, end=" ")
+print("".join(to_print_car_pos), end=" ")
 print("(= (total-cost) 0)")
 print(")\n(:goal\n(and")
 
