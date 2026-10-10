@@ -500,14 +500,11 @@ void create_random_no_access_facts( void )
 {
 
   int i, j, k, p, n, pp;
+  int *floors;
 
   gno_access = ( int * ) calloc( gpassengers, sizeof( int ) );
   gno_access_floors = ( int ** ) calloc( gpassengers, sizeof( int * ) );
   gnum_no_access_floors = ( int * ) calloc( gpassengers, sizeof( int ) );
-  for ( i = 0; i < gpassengers; i++ ) {
-    gno_access_floors[i] = ( int * ) calloc( gfloors, sizeof( int ) );
-    gnum_no_access_floors[i] = 0;
-  }
   gnum_no_access = 0;
 
   n = ( int ) gpassengers * ( (( float ) gp_no_access) / 100.0 );
@@ -518,6 +515,9 @@ void create_random_no_access_facts( void )
     gno_access[gnum_no_access++] = p;
   }
 
+  /* collect the floors in a buffer, then store only as many as needed
+   */
+  floors = ( int * ) calloc( gfloors, sizeof( int ) );
   for ( i = 0; i < gnum_no_access; i++ ) {
     p = gno_access[i];
     for ( j = 0; j < gfloors; j++ ) {
@@ -557,9 +557,12 @@ void create_random_no_access_facts( void )
       }
       /* no other constraints for no access floors ... ?
        */
-      gno_access_floors[i][gnum_no_access_floors[i]++] = j;
+      floors[gnum_no_access_floors[i]++] = j;
     }
+    gno_access_floors[i] = ( int * ) calloc( gnum_no_access_floors[i], sizeof( int ) );
+    memcpy( gno_access_floors[i], floors, gnum_no_access_floors[i] * sizeof( int ) );
   }
+  free( floors );
 
 }
 
