@@ -35,13 +35,20 @@ class SearchEngine {
 
     PerStateInformation<SearchNode> search_space;
     H heuristic;
+    long long num_expansions = 0;
 
 
   public:
     SearchEngine () {
     }
 
-    int search(int bound = std::numeric_limits<int>::max(), double weight = 1, int remaining_time = 0) {
+    long long get_num_expansions() const {
+        return num_expansions;
+    }
+
+    // Stop after remaining_time seconds or max_expansions expansions if they are positive.
+    int search(int bound = std::numeric_limits<int>::max(), double weight = 1, int remaining_time = 0,
+               long long max_expansions = 0) {
         State initial_state = get_initial_state();
     
         int initial_state_id = registry.get_state_id(initial_state);
@@ -58,6 +65,10 @@ class SearchEngine {
                 && time(NULL) - current_time > remaining_time) {
                 return bound +1;
             }
+            if (max_expansions && num_expansions >= max_expansions) {
+                return bound + 1;
+            }
+            ++num_expansions;
             StateID s_id = open.pop_min();
             SearchNode &node = search_space[s_id];
 
