@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -111,6 +112,38 @@ int search(int from, int to, int deb, int num_markets) {
 }
 
 
+// Breadth-first search from market from. Returns TRUE iff market to is
+// reachable; otherwise the markets reachable from from are left marked
+// in reached.
+int *reach_queue = NULL;
+char *reached = NULL;
+
+int reachable(int from, int to, int num_markets) {
+  int k, u, head, tail;
+
+  if (reached == NULL) {
+    reached = (char *)calloc(num_markets, sizeof(char));
+    reach_queue = (int *)calloc(num_markets, sizeof(int));
+  }
+  memset(reached, FALSE, num_markets * sizeof(char));
+
+  head = tail = 0;
+  reached[from] = TRUE;
+  reach_queue[tail++] = from;
+  while (head < tail) {
+    u = reach_queue[head++];
+    for (k = 0; k < num_markets; k++) {
+      if (map[u][k] != NOCONN && !reached[k]) {
+        if (k == to) return TRUE;
+        reached[k] = TRUE;
+        reach_queue[tail++] = k;
+      }
+    }
+  }
+  return FALSE;
+}
+
+
 // Removes an edge from graph
 int remove_conn(int num_markets, int num_depots){
   int from;
@@ -135,6 +168,32 @@ int remove_conn(int num_markets, int num_depots){
 
   // Check if all the markets are still reacheable
   int i,j;
+  static Bool use_search = FALSE;
+  if ((long long)deb + (long long)num_markets * num_markets + 2 > INT_MAX)
+    use_search = TRUE;
+  if (!use_search) {
+    // The map was connected before removing the link, so all markets are
+    // still reachable iff to is reachable from from. This gives the same
+    // answer as the pairwise searches below with a single search. deb is
+    // advanced exactly as those searches would advance it; they are still
+    // used (from then on) once deb could overflow in them, because
+    // search() then no longer finds paths.
+    if (reachable(from, to, num_markets)) {
+      deb += num_markets * (num_markets - 1) / 2;
+    } else {
+      // The first failing pairwise search would be the one from market 0
+      // to the first market j that is not in the same component.
+      for (j = 1; reached[j] == reached[0]; j++);
+      deb += j;
+
+      map[from][to] = SHORT;
+      map[to][from] = SHORT;
+      if (verbose>=3) printf("\tCouldn't remove connection from m%i and m%i\n", from+1, to+1);
+      return FALSE;
+    }
+    if (verbose>=3) printf("\tRemoved connection from m%i and m%i\n", from+1, to+1);
+    return TRUE;
+  }
   for (i=0;i< num_markets;i++) {
     for (j=i;j< num_markets;j++) {
       //if (i!= j) printf("Can I go from %i to %i? ",i+1,j+1);
