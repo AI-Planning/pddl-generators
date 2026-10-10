@@ -68,6 +68,8 @@ int StateRegistry::get_state_id(const State &state) {
     PackedStateBin *data = new PackedStateBin[state_size];
     state_to_packed_state(state, data);
     state_data_pool.push_back(data);
+    // push_back copies the data, so free the buffer to avoid leaking it.
+    delete[] data;
 
     StateID id = state_data_pool.size() - 1;
     pair<StateIDSet::iterator, bool> result = registered_states.insert(id);

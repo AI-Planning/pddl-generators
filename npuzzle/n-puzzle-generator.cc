@@ -12,17 +12,24 @@
 using namespace std;
 
 
-// Number of inversions ignoring zero (blank)
+// Number of inversions ignoring zero (blank), counted in O(n log n) with a
+// Fenwick tree over the tiles 1..n-1. As with the former quadratic count in an
+// int, the result wraps around for huge boards (only its parity is used).
 int inversion_counter (const vector<int>& permutation)
-{	int num_inversions = 0;
+{	long long num_inversions = 0;
 	int n = permutation.size();
+	vector<int> seen(n, 0);
 
-	for (int i = 0; i < n - 1; i++)
-		for (int j = i + 1; j < n; j++)
-			if (permutation[i] != 0 && permutation[j] != 0 && permutation[i] > permutation[j])
-				num_inversions++;
+	for (int i = n - 1; i >= 0; i--)
+		if (permutation[i] != 0)
+		{	// Count the smaller tiles to the right of position i.
+			for (int k = permutation[i] - 1; k > 0; k -= k & -k)
+				num_inversions += seen[k];
+			for (int k = permutation[i]; k < n; k += k & -k)
+				seen[k]++;
+		}
 
-	return num_inversions;
+	return (int) num_inversions;
 }
 
 void usage() {
