@@ -32,14 +32,22 @@ private:
 	vector<vector<int> > path;
 
 public:
-	Map(int s,int d) : locations(s), distance(d), path(s,vector<int>(s,0))
+	Map(int s,int d) : locations(s), distance(d)
 	{
+		// The distances are only written in the numeric and temporal
+		// versions, but they are always drawn to keep the random sequence.
+		bool keep = domainType!=SIMPLE && domainType!=STRIPS;
+		if(keep) path.assign(s,vector<int>(s,0));
 		for(int i = 0;i < s;++i)
 		{
 			for(int j = i+1;j < s;++j)
 			{
-				path[i][j] = rnd(distance/2) + distance/2;
-				path[j][i] = path[i][j];
+				int dist = rnd(distance/2) + distance/2;
+				if(keep)
+				{
+					path[i][j] = dist;
+					path[j][i] = dist;
+				};
 			};
 		};
 	};

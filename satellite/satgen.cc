@@ -73,23 +73,29 @@ class direction : public ProblemObject {
 protected:
 	static int id;
 	static vector<direction *> allDirections;
+	// Slew times to the directions with smaller ids, indexed by myId. They
+	// are not stored in the objects, which get copied a lot.
+	static vector<vector<double> > slewTimes;
 
 	int myId;
 
 	string nm;
-	vector<double> slewTimes;
 
 	virtual direction * clone() const = 0;
 
 public:
 	direction() : myId(id++)
 	{
+		// The slew times are only written for some problem types, but they
+		// are always drawn to keep the random sequence.
+		bool keep = probType==TIMED || probType==COMPLEX || probType==NUMERIC;
+		slewTimes.push_back(vector<double>());
 		for(int i = 0;i < myId;++i)
 		{
 			double a = rnd()*100.0;
 			double b = rnd()*100.0;
 
-			slewTimes.push_back(abs(a-b));
+			if(keep) slewTimes[myId].push_back(abs(a-b));
 		};
 	};
 	string name() const
@@ -113,10 +119,10 @@ public:
 			for(int i = 0;i < myId;++i)
 			{
 				o << "\t(= (slew_time " << name() << " " <<
-					allDirections[i]->name() << ") " << slewTimes[i]
+					allDirections[i]->name() << ") " << slewTimes[myId][i]
 					<< ")\n";
 				o << "\t(= (slew_time " << allDirections[i]->name() << " " <<
-					name() << ") " << slewTimes[i]
+					name() << ") " << slewTimes[myId][i]
 					<< ")\n";
 			};
 		};
@@ -129,6 +135,7 @@ public:
 
 int direction::id = 0;
 vector<direction *> direction::allDirections = vector<direction *>();
+vector<vector<double> > direction::slewTimes;
 
 class target : public direction {
 private:

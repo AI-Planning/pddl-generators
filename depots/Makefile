@@ -1,5 +1,5 @@
 depots: depots.cc
-	g++ depots.cc -o depots
+	g++ -O2 depots.cc -o depots
 
 clean:
 	rm -f depots
