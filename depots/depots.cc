@@ -70,15 +70,14 @@ struct Hoist : public locatable {
 };
 
 struct Map {
-    vector< vector<int> > distances;
-
+    // The distances are not part of the output, so they are not stored.
+    // They are still drawn to keep the sequence of random numbers.
     Map(int locs)
     {
         for(int i = 0;i < locs;++i)
         {
-            distances.push_back(vector<int>());
             for(int j = 0;j < locs;++j)
-                distances[i].push_back(rnd(10));
+                rnd(10);
         };
     };
 };
