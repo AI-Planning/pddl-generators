@@ -28,7 +28,7 @@ MANSECT		= 1
 # make a special BWSTATES just for that purpose.                         #
 ##########################################################################
 
-SIZE		= 200
+SIZE		= 10000
 
 ##########################################################################
 # If you have no gcc or if you wish to compile BWSTATES with another     #
