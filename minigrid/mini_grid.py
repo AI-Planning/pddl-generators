@@ -2,7 +2,6 @@
 
 import argparse
 from collections import deque
-from copy import deepcopy
 import logging
 import os
 from pathlib import Path
@@ -12,9 +11,9 @@ from typing import Optional, Set
 
 
 class Map:
-    def __init__(self, nodes: int):
+    def __init__(self, nodes: int, edges=None):
         self.nodes = nodes
-        self.edges = [[] for n in range(self.nodes)]
+        self.edges = [[] for n in range(self.nodes)] if edges is None else edges
 
     def add_edge(self, src: int, dst: int):
         if dst not in self.edges[src]:
@@ -23,12 +22,13 @@ class Map:
 
     def remove_edges_at(self, node: int):
         assert 0 <= node and node <= self.nodes
-        for i, edges in enumerate(self.edges):
-            self.edges[i] = [dst for dst in edges if dst != node]
+        # Edges are symmetric, so only the neighbors of node can contain it.
+        for i in self.edges[node]:
+            self.edges[i] = [dst for dst in self.edges[i] if dst != node]
         self.edges[node] = []
 
     def clone(self):
-        return deepcopy(self)
+        return Map(self.nodes, [list(edges) for edges in self.edges])
 
     # do BFS exploration
     def path(self, init: int, goal: int):
