@@ -253,7 +253,8 @@ struct Rover{
 		x/=2;
 		image=x%2==0?true:false;
 
-		int radius = locs/3 + rnd(locs);
+		// Use a positive radius, so that each rover can traverse at least one edge.
+		int radius = max(1, locs/3 + rnd(locs));
 		vector<int> reachables;
                 reachable_locs.insert(location);
 		reachables.push_back(location);
