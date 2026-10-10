@@ -5,70 +5,69 @@ import random
 
 
 def get_objects(args):
-    str_objects = "\n"
+    str_objects = ["\n"]
 
     # -- man
-    str_objects = str_objects + "     bob - man\n    "
+    str_objects.append("     bob - man\n    ")
 
     # -- spanner
     for i in range(1, args.spanners + 1):
-        str_objects = str_objects + " spanner" + str(i)
-    str_objects = str_objects + " - spanner\n    "
+        str_objects.append(" spanner" + str(i))
+    str_objects.append(" - spanner\n    ")
 
     # -- nuts
     for i in range(1, args.nuts + 1):
-        str_objects = str_objects + " nut" + str(i)
-    str_objects = str_objects + " - nut\n    "
+        str_objects.append(" nut" + str(i))
+    str_objects.append(" - nut\n    ")
 
     # -- locations
     for i in range(1, args.locations + 1):
-        str_objects = str_objects + " location" + str(i)
-    str_objects = str_objects + " - location\n    "
+        str_objects.append(" location" + str(i))
+    str_objects.append(" - location\n    ")
 
-    str_objects = str_objects + " shed gate - location\n    "
+    str_objects.append(" shed gate - location\n    ")
 
-    return str_objects
+    return "".join(str_objects)
 
 
 def get_init(args):
-    str_init = "\n"
-    str_init = str_init + "    (at bob shed)\n"
+    str_init = ["\n"]
+    str_init.append("    (at bob shed)\n")
 
     for i in range(1, args.spanners + 1):
-        str_init = (
-            str_init
-            + "    (at spanner"
+        str_init.append(
+            "    (at spanner"
             + str(i)
             + " location"
             + str(random.randint(1, args.locations))
             + ")\n"
         )
-        str_init = str_init + "    (useable spanner" + str(i) + ")\n"
+        str_init.append("    (useable spanner" + str(i) + ")\n")
 
     for i in range(1, args.nuts + 1):
-        str_init = str_init + "    (loose nut" + str(i) + ")\n"
-        str_init = str_init + "    (at nut" + str(i) + " gate)\n"
+        str_init.append("    (loose nut" + str(i) + ")\n")
+        str_init.append("    (at nut" + str(i) + " gate)\n")
 
-    str_init = str_init + "    (link shed location1)\n"
-    str_init = str_init + "    (link location" + str(args.locations) + " gate)\n"
+    str_init.append("    (link shed location1)\n")
+    str_init.append("    (link location" + str(args.locations) + " gate)\n")
 
     for i in range(1, args.locations):
-        str_init = (
-            str_init + "    (link location" + str(i) + " location" + str(i + 1) + ")\n"
+        str_init.append(
+            "    (link location" + str(i) + " location" + str(i + 1) + ")\n"
         )
 
-    return str_init
+    return "".join(str_init)
 
 
 def get_goals(args):
-    str_goal = ""
-    str_goal = str_goal + "\n  (and\n"
+    str_goal = []
+    str_goal.append("\n  (and\n")
 
     for i in range(1, args.nuts + 1):
-        str_goal = str_goal + "   (tightened nut" + str(i) + ")\n"
+        str_goal.append("   (tightened nut" + str(i) + ")\n")
 
-    str_goal = str_goal + ")"
-    return str_goal
+    str_goal.append(")")
+    return "".join(str_goal)
 
 
 def parse_args():
