@@ -7,10 +7,11 @@
 import sys
 import random
 
-to_stamp_init = ""
-to_stamp_square = ""
-to_stamp_straight = ""
-to_stamp_L_right = ""
+# String parts, joined before printing (repeated concatenation is quadratic).
+to_stamp_init = []
+to_stamp_square = []
+to_stamp_straight = []
+to_stamp_L_right = []
 rows = 4
 
 
@@ -44,10 +45,9 @@ def put_squares(real_number_square):
         y = random.randint(0, rows - 1)
         if matrix[x][y] == "free":
             matrix[x][y] = "square" + str(squares[posizionati])
-            to_stamp_square = to_stamp_square + matrix[x][y] + " "
-            to_stamp_init = (
-                to_stamp_init
-                + "(at_square square"
+            to_stamp_square.append(matrix[x][y] + " ")
+            to_stamp_init.append(
+                "(at_square square"
                 + str(squares[posizionati])
                 + " f"
                 + str(x)
@@ -110,10 +110,9 @@ if conf_blocks == 2:
                     if matrix[x - 1][y] == "free":
                         matrix[x][y] = "straight" + str(straights[posizionati])
                         matrix[x - 1][y] = "straight" + str(straights[posizionati])
-                        to_stamp_straight = to_stamp_straight + matrix[x][y] + " "
-                        to_stamp_init = (
-                            to_stamp_init
-                            + "(at_two straight"
+                        to_stamp_straight.append(matrix[x][y] + " ")
+                        to_stamp_init.append(
+                            "(at_two straight"
                             + str(straights[posizionati])
                             + " f"
                             + str(x)
@@ -135,10 +134,9 @@ if conf_blocks == 2:
                     if matrix[x][y + 1] == "free":
                         matrix[x][y] = "straight" + str(straights[posizionati])
                         matrix[x][y + 1] = "straight" + str(straights[posizionati])
-                        to_stamp_straight = to_stamp_straight + matrix[x][y] + " "
-                        to_stamp_init = (
-                            to_stamp_init
-                            + "(at_two straight"
+                        to_stamp_straight.append(matrix[x][y] + " ")
+                        to_stamp_init.append(
+                            "(at_two straight"
                             + str(straights[posizionati])
                             + " f"
                             + str(x)
@@ -159,10 +157,9 @@ if conf_blocks == 2:
                 if matrix[x + 1][y] == "free":
                     matrix[x][y] = "straight" + str(straights[posizionati])
                     matrix[x + 1][y] = "straight" + str(straights[posizionati])
-                    to_stamp_straight = to_stamp_straight + matrix[x][y] + " "
-                    to_stamp_init = (
-                        to_stamp_init
-                        + "(at_two straight"
+                    to_stamp_straight.append(matrix[x][y] + " ")
+                    to_stamp_init.append(
+                        "(at_two straight"
                         + str(straights[posizionati])
                         + " f"
                         + str(x)
@@ -182,10 +179,9 @@ if conf_blocks == 2:
                     if matrix[x][y - 1] == "free":
                         matrix[x][y] = "straight" + str(straights[posizionati])
                         matrix[x][y - 1] = "straight" + str(straights[posizionati])
-                        to_stamp_straight = to_stamp_straight + matrix[x][y] + " "
-                        to_stamp_init = (
-                            to_stamp_init
-                            + "(at_two straight"
+                        to_stamp_straight.append(matrix[x][y] + " ")
+                        to_stamp_init.append(
+                            "(at_two straight"
                             + str(straights[posizionati])
                             + " f"
                             + str(x)
@@ -218,10 +214,9 @@ if conf_blocks == 3:
             matrix[x][y] = "rightl" + str(l_rights[posizionati])
             matrix[x + 1][y] = "rightl" + str(l_rights[posizionati])
             matrix[x + 1][y + 1] = "rightl" + str(l_rights[posizionati])
-            to_stamp_L_right = to_stamp_L_right + matrix[x][y] + " "
-            to_stamp_init = (
-                to_stamp_init
-                + "(at_right_l "
+            to_stamp_L_right.append(matrix[x][y] + " ")
+            to_stamp_init.append(
+                "(at_right_l "
                 + matrix[x][y]
                 + " f"
                 + str(x)
@@ -255,10 +250,9 @@ if conf_blocks == 4:
             matrix[x][y] = "rightl" + str(l_rights[posizionati])
             matrix[x + 1][y] = "rightl" + str(l_rights[posizionati])
             matrix[x + 1][y + 1] = "rightl" + str(l_rights[posizionati])
-            to_stamp_L_right = to_stamp_L_right + matrix[x][y] + " "
-            to_stamp_init = (
-                to_stamp_init
-                + "(at_right_l "
+            to_stamp_L_right.append(matrix[x][y] + " ")
+            to_stamp_init.append(
+                "(at_right_l "
                 + matrix[x][y]
                 + " f"
                 + str(x)
@@ -289,10 +283,9 @@ if conf_blocks == 4:
                 if random.randint(1, 4) > 2:
                     matrix[linea][colonna] = "straight" + str(posizionati)
                     matrix[linea - 1][colonna] = "straight" + str(posizionati)
-                    to_stamp_straight = to_stamp_straight + matrix[linea][colonna] + " "
-                    to_stamp_init = (
-                        to_stamp_init
-                        + "(at_two straight"
+                    to_stamp_straight.append(matrix[linea][colonna] + " ")
+                    to_stamp_init.append(
+                        "(at_two straight"
                         + str(posizionati)
                         + " f"
                         + str(linea - 1)
@@ -317,10 +310,9 @@ if conf_blocks == 4:
             if matrix[linea][colonna] == "free":
                 if random.randint(1, 4) > 2:
                     matrix[linea][colonna] = "square" + str(posizionati)
-                    to_stamp_square = to_stamp_square + matrix[linea][colonna] + " "
-                    to_stamp_init = (
-                        to_stamp_init
-                        + "(at_square square"
+                    to_stamp_square.append(matrix[linea][colonna] + " ")
+                    to_stamp_init.append(
+                        "(at_square square"
                         + str(posizionati)
                         + " f"
                         + str(linea)
@@ -335,6 +327,10 @@ if conf_blocks == 4:
 
     # mix up!
 # Finally, time for printing everything out.
+to_stamp_init = "".join(to_stamp_init)
+to_stamp_square = "".join(to_stamp_square)
+to_stamp_straight = "".join(to_stamp_straight)
+to_stamp_L_right = "".join(to_stamp_L_right)
 
 print(
     "(define (problem Tetris-"
