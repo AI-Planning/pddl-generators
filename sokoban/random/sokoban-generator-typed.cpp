@@ -261,8 +261,8 @@ void setup_walls(){
   curr_j=free_locs[idx].second;
   //grow wall
   grow_wall(curr_i,curr_j,num_steps);
-  //get an updated list of free locations 
-  free_locs=get_free_locs();
+  //no need to update the list of free locations:
+  //grow_wall() only changes sokoban_world, not wall_mask
  }
 }
 
