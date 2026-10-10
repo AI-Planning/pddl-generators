@@ -51,6 +51,13 @@ def pos_name(p):
     return f"pos{p[0]}-{p[1]}"
 
 
+def choice_except(positions, position_index, excluded):
+    # Same as random.choice([p for p in positions if p != excluded]) (same
+    # random draw), but without building the list.
+    i = random.choice(range(len(positions) - 1))
+    return positions[i if i < position_index[excluded] else i + 1]
+
+
 def main():
     args = parse()
     random.seed(args.seed)
@@ -59,6 +66,9 @@ def main():
         sys.stdout = open(f"{args.output}/{instance_name}.pddl", "w")
 
     positions = [(x, y) for x in range(args.x) for y in range(args.y)]
+    # Sets and indices for fast membership tests and lookups.
+    position_set = set(positions)
+    position_index = {p: i for i, p in enumerate(positions)}
     assert args.locks < len(positions), "There cannot be more locks than positions"
     assert args.shapes <= args.keys, "There cannot be more shapes than keys"
     assert args.shapes <= args.locks, "There cannot be more shapes than locks"
@@ -66,7 +76,8 @@ def main():
     assert args.prob_goal > 0.0, "Goal probability cannot be 0.0"
 
     locked_positions = random.sample([p for p in positions], k=args.locks)
-    open_positions = [p for p in positions if p not in locked_positions]
+    locked_set = set(locked_positions)
+    open_positions = [p for p in positions if p not in locked_set]
     robot_pos = random.choice(open_positions)
 
     instance_name = f"grid-{args.x}-{args.y}-{args.shapes}-{args.keys}-{args.locks}"
@@ -96,18 +107,20 @@ def main():
     i = 0
     reachable_locked = set()
     reachable_locations = [robot_pos]
-    unlocked_positions = [p for p in open_positions]
+    reachable_set = {robot_pos}
+    unlocked_positions = set(open_positions)
 
     while len(reachable_locations) < len(positions):
         while i < len(reachable_locations):
             loc = reachable_locations[i]
-            adj = adjacent_positions(loc[0], loc[1], positions)
+            adj = adjacent_positions(loc[0], loc[1], position_set)
             for pos in adj:
-                if pos in reachable_locations:
+                if pos in reachable_set:
                     continue
 
                 if pos in unlocked_positions:
                     reachable_locations.append(pos)
+                    reachable_set.add(pos)
                 else:
                     reachable_locked.add(pos)
             i += 1
@@ -126,15 +139,16 @@ def main():
                     else random.choice(positions)
                 )
 
-            for pos in positions:
-                if pos in locked_pos_to_shape and locked_pos_to_shape[pos] == shape:
-                    unlocked_positions.append(pos)
+            for pos, pos_shape in locked_pos_to_shape.items():
+                if pos_shape == shape:
+                    unlocked_positions.add(pos)
 
             to_remove = []
             for r in reachable_locked:
                 if locked_pos_to_shape[r] == shape:
                     to_remove.append(r)
                     reachable_locations.append(r)
+                    reachable_set.add(r)
 
             for r in to_remove:
                 reachable_locked.remove(r)
@@ -151,7 +165,7 @@ def main():
     conn_facts = [
         f"(conn {pos_name(p1)} {pos_name(p2)})"
         for p1 in positions
-        for p2 in adjacent_positions(p1[0], p1[1], positions)
+        for p2 in adjacent_positions(p1[0], p1[1], position_set)
     ]
 
     key_shape_facts = [
@@ -172,12 +186,12 @@ def main():
     goal_facts = []
     for k in range(args.keys):
         if random.random() < args.prob_goal:
-            p = random.choice([p for p in positions if p != key_positions[keys[k]]])
+            p = choice_except(positions, position_index, key_positions[keys[k]])
             goal_facts.append(f"(at {keys[k]} {pos_name(p)})")
 
     if not goal_facts:
         k = random.choice(range(args.keys))
-        p = random.choice([p for p in positions if p != key_positions[keys[k]]])
+        p = choice_except(positions, position_index, key_positions[keys[k]])
         goal_facts.append(f"(at {keys[k]} {pos_name(p)})")
 
     print(
