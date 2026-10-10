@@ -42,7 +42,7 @@ private:
 			
 			for(set<int>::const_iterator i = g[loc].begin();i != g[loc].end();++i)
 			{
-				if(find(reached.begin(),reached.end(),*i)==reached.end())
+				if(reached.find(*i)==reached.end())
 				{
 					togo.push(*i);
 					reached.insert(*i);
@@ -56,12 +56,14 @@ private:
 		set<int> reached;
 		int start = rnd(services);
 		explore(g,start,reached);
+		// reached only grows, so the search for the first unreached location
+		// can continue from the previous one.
+		int next = 0;
 		while(reached.size()!=services)
 		{
-			int next;
-			for(int i = 0;i < services;++i)
+			for(int i = next;i < services;++i)
 			{
-				if(find(reached.begin(),reached.end(),i)==reached.end())
+				if(reached.find(i)==reached.end())
 				{
 					next = i;
 					break;
