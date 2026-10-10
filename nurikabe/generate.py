@@ -149,6 +149,9 @@ def print_solution(width, height, m):
 
 
 def is_number(x):
+    # Shortcut for the most common cells because raising ValueError is slow.
+    if x in (" ", "#", "X"):
+        return False
     try:
         d = int(x)
         return True

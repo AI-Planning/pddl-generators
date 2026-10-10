@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+from collections import defaultdict
 import copy
 import math
 import euclidean_graph
@@ -31,6 +32,10 @@ def min_required_fuel(graph, nodes, size, start):
     dist[start] = 0
     queue = copy.copy(graph.vertices)
     assert start in queue
+    in_queue = set(queue)
+    predecessors = defaultdict(list)
+    for v, u in graph.edges:
+        predecessors[u].append(v)
 
     while len(queue) > 0:
         mindist = size * size * nodes * 4
@@ -39,8 +44,9 @@ def min_required_fuel(graph, nodes, size, start):
                 mindist = dist[x]
                 minelement = x
         queue.remove(minelement)
-        for v, u in graph.edges:
-            if u == minelement and v in queue:
+        in_queue.remove(minelement)
+        for v in predecessors[minelement]:
+            if v in in_queue:
                 ndist = (
                     dist[minelement] + minelement.round_distance(v) * 2
                 )  # *2; conversion from distance to fuel req
@@ -134,16 +140,15 @@ for u, v in city_b.edges:
 
 # connect the two cities
 min_connect_distance = 4 * size
+shifted_city_b = [
+    euclidean_graph.Point(u.name, u.x + 2 * size, u.y) for u in city_b.vertices
+]
 for v in city_a.vertices:
-    for u in city_b.vertices:
-        if (
-            v.distance(euclidean_graph.Point(u.name, u.x + 2 * size, u.y))
-            < min_connect_distance
-        ):
+    for u, shifted_u in zip(city_b.vertices, shifted_city_b):
+        distance = v.distance(shifted_u)
+        if distance < min_connect_distance:
             min_tuple = (v, u)
-            min_connect_distance = v.distance(
-                euclidean_graph.Point(u.name, u.x + 2 * size, u.y)
-            )
+            min_connect_distance = distance
 
 print(
     "  ; %d,%d <-> %d,%d"
