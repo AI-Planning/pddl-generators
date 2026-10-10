@@ -96,6 +96,19 @@ int gnum_passenger, gnum_up_down, gnum_vip, gnum_going_nonstop;
 int gnum_attendant, gnum_never_alone, gnum_con_A, gnum_con_B;
 int gnum_no_access;
 
+/* type membership of each passenger, as bit flags, so that the is_
+ * tests take constant time instead of scanning the above lists.
+ */
+#define UP_DOWN 1
+#define VIP 2
+#define GOING_NONSTOP 4
+#define ATTENDANT 8
+#define NEVER_ALONE 16
+#define CON_A 32
+#define CON_B 64
+#define NO_ACCESS 128
+unsigned char *gtype;
+
 /* final random journeys
  */
 int *gorigin, *gdestin;
@@ -281,6 +294,7 @@ void create_random_types( void )
   gnever_alone = ( int * ) calloc( gpassengers, sizeof( int ) );
   gcon_A = ( int * ) calloc( gpassengers, sizeof( int ) );
   gcon_B = ( int * ) calloc( gpassengers, sizeof( int ) );
+  gtype = ( unsigned char * ) calloc( gpassengers, sizeof( unsigned char ) );
 
   n = ( int ) gpassengers * ( (( float ) gp_up_down) / 100.0 );
   for ( j = 0; j < n; j++ ) {
@@ -288,6 +302,7 @@ void create_random_types( void )
       p = random() % gpassengers;
     } while ( is_up_down( p ) );
     gup_down[gnum_up_down++] = p;
+    gtype[p] |= UP_DOWN;
   }
 
   n = ( int ) gpassengers * ( (( float ) gp_vip) / 100.0 );
@@ -296,6 +311,7 @@ void create_random_types( void )
       p = random() % gpassengers;
     } while ( is_vip( p ) );
     gvip[gnum_vip++] = p;
+    gtype[p] |= VIP;
   }
 
   n = ( int ) gpassengers * ( (( float ) gp_going_nonstop) / 100.0 );
@@ -304,6 +320,7 @@ void create_random_types( void )
       p = random() % gpassengers;
     } while ( is_going_nonstop( p ) );
     ggoing_nonstop[gnum_going_nonstop++] = p;
+    gtype[p] |= GOING_NONSTOP;
     /* it might seem that for a going going_nonstop, it's nonsense to also be
      * up_down; however, going going_nonstop only prevents the lift from STOPPING
      * at a different location than the destin. It can still move
@@ -320,6 +337,7 @@ void create_random_types( void )
       p = random() % gpassengers;
     } while ( is_never_alone( p ) );
     gnever_alone[gnum_never_alone++] = p;
+    gtype[p] |= NEVER_ALONE;
   }
   /* attendant s only if there is at least one never_alone !
    */
@@ -333,6 +351,7 @@ void create_random_types( void )
       } while ( is_attendant( p ) ||
 		is_never_alone( p ) );
       gattendant[gnum_attendant++] = p;
+      gtype[p] |= ATTENDANT;
     }
   }
 
@@ -345,6 +364,7 @@ void create_random_types( void )
       p = random() % gpassengers;
     } while ( is_con_A( p ) );
     gcon_A[gnum_con_A++] = p;
+    gtype[p] |= CON_A;
   }
   /* B s only if there is at least one A !
    */
@@ -357,6 +377,7 @@ void create_random_types( void )
       } while ( is_con_B( p ) || 
 		is_con_A( p ) );
       gcon_B[gnum_con_B++] = p;
+      gtype[p] |= CON_B;
     }
   }
 
@@ -502,14 +523,11 @@ void create_random_no_access_facts( void )
 {
 
   int i, j, k, p, n, pp;
+  int *floors;
 
   gno_access = ( int * ) calloc( gpassengers, sizeof( int ) );
   gno_access_floors = ( int ** ) calloc( gpassengers, sizeof( int * ) );
   gnum_no_access_floors = ( int * ) calloc( gpassengers, sizeof( int ) );
-  for ( i = 0; i < gpassengers; i++ ) {
-    gno_access_floors[i] = ( int * ) calloc( gfloors, sizeof( int ) );
-    gnum_no_access_floors[i] = 0;
-  }
   gnum_no_access = 0;
 
   n = ( int ) gpassengers * ( (( float ) gp_no_access) / 100.0 );
@@ -518,8 +536,12 @@ void create_random_no_access_facts( void )
       p = random() % gpassengers;
     } while ( is_no_access( p ) );
     gno_access[gnum_no_access++] = p;
+    gtype[p] |= NO_ACCESS;
   }
 
+  /* collect the floors in a buffer, then store only as many as needed
+   */
+  floors = ( int * ) calloc( gfloors, sizeof( int ) );
   for ( i = 0; i < gnum_no_access; i++ ) {
     p = gno_access[i];
     for ( j = 0; j < gfloors; j++ ) {
@@ -534,34 +556,37 @@ void create_random_no_access_facts( void )
       /* persons in origins or destins of vips shall have
        * access to all dests of vips; they will likely be moved there
        * anyway.
+       * (scan the vip list rather than all passengers)
        */
-      for ( k = 0; k < gpassengers; k++ ) {
-	if ( k == p || !is_vip( k ) ) continue;
-	if ( gorigin[p] == gorigin[k] ||
-	     gorigin[p] == gdestin[k] ) break;
+      for ( k = 0; k < gnum_vip; k++ ) {
+	if ( gvip[k] == p ) continue;
+	if ( gorigin[p] == gorigin[gvip[k]] ||
+	     gorigin[p] == gdestin[gvip[k]] ) break;
       }
-      if ( k < gpassengers ) {
-	for ( k = 0; k < gpassengers; k++ ) {
-	  if ( k == p || !is_vip( k ) ) continue;
-	  if ( gdestin[k] == j ) break;
+      if ( k < gnum_vip ) {
+	for ( k = 0; k < gnum_vip; k++ ) {
+	  if ( gvip[k] == p ) continue;
+	  if ( gdestin[gvip[k]] == j ) break;
 	}
-	if ( k < gpassengers ) continue;
+	if ( k < gnum_vip ) continue;
       }
       /* attendants shall have access to all locations where never_alone s
        * are waiting
        */
       if ( is_attendant( p ) ) {
-	for ( k = 0; k < gpassengers; k++ ) {
-	  if ( is_never_alone( k ) &&
-	       gorigin[k] == j ) break;
+	for ( k = 0; k < gnum_never_alone; k++ ) {
+	  if ( gorigin[gnever_alone[k]] == j ) break;
 	}
-	if ( k < gpassengers ) continue;
+	if ( k < gnum_never_alone ) continue;
       }
       /* no other constraints for no access floors ... ?
        */
-      gno_access_floors[i][gnum_no_access_floors[i]++] = j;
+      floors[gnum_no_access_floors[i]++] = j;
     }
+    gno_access_floors[i] = ( int * ) calloc( gnum_no_access_floors[i], sizeof( int ) );
+    memcpy( gno_access_floors[i], floors, gnum_no_access_floors[i] * sizeof( int ) );
   }
+  free( floors );
 
 }
 
@@ -571,13 +596,7 @@ Bool is_up_down( int p )
 
 {
 
-  int i;
-
-  for ( i = 0; i < gnum_up_down; i++ ) {
-    if ( gup_down[i] == p ) return TRUE;
-  }
-
-  return FALSE;
+  return ( gtype[p] & UP_DOWN ) ? TRUE : FALSE;
 
 }
 
@@ -587,13 +606,7 @@ Bool is_vip( int p )
 
 {
 
-  int i;
-
-  for ( i = 0; i < gnum_vip; i++ ) {
-    if ( gvip[i] == p ) return TRUE;
-  }
-
-  return FALSE;
+  return ( gtype[p] & VIP ) ? TRUE : FALSE;
 
 }
 
@@ -603,13 +616,7 @@ Bool is_going_nonstop( int p )
 
 {
 
-  int i;
-
-  for ( i = 0; i < gnum_going_nonstop; i++ ) {
-    if ( ggoing_nonstop[i] == p ) return TRUE;
-  }
-
-  return FALSE;
+  return ( gtype[p] & GOING_NONSTOP ) ? TRUE : FALSE;
 
 }
 
@@ -619,13 +626,7 @@ Bool is_attendant( int p )
 
 {
 
-  int i;
-
-  for ( i = 0; i < gnum_attendant; i++ ) {
-    if ( gattendant[i] == p ) return TRUE;
-  }
-
-  return FALSE;
+  return ( gtype[p] & ATTENDANT ) ? TRUE : FALSE;
 
 }
 
@@ -635,13 +636,7 @@ Bool is_never_alone( int p )
 
 {
 
-  int i;
-
-  for ( i = 0; i < gnum_never_alone; i++ ) {
-    if ( gnever_alone[i] == p ) return TRUE;
-  }
-
-  return FALSE;
+  return ( gtype[p] & NEVER_ALONE ) ? TRUE : FALSE;
 
 }
 
@@ -651,13 +646,7 @@ Bool is_con_A( int p )
 
 {
 
-  int i;
-
-  for ( i = 0; i < gnum_con_A; i++ ) {
-    if ( gcon_A[i] == p ) return TRUE;
-  }
-
-  return FALSE;
+  return ( gtype[p] & CON_A ) ? TRUE : FALSE;
 
 }
 
@@ -667,13 +656,7 @@ Bool is_con_B( int p )
 
 {
 
-  int i;
-
-  for ( i = 0; i < gnum_con_B; i++ ) {
-    if ( gcon_B[i] == p ) return TRUE;
-  }
-
-  return FALSE;
+  return ( gtype[p] & CON_B ) ? TRUE : FALSE;
 
 }
 
@@ -683,13 +666,7 @@ Bool is_no_access( int p )
 
 {
 
-  int i;
-
-  for ( i = 0; i < gnum_no_access; i++ ) {
-    if ( gno_access[i] == p ) return TRUE;
-  }
-
-  return FALSE;
+  return ( gtype[p] & NO_ACCESS ) ? TRUE : FALSE;
 
 }
 
