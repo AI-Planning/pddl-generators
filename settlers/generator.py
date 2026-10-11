@@ -7,9 +7,6 @@ import random
 import re
 from collections import defaultdict
 
-import numpy
-from scipy.optimize import Bounds, LinearConstraint, milp
-
 
 # The original generator used Python 2. These functions draw random numbers
 # like Python 2's randint(), sample() and shuffle(), so that we generate the
@@ -37,6 +34,11 @@ def solve_mip(variables, constraints):
     The arguments describe the variables and constraints in the format of
     CPLEX's Python API, which the original generator used.
     """
+    # Only import NumPy and SciPy when needed, since importing them takes
+    # much longer than generating most tasks.
+    import numpy
+    from scipy.optimize import Bounds, LinearConstraint, milp
+
     if not variables:
         return 0.0
     index = {names[0]: i for i, (names, _, _, _, _) in enumerate(variables)}
