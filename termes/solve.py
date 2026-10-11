@@ -198,75 +198,71 @@ def solve(
     s = Optimize()
     # s.set("timeout", timeout)
 
+    # Building the constraints with z3's Python API is much slower than solving
+    # them, so we write the same assertions in SMT-LIB format and parse them in
+    # one call.
+    def I(x, y):
+        return f"intermediate{x}-{y}"
+
+    def T(x, y):
+        return f"target{x}-{y}"
+
+    def O(x, y):
+        return f"order{x}-{y}"
+
+    def S(x, y, xp, yp):
+        return f"supporter{x}-{y}-{xp}-{yp}"
+
+    lines = []
+    for r in range(grid_size_y):
+        for c in range(grid_size_x):
+            lines.append(f"(declare-const {I(c, r)} Int)")
+    for r in range(grid_size_y):
+        for c in range(grid_size_x):
+            lines.append(f"(declare-const {T(c, r)} Int)")
+    for r in range(grid_size_y):
+        for c in range(grid_size_x):
+            lines.append(f"(declare-const {O(c, r)} Int)")
+    for r in range(grid_size_y):
+        for c in range(grid_size_x):
+            lines.append(f"(declare-const supporter{c}-{r} Bool)")
+    for r in range(grid_size_y):
+        for c in range(grid_size_x):
+            lines.append(f"(declare-const supported{c}-{r} Bool)")
+    for x, y, xp, yp in supporter_variables:
+        lines.append(f"(declare-const {S(x, y, xp, yp)} Bool)")
+
     for (y, row) in enumerate(g_grid):
         for (x, tile) in enumerate(row):
             if (x, y) in depots:
-                s.add(
-                    intermediate_board[y][x] == 0
-                )  # The depot location must always have height 0
-                s.add(order[y][x] == 0)  # The depot location must always have order 0
+                # The depot location must always have height 0 and order 0.
+                lines.append(f"(assert (= {I(x, y)} 0))")
+                lines.append(f"(assert (= {O(x, y)} 0))")
             else:
-                s.add(order[y][x] > 0)
-                s.add(target_board[y][x] == tile)
-
-                s.add(
-                    intermediate_board[y][x] <= max_height
-                )  # Intermediate_Board cannot have more height than max_height
-                s.add(
-                    intermediate_board[y][x] >= max(tile, i_grid[y][x])
-                )  # Intermediate_Board cannot have negative height
-
+                lines.append(f"(assert (> {O(x, y)} 0))")
+                lines.append(f"(assert (= {T(x, y)} {tile}))")
+                # Intermediate_Board cannot have more height than max_height
+                lines.append(f"(assert (<= {I(x, y)} {max_height}))")
+                # Intermediate_Board cannot have negative height
+                lines.append(f"(assert (>= {I(x, y)} {max(tile, i_grid[y][x])}))")
                 # All intermediate_board supporter or greater than 0 must have a supporter
-                s.add(Implies(intermediate_board[y][x] > 0, is_supported[y][x] == True))
-
-                s.add(
-                    is_supported[y][x]
-                    == Or(
-                        *[
-                            supporter_variables[(x, y, xp, yp)] == True
-                            for (xp, yp) in adjacent[(x, y)]
-                        ]
-                    )
-                )
-                s.add(
-                    is_supporter[y][x]
-                    == Or(
-                        *[
-                            supporter_variables[(xp, yp, x, y)] == True
-                            for (xp, yp) in adjacent[(x, y)]
-                        ]
-                    )
-                )
-                s.add(Implies(is_supporter[y][x], is_supported[y][x]))
+                lines.append(f"(assert (=> (> {I(x, y)} 0) (= supported{x}-{y} true)))")
+                supporters = " ".join(f"(= {S(x, y, xp, yp)} true)" for (xp, yp) in adjacent[(x, y)])
+                lines.append(f"(assert (= supported{x}-{y} (or {supporters})))")
+                supported = " ".join(f"(= {S(xp, yp, x, y)} true)" for (xp, yp) in adjacent[(x, y)])
+                lines.append(f"(assert (= supporter{x}-{y} (or {supported})))")
+                lines.append(f"(assert (=> supporter{x}-{y} supported{x}-{y}))")
                 for (xp, yp) in adjacent[(x, y)]:
                     # A cell cannot support its supporter (there is a total order of supporters)
-                    s.add(
-                        Implies(
-                            supporter_variables[(x, y, xp, yp)],
-                            order[yp][xp] < order[y][x],
-                        )
-                    )
-
+                    lines.append(f"(assert (=> {S(x, y, xp, yp)} (< {O(xp, yp)} {O(x, y)})))")
                     # The supporter must give access to the cell
-                    s.add(
-                        Or(
-                            supporter_variables[(x, y, xp, yp)] == False,
-                            intermediate_board[y][x] == intermediate_board[yp][xp],
-                            intermediate_board[y][x] == intermediate_board[yp][xp] + 1,
-                        )
+                    lines.append(
+                        f"(assert (or (= {S(x, y, xp, yp)} false) (= {I(x, y)} {I(xp, yp)})"
+                        f" (= {I(x, y)} (+ {I(xp, yp)} 1))))"
                     )
-
                     # The supporter must give access to remove the cell
-                    s.add(
-                        Implies(
-                            supporter_variables[(x, y, xp, yp)],
-                            target_board[y][x] >= target_board[yp][xp],
-                        )
-                    )
-
-                    # s.add(Or(is_supporter[y][x] == False, is_supported[y][x] == False, is_supporter[yp][xp] == False, is_supported[yp][xp] == False, order[y][x] == order[yp][xp], order[y][x] == order[yp][xp] + 1, order[y][x] == order[yp][xp] - 1))
-
-                    # s.add (intermediate_board[0][0] == 0)
+                    lines.append(f"(assert (=> {S(x, y, xp, yp)} (>= {T(x, y)} {T(xp, yp)})))")
+    s.from_string("\n".join(lines))
     if minimize:
         h = s.minimize(
             Sum(*all_intermediate_board) * 1000
