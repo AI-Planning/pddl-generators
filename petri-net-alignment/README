@@ -1,0 +1,48 @@
+Petri Net Alignment:
+submitted by Massimiliano de Leoni (Eindhoven University of Technology) and
+Andrea Marrella (Sapienza University of Rome)
+
+Conformance checking compares the observed behavior of a process, recorded as
+traces of events, with a process model given as a Petri net. An alignment
+relates each event of a trace to a transition of the net. It consists of
+synchronous moves (the trace and the net agree), moves in the log (an event
+without a matching transition) and moves in the model (a transition without a
+matching event). Moves in the log and moves in visible transitions cost 1,
+synchronous moves and invisible transitions cost 0. The task is to find an
+alignment with minimal cost.
+
+References:
+
+M. de Leoni and A. Marrella. Aligning Real Process Executions and Prescriptive
+Process Models through Automated Planning. Expert Systems With Applications 82,
+pages 162-183, 2017.
+
+M. de Leoni and A. Marrella. How Planning Techniques Can Help Process Mining:
+The Conformance-Checking Case. SEBD 2017.
+
+
+Generator:
+
+The original generator is a Java GUI ("Planning-based Imperative Conformance
+Checker", https://bitbucket.org/ipc2018-classical/generate-petri-net-alignment)
+that encodes the traces of an event log in XES format and a Petri net in PNML
+format. For IPC 2018, the event log consisted of one trace of a synthetic log
+for the net d64 with 0, 10, ..., 190 activities from other traces inserted at
+random positions. In addition, each pair of adjacent events was swapped with
+probability 30/101.
+
+generate.py is a Python reimplementation of this pipeline. Instead of using a
+given event log, it generates traces by firing random enabled transitions of
+the net until no transition is enabled. The initial marking consists of the
+places without incoming arcs and the final marking of the places without
+outgoing arcs. For the traces of the IPC 2018 tasks, the encoding is identical
+to the IPC 2018 tasks.
+
+Usage:
+
+    ./generate.py nets/d64.pnml --seed 0 --noise 50 --domain domain.pddl --problem problem.pddl
+
+The directory nets contains the synthetic Petri nets that come with the
+original generator. Since the domain depends on the trace, each task has its
+own domain file. generate-ipc-instances.sh generates 20 tasks like the IPC 2018
+tasks.
