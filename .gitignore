@@ -20,6 +20,7 @@ elevators/generate_data
 elevators/generate_pddl
 ferry/ferry
 freecell/freecell
+flashfill/compile
 fridge/fridge
 goldminer/gold-miner-generator
 grid/grid
