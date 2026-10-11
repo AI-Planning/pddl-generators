@@ -37,19 +37,23 @@ def compile_task(lines, examples):
     return result.stdout, result.stderr
 
 
-def remove_unused_constants(domain, problem, constants):
-    """Only declare the constants that the domain or problem use."""
-    declaration = " ".join(constants)
-    lines = domain.splitlines() + problem.splitlines()
-    used = set(re.split(r"\W+", "\n".join(line for line in lines if declaration not in line)))
-    return domain.replace(declaration, " ".join(c for c in constants if c in used))
+def remove_unused_constants(domain, problem):
+    """Only declare the characters and limiters that the domain or problem use."""
+    declarations = {" ".join(constants): constants for constants in [CHARS, LIMITERS]}
+    text = domain
+    for declaration in declarations:
+        text = text.replace(declaration, "")
+    pattern = re.compile(r"\b(?:" + "|".join(CHARS + LIMITERS) + r")\b")
+    used = set(pattern.findall(text)) | set(pattern.findall(problem))
+    for declaration, constants in declarations.items():
+        domain = domain.replace(declaration, " ".join(c for c in constants if c in used))
+    return domain
 
 
 def main():
     args = parse_args()
     domain, problem = compile_task(args.lines, args.examples)
-    domain = remove_unused_constants(domain, problem, CHARS)
-    domain = remove_unused_constants(domain, problem, LIMITERS)
+    domain = remove_unused_constants(domain, problem)
     domain = domain.replace(REQUIREMENTS, REQUIREMENTS[:-1] + ":NEGATIVE-PRECONDITIONS :ADL)")
     with open(args.domain, "w") as f:
         f.write(domain)

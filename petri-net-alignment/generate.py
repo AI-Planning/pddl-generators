@@ -13,6 +13,7 @@ and "synchronous move", so the domain file depends on the trace.
 import argparse
 import random
 import xml.etree.ElementTree as ET
+from collections import defaultdict
 
 
 def parse_args():
@@ -99,7 +100,7 @@ class PetriNet:
         marking = set(self.initial_marking)
         trace = []
         while True:
-            enabled = [t for t in self.transitions if all(p in marking for p in t.inputs)]
+            enabled = [t for t in self.transitions if marking.issuperset(t.inputs)]
             if not enabled:
                 return trace
             transition = rng.choice(enabled)
@@ -160,19 +161,21 @@ def write_domain(net, trace, filename):
         "(:predicates\n    (token ?p - place)\n    (tracepointer ?e - event)\n    (allowed)\n)\n",
         "(:functions\n    (total-cost) - number\n)\n",
     ]
+    positions = defaultdict(list)
+    for i, activity in enumerate(trace):
+        positions[activity].append(i)
     for t in net.transitions:
         consume = [f"(not (token {p}))" for p in t.inputs]
         produce = [f"(token {p})" for p in t.outputs]
-        for i, activity in enumerate(trace):
-            if activity == t.name:
-                event, next_event = events[i], events[i + 1]
-                parts.append(
-                    action(
-                        f"movesync-{t.name}-{event}",
-                        [f"(token {p})" for p in t.inputs] + [f"(tracepointer {event})"],
-                        ["(allowed)"] + consume + produce + [f"(not (tracepointer {event}))", f"(tracepointer {next_event})"],
-                    )
+        for i in positions[t.name]:
+            event, next_event = events[i], events[i + 1]
+            parts.append(
+                action(
+                    f"movesync-{t.name}-{event}",
+                    [f"(token {p})" for p in t.inputs] + [f"(tracepointer {event})"],
+                    ["(allowed)"] + consume + produce + [f"(not (tracepointer {event}))", f"(tracepointer {next_event})"],
                 )
+            )
         cost = 0 if t.invisible else 1
         parts.append(
             action(
