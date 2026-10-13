@@ -147,7 +147,6 @@ void output_pddl_file(int initial_fuel) {
 		printf("(at t%d l%d)\n", i, g_t_initials[i]);
 		printf("(fuel t%d level%d)\n", i, (initial_fuel));
 	}
-	printf("(= (total-cost) 0)\n");
 	printf("\n");
 
 	for (i = 0; i < g_num_packages; i++) {
@@ -161,7 +160,6 @@ void output_pddl_file(int initial_fuel) {
 	}
 	printf(")\n");
 	printf(")\n");
-	printf("(:metric minimize (total-cost))");
 	printf(")\n");
 }
 
