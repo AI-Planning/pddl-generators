@@ -6,7 +6,7 @@
 ; Based on the submission
 
 (define (domain snake)
-	(:requirements :strips :negative-preconditions)
+	(:requirements :strips :equality :negative-preconditions)
 
 	(:constants dummyPoint)
 
