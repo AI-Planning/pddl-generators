@@ -305,30 +305,27 @@ class Task:
         print("  (:domain woodworking)", file=out)
 
     def _dump_objects(self, indent="", out=None):
+        def dump_typed_list(names, type):
+            # PDDL needs at least one object before "- type", so we omit empty lists.
+            if names:
+                print("{}  {} - {}".format(indent, " ".join(names), type), file=out)
+
         print(indent + "(:objects", file=out)
 
         for type, machines in self.machines.items():
-            print(
-                "{}  {} - {}".format(indent, " ".join([m.name for m in machines]), type),
-                file=out,
-            )
+            dump_typed_list([m.name for m in machines], type)
 
-        print("{}  {} - acolour".format(indent, " ".join(self.colours)), file=out)
-        print("{}  {} - awood".format(indent, " ".join(self.woods)), file=out)
-        print(
-            "{}  {} - part".format(indent, " ".join([p.name for p in self.parts])), file=out
-        )
-        print(
-            "{}  {} - board".format(indent, " ".join([b.name for b in self.boards])),
-            file=out,
-        )
+        dump_typed_list(self.colours, "acolour")
+        dump_typed_list(self.woods, "awood")
+        dump_typed_list([p.name for p in self.parts], "part")
+        dump_typed_list([b.name for b in self.boards], "board")
 
         boardsizes = [
             "%s%d" % (_boardsize_prefix, size)
             for size in range(self.max_board_size + 1)
         ]
 
-        print("{}  {} - aboardsize".format(indent, " ".join(boardsizes)), file=out)
+        dump_typed_list(boardsizes, "aboardsize")
         print(indent + ")", file=out)
 
     def _dump_init(self, indent="", out=None):
